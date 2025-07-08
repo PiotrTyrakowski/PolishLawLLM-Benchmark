@@ -8,3 +8,7 @@ __pycache__/
 *.pywz
 *.pyzw
 *.pyzwz
+
+# PDF files
+*.pdf
+**/*.pdf

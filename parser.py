@@ -100,27 +100,74 @@ def parse_answers(file_path: str) -> dict:
 
 
 if __name__ == "__main__":
-    # The filenames are taken from the current directory.
-    # Make sure the script is in the same directory as the PDF files.
-    questions_pdf_path = "Zestaw_pytań_testowych_na_egzamin_wstępny_dla_kandydatów_na_aplikantów_adwokackich_i_radcowskich_28_września_2024.pdf"
-    answers_pdf_path = "Wykaz_prawidłowych_odpowiedzi_do_zestawu_pytań_testowych_na_egzamin_wstępny_na_aplikację_adwokacką_i_radcowską_28_września_2024_.pdf"
+    # Get all pdf files in the current directory
+    all_files = [f for f in os.listdir('.') if f.endswith('.pdf')]
 
-    if os.path.exists(questions_pdf_path):
-        # Parse questions and save to a JSON file
-        parsed_questions = parse_questions(questions_pdf_path)
-        with open("questions.json", "w", encoding="utf-8") as f:
-            json.dump(parsed_questions, f, ensure_ascii=False, indent=4)
-        print(f"Successfully parsed {len(parsed_questions['questions'])} questions from {questions_pdf_path}")
-        print("Output saved to questions.json")
-    else:
-        print(f"Error: Questions file not found at {questions_pdf_path}")
+    # Group files by year and exam type
+    exams = {}
 
-    if os.path.exists(answers_pdf_path):
-        # Parse answers and save to a JSON file
-        parsed_answers = parse_answers(answers_pdf_path)
-        with open("answers.json", "w", encoding="utf-8") as f:
-            json.dump(parsed_answers, f, ensure_ascii=False, indent=4)
-        print(f"Successfully parsed {len(parsed_answers['answers'])} answers from {answers_pdf_path}")
-        print("Output saved to answers.json")
-    else:
-        print(f"Error: Answers file not found at {answers_pdf_path}") 
+    for pdf_file in all_files:
+        # Extract year from filename (any 4-digit number)
+        year_match = re.search(r'\d{4}', pdf_file)
+        if not year_match:
+            print(f"Warning: Could not find a year in '{pdf_file}', skipping.")
+            continue
+        year = year_match.group(0)
+
+        # Determine exam type from filename
+        exam_type = None
+        if 'adwokack' in pdf_file or 'radcow' in pdf_file:
+            exam_type = 'adwokacki_radcowy'
+        elif 'komornic' in pdf_file:
+            exam_type = 'komorniczy'
+        elif 'notarialn' in pdf_file:
+            exam_type = 'notarialny'
+
+        if not exam_type:
+            print(f"Warning: Could not determine exam type for '{pdf_file}', skipping.")
+            continue
+
+        # Initialize dictionaries if they don't exist
+        if year not in exams:
+            exams[year] = {}
+        if exam_type not in exams[year]:
+            exams[year][exam_type] = {}
+
+        # Categorize as questions or answers pdf
+        if pdf_file.startswith('Zestaw_pytań'):
+            exams[year][exam_type]['questions_pdf'] = pdf_file
+        elif pdf_file.startswith('Wykaz_prawidłowych_odpowiedzi'):
+            exams[year][exam_type]['answers_pdf'] = pdf_file
+
+    # Process each exam
+    for year, types in exams.items():
+        for exam_type, files in types.items():
+            print(f"Processing exam: Year - {year}, Type - {exam_type}")
+
+            # Create the output directory
+            output_dir = os.path.join('exams', year, exam_type)
+            os.makedirs(output_dir, exist_ok=True)
+
+            # Parse questions if file exists
+            if 'questions_pdf' in files:
+                questions_pdf_path = files['questions_pdf']
+                parsed_questions = parse_questions(questions_pdf_path)
+                output_path = os.path.join(output_dir, 'questions.json')
+                with open(output_path, "w", encoding="utf-8") as f:
+                    json.dump(parsed_questions, f, ensure_ascii=False, indent=4)
+                print(f"  - Successfully parsed {len(parsed_questions['questions'])} questions.")
+                print(f"    Saved to {output_path}")
+            else:
+                print(f"  - Warning: Questions file not found for this exam.")
+
+            # Parse answers if file exists
+            if 'answers_pdf' in files:
+                answers_pdf_path = files['answers_pdf']
+                parsed_answers = parse_answers(answers_pdf_path)
+                output_path = os.path.join(output_dir, 'answers.json')
+                with open(output_path, "w", encoding="utf-8") as f:
+                    json.dump(parsed_answers, f, ensure_ascii=False, indent=4)
+                print(f"  - Successfully parsed {len(parsed_answers['answers'])} answers.")
+                print(f"    Saved to {output_path}")
+            else:
+                print(f"  - Warning: Answers file not found for this exam.") 
