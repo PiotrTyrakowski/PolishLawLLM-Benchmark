@@ -32,7 +32,7 @@ def parse_questions(file_path: str) -> dict:
     questions = []
     matches = question_pattern.finditer(full_text)
 
-    for match in matches:
+    for i, match in enumerate(matches):
         # We clean up the extracted text by replacing newlines and multiple spaces.
         question_text = ' '.join(match.group(2).strip().split())
         option_a = ' '.join(match.group(3).strip().split())
@@ -40,6 +40,7 @@ def parse_questions(file_path: str) -> dict:
         option_c = ' '.join(match.group(5).strip().split())
 
         questions.append({
+            "question_number": i + 1,
             "question": question_text,
             "A": option_a,
             "B": option_b,
@@ -73,8 +74,8 @@ def parse_answers(file_path: str) -> dict:
     answers = []
     matches = answer_pattern.finditer(full_text)
 
-    for match in matches:
-        question_number = int(match.group(1))
+    for i, match in enumerate(matches):
+        question_number = i + 1
         correct_answer = match.group(2)
         legal_basis = ' '.join(match.group(3).strip().split())
         answers.append({
@@ -85,10 +86,11 @@ def parse_answers(file_path: str) -> dict:
 
     # Fallback for a simpler format if the above regex fails to find matches.
     if not answers:
+
         answer_pattern = re.compile(r"(\d+)\.\s+([A-C])")
         matches = answer_pattern.finditer(full_text)
-        for match in matches:
-            question_number = int(match.group(1))
+        for i, match in enumerate(matches):
+            question_number = i + 1
             correct_answer = match.group(2)
             answers.append({
                 "question_number": question_number,
