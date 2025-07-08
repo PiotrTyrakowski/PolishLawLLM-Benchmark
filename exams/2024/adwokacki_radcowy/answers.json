@@ -1,0 +1,754 @@
+{
+    "answers": [
+        {
+            "question_number": 1,
+            "correct_answer": "C",
+            "legal_basis": "art. 18 § 3 k.k."
+        },
+        {
+            "question_number": 2,
+            "correct_answer": "C",
+            "legal_basis": "art. 25 § 3 k.k."
+        },
+        {
+            "question_number": 3,
+            "correct_answer": "A",
+            "legal_basis": "art. 28 § 1 k.k."
+        },
+        {
+            "question_number": 4,
+            "correct_answer": "B",
+            "legal_basis": "art. 35 § 1 k.k."
+        },
+        {
+            "question_number": 5,
+            "correct_answer": "A",
+            "legal_basis": "art. 37b k.k."
+        },
+        {
+            "question_number": 6,
+            "correct_answer": "B",
+            "legal_basis": "art. 38 § 2 k.k."
+        },
+        {
+            "question_number": 7,
+            "correct_answer": "C",
+            "legal_basis": "art. 59 k.k."
+        },
+        {
+            "question_number": 8,
+            "correct_answer": "B",
+            "legal_basis": "art. 90 § 2 k.k."
+        },
+        {
+            "question_number": 9,
+            "correct_answer": "B",
+            "legal_basis": "art. 93a § 1 pkt 1 k.k."
+        },
+        {
+            "question_number": 10,
+            "correct_answer": "B",
+            "legal_basis": "art. 106a k.k."
+        },
+        {
+            "question_number": 11,
+            "correct_answer": "C",
+            "legal_basis": "art. 115 § 5 k.k."
+        },
+        {
+            "question_number": 12,
+            "correct_answer": "B",
+            "legal_basis": "art. 5 § 1 k.p.k."
+        },
+        {
+            "question_number": 13,
+            "correct_answer": "B",
+            "legal_basis": "art. 56 § 1a k.p.k."
+        },
+        {
+            "question_number": 14,
+            "correct_answer": "A",
+            "legal_basis": "art. 79 § 3 k.p.k."
+        },
+        {
+            "question_number": 15,
+            "correct_answer": "A",
+            "legal_basis": "art. 183 § 1 k.p.k."
+        },
+        {
+            "question_number": 16,
+            "correct_answer": "B",
+            "legal_basis": "art. 253 § 2 k.p.k."
+        },
+        {
+            "question_number": 17,
+            "correct_answer": "C",
+            "legal_basis": "art. 381 k.p.k."
+        },
+        {
+            "question_number": 18,
+            "correct_answer": "C",
+            "legal_basis": "art. 389 § 1 k.p.k."
+        },
+        {
+            "question_number": 19,
+            "correct_answer": "B",
+            "legal_basis": "art. 437 § 2 w zw. z art. 439 § 1 pkt 5 k.p.k."
+        },
+        {
+            "question_number": 20,
+            "correct_answer": "A",
+            "legal_basis": "art. 502 § 1 k.p.k."
+        },
+        {
+            "question_number": 21,
+            "correct_answer": "A",
+            "legal_basis": "art. 554 § 1 i § 2 k.p.k."
+        },
+        {
+            "question_number": 22,
+            "correct_answer": "C",
+            "legal_basis": "1 art. 8 k.w."
+        },
+        {
+            "question_number": 23,
+            "correct_answer": "A",
+            "legal_basis": "art. 28 § 1 pkt 4 k.w."
+        },
+        {
+            "question_number": 24,
+            "correct_answer": "B",
+            "legal_basis": "art. 32 k.w."
+        },
+        {
+            "question_number": 25,
+            "correct_answer": "B",
+            "legal_basis": "art. 24 § 1 k.p.s.w."
+        },
+        {
+            "question_number": 26,
+            "correct_answer": "B",
+            "legal_basis": "art. 97 § 2 k.p.s.w."
+        },
+        {
+            "question_number": 27,
+            "correct_answer": "A",
+            "legal_basis": "art. 47 § 1 k.k.s."
+        },
+        {
+            "question_number": 28,
+            "correct_answer": "C",
+            "legal_basis": "art. 19 k.c."
+        },
+        {
+            "question_number": 29,
+            "correct_answer": "A",
+            "legal_basis": "art. 105 k.c."
+        },
+        {
+            "question_number": 30,
+            "correct_answer": "B",
+            "legal_basis": "art. 121 pkt 4 k.c."
+        },
+        {
+            "question_number": 31,
+            "correct_answer": "A",
+            "legal_basis": "art. 144 k.c."
+        },
+        {
+            "question_number": 32,
+            "correct_answer": "B",
+            "legal_basis": "art. 173 k.c."
+        },
+        {
+            "question_number": 33,
+            "correct_answer": "A",
+            "legal_basis": "art. 222 § 1 k.c."
+        },
+        {
+            "question_number": 34,
+            "correct_answer": "B",
+            "legal_basis": "art. 229 § 1 k.c."
+        },
+        {
+            "question_number": 35,
+            "correct_answer": "C",
+            "legal_basis": "art. 291 k.c."
+        },
+        {
+            "question_number": 36,
+            "correct_answer": "B",
+            "legal_basis": "art. 358 § 1 k.c."
+        },
+        {
+            "question_number": 37,
+            "correct_answer": "B",
+            "legal_basis": "art. 388 § 1 k.c."
+        },
+        {
+            "question_number": 38,
+            "correct_answer": "C",
+            "legal_basis": "art. 392 k.c."
+        },
+        {
+            "question_number": 39,
+            "correct_answer": "B",
+            "legal_basis": "art. 426 k.c."
+        },
+        {
+            "question_number": 40,
+            "correct_answer": "A",
+            "legal_basis": "art. 484 § 1 k.c."
+        },
+        {
+            "question_number": 41,
+            "correct_answer": "C",
+            "legal_basis": "art. 508 k.c."
+        },
+        {
+            "question_number": 42,
+            "correct_answer": "C",
+            "legal_basis": "art. 598 § 2 k.c."
+        },
+        {
+            "question_number": 43,
+            "correct_answer": "A",
+            "legal_basis": "art. 744 k.c."
+        },
+        {
+            "question_number": 44,
+            "correct_answer": "C",
+            "legal_basis": "art. 7581 § 1 k.c."
+        },
+        {
+            "question_number": 45,
+            "correct_answer": "B",
+            "legal_basis": "art. 942 k.c."
+        },
+        {
+            "question_number": 46,
+            "correct_answer": "A",
+            "legal_basis": "art. 9811 § 2 k.c."
+        },
+        {
+            "question_number": 47,
+            "correct_answer": "B",
+            "legal_basis": "2 art. 986 § 2 k.c."
+        },
+        {
+            "question_number": 48,
+            "correct_answer": "A",
+            "legal_basis": "art. 1018 § 1 k.c."
+        },
+        {
+            "question_number": 49,
+            "correct_answer": "B",
+            "legal_basis": "art. 1048 § 1 k.c."
+        },
+        {
+            "question_number": 50,
+            "correct_answer": "C",
+            "legal_basis": "art. 1 ust. 2 pkt 5 ustawy z dnia 4 lutego 1994 r. o prawie"
+        },
+        {
+            "question_number": 51,
+            "correct_answer": "B",
+            "legal_basis": "autorskim i prawach pokrewnych art. 54 ust. 2 ustawy z dnia 4 lutego 1994 r. o prawie"
+        },
+        {
+            "question_number": 52,
+            "correct_answer": "C",
+            "legal_basis": "autorskim i prawach pokrewnych art. 67 ustawy z dnia 6 lipca 1982 r. o księgach"
+        },
+        {
+            "question_number": 53,
+            "correct_answer": "B",
+            "legal_basis": "wieczystych i hipotece art. 69 i art. 77 zd. 2 ustawy z dnia 6 lipca 1982 r."
+        },
+        {
+            "question_number": 54,
+            "correct_answer": "A",
+            "legal_basis": "o księgach wieczystych i hipotece art. 12 ust. 2 ustawy z dnia 22 maja 2003 r. o ubezpieczeniach obowiązkowych, Ubezpieczeniowym"
+        },
+        {
+            "question_number": 55,
+            "correct_answer": "C",
+            "legal_basis": "Funduszu Gwarancyjnym i Polskim Biurze Ubezpieczycieli Komunikacyjnych art. 30 ustawy z dnia 28 kwietnia 1936 r. – Prawo"
+        },
+        {
+            "question_number": 56,
+            "correct_answer": "C",
+            "legal_basis": "wekslowe art. 34 ustawy z dnia 7 kwietnia 1989 r. – Prawo"
+        },
+        {
+            "question_number": 57,
+            "correct_answer": "A",
+            "legal_basis": "o stowarzyszeniach art. 1 ust. 1 ustawy z dnia 15 grudnia 2000 r."
+        },
+        {
+            "question_number": 58,
+            "correct_answer": "B",
+            "legal_basis": "o spółdzielniach mieszkaniowych art. 172 ust. 1 ustawy z dnia 15 grudnia 2000 r."
+        },
+        {
+            "question_number": 59,
+            "correct_answer": "A",
+            "legal_basis": "o spółdzielniach mieszkaniowych art. 45 § 5 ustawy z dnia 16 września 1982 r. – Prawo"
+        },
+        {
+            "question_number": 60,
+            "correct_answer": "C",
+            "legal_basis": "spółdzielcze art. 19f ust. 2 ustawy z dnia 21 czerwca 2001 r. o ochronie"
+        },
+        {
+            "question_number": 61,
+            "correct_answer": "A",
+            "legal_basis": "praw lokatorów, mieszkaniowym zasobie gminy i o zmianie Kodeksu cywilnego art. 3 ust. 1 ustawy z dnia 24 czerwca 1994 r. o własności"
+        },
+        {
+            "question_number": 62,
+            "correct_answer": "C",
+            "legal_basis": "lokali"
+        },
+        {
+            "question_number": 63,
+            "correct_answer": "B",
+            "legal_basis": "art. 6 ustawy z dnia 24 czerwca 1994 r. o własności lokali art. 16 ust. 1 ustawy z dnia 21 sierpnia 1997 r."
+        },
+        {
+            "question_number": 64,
+            "correct_answer": "A",
+            "legal_basis": "o gospodarce nieruchomościami art. 11 k.p.c."
+        },
+        {
+            "question_number": 65,
+            "correct_answer": "B",
+            "legal_basis": "art. 94 § 1 k.p.c."
+        },
+        {
+            "question_number": 66,
+            "correct_answer": "C",
+            "legal_basis": "art. 102 k.p.c."
+        },
+        {
+            "question_number": 67,
+            "correct_answer": "B",
+            "legal_basis": "art. 1262 § 2 k.p.c."
+        },
+        {
+            "question_number": 68,
+            "correct_answer": "A",
+            "legal_basis": "3 art. 171 k.p.c."
+        },
+        {
+            "question_number": 69,
+            "correct_answer": "C",
+            "legal_basis": "art. 174 § 1 pkt 1 k.p.c."
+        },
+        {
+            "question_number": 70,
+            "correct_answer": "A",
+            "legal_basis": "art. 199 § 1 pkt 2 k.p.c."
+        },
+        {
+            "question_number": 71,
+            "correct_answer": "A",
+            "legal_basis": "art. 214 § 1 k.p.c."
+        },
+        {
+            "question_number": 72,
+            "correct_answer": "B",
+            "legal_basis": "art. 234 k.p.c."
+        },
+        {
+            "question_number": 73,
+            "correct_answer": "C",
+            "legal_basis": "art. 385 k.p.c."
+        },
+        {
+            "question_number": 74,
+            "correct_answer": "A",
+            "legal_basis": "art. 3941 § 11 k.p.c."
+        },
+        {
+            "question_number": 75,
+            "correct_answer": "A",
+            "legal_basis": "art. 4 ust. 1 ustawy z dnia 28 lipca 2005 r. o kosztach"
+        },
+        {
+            "question_number": 76,
+            "correct_answer": "B",
+            "legal_basis": "sądowych w sprawach cywilnych art. 151 § 2 k.r. i o."
+        },
+        {
+            "question_number": 77,
+            "correct_answer": "C",
+            "legal_basis": "art. 47 § 1 k.r. i o"
+        },
+        {
+            "question_number": 78,
+            "correct_answer": "A",
+            "legal_basis": "art. 57 k.r. i o."
+        },
+        {
+            "question_number": 79,
+            "correct_answer": "B",
+            "legal_basis": "art. 616 § 1 k.r. i o."
+        },
+        {
+            "question_number": 80,
+            "correct_answer": "A",
+            "legal_basis": "art. 139 k.r. i o."
+        },
+        {
+            "question_number": 81,
+            "correct_answer": "A",
+            "legal_basis": "art. 9 ust. 1 ustawy z dnia 8 marca 2013 r."
+        },
+        {
+            "question_number": 82,
+            "correct_answer": "B",
+            "legal_basis": "o przeciwdziałaniu nadmiernym opóźnieniom w transakcjach handlowych art. 5 ustawy z dnia 6 grudnia 1996 r. o zastawie"
+        },
+        {
+            "question_number": 83,
+            "correct_answer": "C",
+            "legal_basis": "rejestrowym i rejestrze zastawów art. 18a ustawy z dnia 6 grudnia 1996 r. o zastawie"
+        },
+        {
+            "question_number": 84,
+            "correct_answer": "C",
+            "legal_basis": "rejestrowym i rejestrze zastawów art. 1 ust. 2 pkt 3 ustawy z dnia 20 sierpnia 1997 r."
+        },
+        {
+            "question_number": 85,
+            "correct_answer": "A",
+            "legal_basis": "o Krajowym Rejestrze Sądowym art. 13 ust. 1 ustawy z dnia 20 sierpnia 1997 r."
+        },
+        {
+            "question_number": 86,
+            "correct_answer": "B",
+            "legal_basis": "o Krajowym Rejestrze Sądowym art. 4 ust. 1 pkt 3 ustawy z dnia 15 maja 2015 r. – Prawo"
+        },
+        {
+            "question_number": 87,
+            "correct_answer": "C",
+            "legal_basis": "restrukturyzacyjne art. 18 ustawy z dnia 28 lutego 2003 r. – Prawo"
+        },
+        {
+            "question_number": 88,
+            "correct_answer": "B",
+            "legal_basis": "upadłościowe art. 52 ustawy z dnia 28 lutego 2003 r. – Prawo"
+        },
+        {
+            "question_number": 89,
+            "correct_answer": "C",
+            "legal_basis": "upadłościowe art. 7a ust. 1 ustawy z dnia 30 maja 2014 r. o prawach"
+        },
+        {
+            "question_number": 90,
+            "correct_answer": "B",
+            "legal_basis": "konsumenta art. 17 ust. 3 ustawy z dnia 6 marca 2018 r. – Prawo"
+        },
+        {
+            "question_number": 91,
+            "correct_answer": "B",
+            "legal_basis": "przedsiębiorców 4 art. 25 ust. 2 pkt 3 ustawy z dnia 6 marca 2018 r. – Prawo"
+        },
+        {
+            "question_number": 92,
+            "correct_answer": "A",
+            "legal_basis": "przedsiębiorców art. 4 § 1 pkt 1 k.s.h."
+        },
+        {
+            "question_number": 93,
+            "correct_answer": "C",
+            "legal_basis": "art. 11 § 1 w zw. z art. 161 § 1 k.s.h."
+        },
+        {
+            "question_number": 94,
+            "correct_answer": "B",
+            "legal_basis": "art. 30 § 1 k.s.h."
+        },
+        {
+            "question_number": 95,
+            "correct_answer": "A",
+            "legal_basis": "art. 100 § 1 k.s.h."
+        },
+        {
+            "question_number": 96,
+            "correct_answer": "C",
+            "legal_basis": "art. 134 § 1 k.s.h."
+        },
+        {
+            "question_number": 97,
+            "correct_answer": "B",
+            "legal_basis": "art. 154 § 2 k.s.h."
+        },
+        {
+            "question_number": 98,
+            "correct_answer": "A",
+            "legal_basis": "art. 205 § 1 k.s.h."
+        },
+        {
+            "question_number": 99,
+            "correct_answer": "C",
+            "legal_basis": "art. 303 § 2 k.s.h."
+        },
+        {
+            "question_number": 100,
+            "correct_answer": "B",
+            "legal_basis": "art. 2 k.p."
+        },
+        {
+            "question_number": 101,
+            "correct_answer": "C",
+            "legal_basis": "art. 63¹ § 1 k.p."
+        },
+        {
+            "question_number": 102,
+            "correct_answer": "B",
+            "legal_basis": "art. 6719 § 1 pkt 1 i 2 k.p."
+        },
+        {
+            "question_number": 103,
+            "correct_answer": "B",
+            "legal_basis": "art. 3 ust. 5 ustawy z dnia 13 marca 2003 r."
+        },
+        {
+            "question_number": 104,
+            "correct_answer": "C",
+            "legal_basis": "o szczególnych zasadach rozwiązywania z pracownikami stosunków pracy z przyczyn niedotyczących pracowników art. 60 ust. 1 ustawy z dnia 13 października 1998 r."
+        },
+        {
+            "question_number": 105,
+            "correct_answer": "A",
+            "legal_basis": "o systemie ubezpieczeń społecznych art. 35 ust. 1 ustawy z dnia 25 czerwca 1999 r."
+        },
+        {
+            "question_number": 106,
+            "correct_answer": "B",
+            "legal_basis": "o świadczeniach pieniężnych z ubezpieczenia społecznego w razie choroby i macierzyństwa art. 5a ust. 4 ustawy z dnia 8 marca 1990 r. o samorządzie"
+        },
+        {
+            "question_number": 107,
+            "correct_answer": "A",
+            "legal_basis": "gminnym art. 26 ust. 1 ustawy z dnia 5 czerwca 1998 r."
+        },
+        {
+            "question_number": 108,
+            "correct_answer": "A",
+            "legal_basis": "o samorządzie powiatowym art. 78 ust. 1 ustawy z dnia 5 czerwca 1998 r."
+        },
+        {
+            "question_number": 109,
+            "correct_answer": "C",
+            "legal_basis": "o samorządzie województwa art. 10 ustawy z dnia 23 stycznia 2009 r. o wojewodzie"
+        },
+        {
+            "question_number": 110,
+            "correct_answer": "C",
+            "legal_basis": "i administracji rządowej w województwie art. 60 ust. 1 ustawy z dnia 23 stycznia 2009 r."
+        },
+        {
+            "question_number": 111,
+            "correct_answer": "B",
+            "legal_basis": "o wojewodzie i administracji rządowej w województwie art. 33 § 1 k.p.a."
+        },
+        {
+            "question_number": 112,
+            "correct_answer": "A",
+            "legal_basis": "art. 58 § 2 k.p.a."
+        },
+        {
+            "question_number": 113,
+            "correct_answer": "C",
+            "legal_basis": "5 art. 61 § 3 k.p.a."
+        },
+        {
+            "question_number": 114,
+            "correct_answer": "A",
+            "legal_basis": "art. 104 § 2 k.p.a."
+        },
+        {
+            "question_number": 115,
+            "correct_answer": "C",
+            "legal_basis": "art. 110 § 1 k.p.a."
+        },
+        {
+            "question_number": 116,
+            "correct_answer": "B",
+            "legal_basis": "art. 122a § 1 k.p.a."
+        },
+        {
+            "question_number": 117,
+            "correct_answer": "B",
+            "legal_basis": "art. 156 § 1 pkt 2 k.p.a."
+        },
+        {
+            "question_number": 118,
+            "correct_answer": "B",
+            "legal_basis": "art. 189b k.p.a."
+        },
+        {
+            "question_number": 119,
+            "correct_answer": "A",
+            "legal_basis": "art. 87 § 5 ustawy z dnia 30 sierpnia 2002 r. – Prawo"
+        },
+        {
+            "question_number": 120,
+            "correct_answer": "B",
+            "legal_basis": "o postępowaniu przed sądami administracyjnymi art. 106 § 3 ustawy z dnia 30 sierpnia 2002 r. – Prawo"
+        },
+        {
+            "question_number": 121,
+            "correct_answer": "A",
+            "legal_basis": "o postępowaniu przed sądami administracyjnymi art. 114 ustawy z dnia 30 sierpnia 2002 r. – Prawo"
+        },
+        {
+            "question_number": 122,
+            "correct_answer": "C",
+            "legal_basis": "o postępowaniu przed sądami administracyjnymi art. 141 § 2 ustawy z dnia 30 sierpnia 2002 r. – Prawo"
+        },
+        {
+            "question_number": 123,
+            "correct_answer": "A",
+            "legal_basis": "o postępowaniu przed sądami administracyjnymi art. 183 § 2 pkt 4 ustawy z dnia 30 sierpnia 2002 r. –"
+        },
+        {
+            "question_number": 124,
+            "correct_answer": "A",
+            "legal_basis": "Prawo o postępowaniu przed sądami administracyjnymi art. 239 § 1 pkt 1 lit. d ustawy z dnia 30 sierpnia 2002 r. –"
+        },
+        {
+            "question_number": 125,
+            "correct_answer": "B",
+            "legal_basis": "Prawo o postępowaniu przed sądami administracyjnymi art. 259 § 3 ustawy z dnia 30 sierpnia 2002 r. – Prawo"
+        },
+        {
+            "question_number": 126,
+            "correct_answer": "C",
+            "legal_basis": "o postępowaniu przed sądami administracyjnymi art. 10 ust. 1 Traktatu z dnia 7 lutego 1992 r. o Unii"
+        },
+        {
+            "question_number": 127,
+            "correct_answer": "A",
+            "legal_basis": "Europejskiej – tekst uwzględniający zmiany wprowadzone Traktatem z Lizbony art. 14 ust. 2 Traktatu z dnia 7 lutego 1992 r. o Unii"
+        },
+        {
+            "question_number": 128,
+            "correct_answer": "B",
+            "legal_basis": "Europejskiej – tekst uwzględniający zmiany wprowadzone Traktatem z Lizbony art. 16 ust. 2 Traktatu z dnia 7 lutego 1992 r. o Unii"
+        },
+        {
+            "question_number": 129,
+            "correct_answer": "A",
+            "legal_basis": "Europejskiej – tekst uwzględniający zmiany wprowadzone Traktatem z Lizbony art. 3 ust. 1 lit. c Traktatu z dnia 25 marca 1957 r. o funkcjonowaniu Unii Europejskiej – tekst"
+        },
+        {
+            "question_number": 130,
+            "correct_answer": "A",
+            "legal_basis": "uwzględniający zmiany wprowadzone Traktatem z Lizbony art. 20 ust. 1 Traktatu z dnia 25 marca 1957 r. o funkcjonowaniu Unii Europejskiej – tekst"
+        },
+        {
+            "question_number": 131,
+            "correct_answer": "B",
+            "legal_basis": "uwzględniający zmiany wprowadzone Traktatem z Lizbony art. 4 ust. 1 Konstytucji Rzeczypospolitej Polskiej"
+        },
+        {
+            "question_number": 132,
+            "correct_answer": "C",
+            "legal_basis": "6 art. 64 ust. 3 Konstytucji Rzeczypospolitej Polskiej"
+        },
+        {
+            "question_number": 133,
+            "correct_answer": "A",
+            "legal_basis": "art. 125 ust. 3 Konstytucji Rzeczypospolitej Polskiej"
+        },
+        {
+            "question_number": 134,
+            "correct_answer": "B",
+            "legal_basis": "art. 202 ust. 2 Konstytucji Rzeczypospolitej Polskiej"
+        },
+        {
+            "question_number": 135,
+            "correct_answer": "B",
+            "legal_basis": "art. 221 Konstytucji Rzeczypospolitej Polskiej"
+        },
+        {
+            "question_number": 136,
+            "correct_answer": "C",
+            "legal_basis": "art. 50 § 1 ustawy z dnia 27 lipca 2001 r. – Prawo"
+        },
+        {
+            "question_number": 137,
+            "correct_answer": "B",
+            "legal_basis": "o ustroju sądów powszechnych art. 16 § 1 ustawy z dnia 8 grudnia 2017 r. o Sądzie"
+        },
+        {
+            "question_number": 138,
+            "correct_answer": "C",
+            "legal_basis": "Najwyższym art. 9 § 1 ustawy z dnia 28 stycznia 2016 r. – Prawo"
+        },
+        {
+            "question_number": 139,
+            "correct_answer": "A",
+            "legal_basis": "o prokuraturze art. 7 ust. 1 ustawy z dnia 26 maja 1982 r. – Prawo"
+        },
+        {
+            "question_number": 140,
+            "correct_answer": "A",
+            "legal_basis": "o adwokaturze art. 14 ust. 1 ustawy z dnia 26 maja 1982 r. – Prawo"
+        },
+        {
+            "question_number": 141,
+            "correct_answer": "B",
+            "legal_basis": "o adwokaturze art. 41 ust. 1 ustawy z dnia 26 maja 1982 r. – Prawo"
+        },
+        {
+            "question_number": 142,
+            "correct_answer": "A",
+            "legal_basis": "o adwokaturze art. 83 ust. 1 ustawy z dnia 26 maja 1982 r. – Prawo"
+        },
+        {
+            "question_number": 143,
+            "correct_answer": "B",
+            "legal_basis": "o adwokaturze art. 95ł ust. 1 ustawy z dnia 26 maja 1982 r. – Prawo"
+        },
+        {
+            "question_number": 144,
+            "correct_answer": "B",
+            "legal_basis": "o adwokaturze art. 8 ust. 1 pkt 1 ustawy z dnia 6 lipca 1982 r. o radcach"
+        },
+        {
+            "question_number": 145,
+            "correct_answer": "B",
+            "legal_basis": "prawnych art. 8 ust. 6 ustawy z dnia 6 lipca 1982 r. o radcach"
+        },
+        {
+            "question_number": 146,
+            "correct_answer": "C",
+            "legal_basis": "prawnych art. 11 ust. 2 ustawy z dnia 6 lipca 1982 r. o radcach"
+        },
+        {
+            "question_number": 147,
+            "correct_answer": "B",
+            "legal_basis": "prawnych"
+        },
+        {
+            "question_number": 148,
+            "correct_answer": "B",
+            "legal_basis": "art. 221 ustawy z dnia 6 lipca 1982 r. o radcach prawnych"
+        },
+        {
+            "question_number": 149,
+            "correct_answer": "C",
+            "legal_basis": "art. 23 ustawy z dnia 6 lipca 1982 r. o radcach prawnych art. 5 ust. 2 ustawy z dnia 15 lipca 1987 r. o Rzeczniku"
+        },
+        {
+            "question_number": 150,
+            "correct_answer": "B",
+            "legal_basis": "Praw Obywatelskich 7"
+        }
+    ]
+}
