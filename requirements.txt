@@ -1,1 +1,7 @@
-pdfplumber 
+pdfplumber
+openai
+google-genai
+anthropic
+typer
+black
+pylint
