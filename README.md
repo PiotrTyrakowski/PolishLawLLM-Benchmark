@@ -35,12 +35,12 @@ A comprehensive benchmark framework for evaluating Large Language Models (LLMs) 
 Run a benchmark using the command-line interface:
 
 ```bash
-python -m benchmark_framework.cli run <path_to_questions> <model_name>
+python -m benchmark_framework.cli <path_to_questions> <model_name>
 ```
 
 **Example:**
 ```bash
-python -m benchmark_framework.cli run exams/2024/adwokacki_radcowy/questions.jsonl gemini-2.5-flash
+python -m benchmark_framework.cli exams/2024/adwokacki_radcowy/questions.jsonl gemini-2.5-flash
 ```
 
 ## 🤖 Supported Models
