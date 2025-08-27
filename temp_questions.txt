@@ -1,0 +1,1 @@
+{"question":"Kto w Polsce jest głównym organem wykonawczym rządu?","choices":["Prezydent RP","Sejm RP","Rada Ministrów","Trybunał Konstytucyjny"],"answer":"C"}
