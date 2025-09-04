@@ -9,8 +9,10 @@ from benchmark_framework.constants import ENCODING
 
 class BaseManager(ABC):
     """
-    Abstract base class for all LLM adapters.
-    Concrete implementations must implement `generate_response`.
+    Abstract base class for benchmark managers.
+
+    Handles task initialization, result collection, and file output for
+    different types of benchmark evaluations.
     """
 
     def __init__(self, model_name: str, dataset_name: str):
@@ -29,7 +31,14 @@ class BaseManager(ABC):
 
     def get_result(self, task: Task, model_response: str) -> dict:
         """
-        Get the result for the manager.
+        Generate a result dictionary for a completed task.
+
+        Args:
+            task: The task that was evaluated
+            model_response: The raw response from the model
+
+        Returns:
+            dict: A dictionary containing task details, model response, and evaluation results
         """
         pass
 

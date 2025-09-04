@@ -5,8 +5,11 @@ import re
 
 class BaseModel(ABC):
     """
-    Abstract base class for all LLM adapters.
-    Concrete implementations must implement `generate_response`.
+    Abstract base class for language model implementations.
+
+    Provides a common interface for different LLM providers (OpenAI, Google, etc.).
+    Concrete implementations must implement the `generate_response` method to handle
+    model-specific API calls and response formatting.
     """
 
     def __init__(self, model_name: str, **kwargs):
@@ -19,13 +22,13 @@ class BaseModel(ABC):
     @abstractmethod
     def generate_response(self, prompt: str) -> str:
         """
-        Generate an answer for a multiple-choice question.
+        Generate a response from the language model for a given prompt.
 
         Args:
-            prompt: The question prompt (with question and choices).
+            prompt: The formatted question prompt including the question and multiple choice options.
 
         Returns:
-             A string containing the model response. 
+            str: The raw text response from the model, typically containing the selected answer.
         """
         pass
 

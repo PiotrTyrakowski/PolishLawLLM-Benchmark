@@ -8,8 +8,15 @@ from benchmark_framework.managers.base_manager import BaseManager
 
 
 class ExamManager(BaseManager):
+    """
+    Manager for handling legal exam benchmark evaluations.
+    """
+
     def __init__(self, model_name: str):
         super().__init__(model_name, "exams")
+
+    def get_tasks(self) -> list[Exam]:
+        return self.tasks
         
     def get_result(self, exam: Exam, model_response: str) -> dict:
         extracted_answer = extract_answer_from_response(model_response)

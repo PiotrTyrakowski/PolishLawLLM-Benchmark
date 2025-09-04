@@ -3,6 +3,9 @@ from typing import List, Optional
 
 
 class Task(ABC):
+    """
+    Abstract base class for benchmark tasks.
+    """
     def __init__(self):
         super().__init__()
 
@@ -10,6 +13,9 @@ class Task(ABC):
     @abstractmethod
     def get_prompt(self) -> str:
         """
-        Get the prompt for the task.
+        Generate a formatted prompt string for the task.
+
+        Returns:
+            str: A complete prompt that can be sent to a language model for evaluation.
         """
         pass
