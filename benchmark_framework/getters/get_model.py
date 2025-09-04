@@ -1,10 +1,11 @@
-from benchmark_framework.models.base import BaseModel
+from benchmark_framework.models.base_model import BaseModel
 from benchmark_framework.models.gemini import GeminiModel
 
 # Model registry mapping model names to their corresponding classes
 MODEL_REGISTRY = {
-    "gemini": GeminiModel,
+    "gemini-2.5-pro": GeminiModel,
     "gemini-2.5-flash": GeminiModel,
+    "gemini-2.5-flash-lite": GeminiModel,
 }
 
 
@@ -21,4 +22,7 @@ def get_model_by_name(model_name) -> BaseModel:
     model_class = MODEL_REGISTRY.get(model_name)
     if not model_class:
         raise ValueError(f"Model name '{model_name}' is not recognized.")
-    return model_class()
+
+    model_instance = model_class(model_name)
+
+    return model_instance

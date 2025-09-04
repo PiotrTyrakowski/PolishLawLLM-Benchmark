@@ -2,7 +2,7 @@ from typing import Final
 
 ENCODING: Final[str] = "utf-8"
 
-CONFIG_PROMPT: Final[str] = (
+SYSTEM_PROMPT: Final[str] = (
     "Jesteś ekspertem w prawie polskim biorącym udział w egzaminie zawodowym. "
     "Twoim zadaniem jest rozwiązanie pytań testowych z zakresu polskiego prawa. "
     "Każde pytanie ma dokładnie trzy możliwe odpowiedzi: A, B, C. "

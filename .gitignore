@@ -13,3 +13,7 @@ __pycache__/
 # PDF files
 *.pdf
 **/*.pdf
+
+.env
+.claude/
+changes.txt

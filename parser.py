@@ -76,9 +76,7 @@ def create_unified_jsonl(questions: List[Dict], answers: List[Dict], exam_type: 
             'year': int(year),
             'exam_type': exam_type,
             'question': q['question'],
-            'A': q['A'],
-            'B': q['B'],
-            'C': q['C'],
+            'choices': [f"A) {q['A']}", f"B) {q['B']}", f"C) {q['C']}"],
             'answer': answer_info.get('correct_answer', ''),
             'legal_basis': answer_info.get('legal_basis', '')
         }
@@ -249,29 +247,6 @@ def parse_answers(file_path: str, validate: bool = True) -> dict:
     
     return {"answers": answers, "metadata": metadata}
 
-def export_to_csv(questions: List[Dict], answers: List[Dict], output_path: str) -> None:
-    """
-    Export questions and answers to CSV format for easy analysis.
-    """
-    with open(output_path, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.writer(f)
-        writer.writerow(['Question Number', 'Question', 'Option A', 'Option B', 'Option C', 
-                        'Correct Answer', 'Legal Basis'])
-        
-        answer_dict = {a['question_number']: a for a in answers}
-        
-        for q in questions:
-            answer_info = answer_dict.get(q['question_number'], {})
-            writer.writerow([
-                q['question_number'],
-                q['question'],
-                q['A'],
-                q['B'],
-                q['C'],
-                answer_info.get('correct_answer', ''),
-                answer_info.get('legal_basis', '')
-            ])
-
 def generate_statistics(exam_data: Dict) -> Dict:
     """
     Generate statistics about parsed exam data.
@@ -292,7 +267,6 @@ if __name__ == "__main__":
     import argparse
     
     parser = argparse.ArgumentParser(description='Parse Polish law exam PDFs')
-    parser.add_argument('--csv', action='store_true', help='Also export to CSV format')
     parser.add_argument('--stats', action='store_true', help='Generate statistics')
     parser.add_argument('--validate', action='store_true', default=True, help='Validate parsed data')
     args = parser.parse_args()
@@ -390,12 +364,6 @@ if __name__ == "__main__":
             print(f"  - Saved unified format: {unified_path}")
             
             
-            # Export to CSV if requested
-            if args.csv:
-                csv_path = os.path.join(output_dir, f'exam_data_{year}.csv')
-                export_to_csv(parsed_questions['questions'], parsed_answers['answers'], csv_path)
-                print(f"    Exported to CSV: {csv_path}")
-                
             # Generate statistics if requested
             if args.stats:
                 stats = generate_statistics(parsed_questions)
