@@ -28,7 +28,7 @@ class BaseModel(ABC):
             prompt: The formatted question prompt including the question and multiple choice options.
 
         Returns:
-            str: The raw text response from the model, typically containing the selected answer.
+            str: The raw text response from the model, containing the selected answer with string "ANSWER: X".
         """
         pass
 

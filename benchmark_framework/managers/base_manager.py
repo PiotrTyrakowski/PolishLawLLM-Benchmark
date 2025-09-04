@@ -5,7 +5,7 @@ from benchmark_framework.types.task import Task
 from benchmark_framework.utils import initialize_tasks
 from pathlib import Path
 import json
-from benchmark_framework.constants import ENCODING
+from benchmark_framework.constants import ENCODING, RESULTS_PATH
 
 class BaseManager(ABC):
     """
@@ -18,11 +18,11 @@ class BaseManager(ABC):
     def __init__(self, model_name: str, dataset_name: str):
         super().__init__()
         self.model_name = model_name
-        self.tasks = initialize_tasks(Path(__file__).parent.parent.parent / "data", dataset_name)
+        self.tasks = initialize_tasks(dataset_name)
         self.results = []
 
         # Set fixed output directory structure: PolishLawLLM-Benchmark/results/dataset_name/
-        base_dir = Path(__file__).parent.parent.parent / "results" / dataset_name
+        base_dir = RESULTS_PATH / dataset_name
         base_dir.mkdir(parents=True, exist_ok=True)
         self.output_file = base_dir / f"{self.model_name}.jsonl"
 

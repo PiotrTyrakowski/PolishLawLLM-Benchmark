@@ -1,4 +1,5 @@
 from typing import Final
+from pathlib import Path
 
 ENCODING: Final[str] = "utf-8"
 
@@ -18,3 +19,6 @@ SYSTEM_PROMPT: Final[str] = (
     "5. Zakończ swoją odpowiedź w formacie: ANSWER: X (gdzie X to A, B lub C)\n\n"
     "WAŻNE: Zawsze zakończ dokładnie tekstem 'ANSWER: ' oraz jedną literą (A, B lub C)."
 )
+
+DATA_PATH: Final[Path] = Path(__file__).parent.parent / "data"
+RESULTS_PATH: Final[Path] = Path(__file__).parent.parent / "results"
