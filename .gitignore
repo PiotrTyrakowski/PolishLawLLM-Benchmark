@@ -17,3 +17,6 @@ __pycache__/
 .env
 .claude/
 changes.txt
+
+# package
+*.egg-info/
