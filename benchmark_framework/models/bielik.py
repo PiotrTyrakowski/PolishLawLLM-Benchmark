@@ -22,7 +22,7 @@ class BielikModel(BaseModel):
             torch_dtype=torch.bfloat16,
             low_cpu_mem_usage=True,
             device_map="auto"
-        ).to(self.device)
+        )
 
     def generate_response(self, prompt: str) -> str:
         """
