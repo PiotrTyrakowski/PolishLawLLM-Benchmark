@@ -7,9 +7,8 @@ MODEL_REGISTRY = {
     "gemini-2.5-pro": GeminiModel,
     "gemini-2.5-flash": GeminiModel,
     "gemini-2.5-flash-lite": GeminiModel,
-    "speakleash/Bielik-11B-v2.2-Instruct": BielikModel,
+    "speakleash/Bielik-4.5B-v3.0-Instruct": BielikModel,
 }
-
 
 def get_model_by_name(model_name) -> BaseModel:
     """

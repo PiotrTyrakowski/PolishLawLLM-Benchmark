@@ -11,12 +11,15 @@ class BielikModel(BaseModel):
     This class handles loading the model and tokenizer, and then
     uses them to generate responses for given prompts.
     """
+
     def __init__(self, model_name: str, **kwargs):
         super().__init__(model_name, **kwargs)
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
+
+        print("Loading tokenizer...")
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
 
-        # TODO: validate the options here
+        print("Loading model...")
         self.model = AutoModelForCausalLM.from_pretrained(
             self.model_name,
             torch_dtype=torch.bfloat16,
@@ -38,19 +41,9 @@ class BielikModel(BaseModel):
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": prompt}
         ]
-
-        input_ids = self.tokenizer.apply_chat_template(
-            messages,
-            return_tensors="pt"
-        ).to(self.device)
-
-        # TODO: test do_sample option
+        input_ids = self.tokenizer.apply_chat_template(messages, return_tensors="pt").to(self.device)
         outputs = self.model.generate(input_ids, max_new_tokens=1000)
-        response_ids = outputs[0][input_ids.shape[-1]:]
-        response = self.tokenizer.decode(response_ids, skip_special_tokens=True)
+        response = self.tokenizer.batch_decode(outputs)[0]
         print(response)
 
-        decoded = self.tokenizer.batch_decode(outputs)
-        print(decoded)
-
-        return response.strip()
+        return response
