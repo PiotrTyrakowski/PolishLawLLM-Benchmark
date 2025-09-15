@@ -27,13 +27,10 @@ class BenchmarkRunner:
 
 
     def run(self):
-        correct = 0
         total_processed = 0
-
         tasks = self.manager.get_tasks()
-        
         for task in tasks[self.start_task_index:]:
-            if(self.requests_per_minute is not None):
+            if self.requests_per_minute is not None:
                 self._rate_limit_wait()
             
             resp = self.model.generate_response(task.get_prompt())

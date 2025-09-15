@@ -1,4 +1,5 @@
 from benchmark_framework.models.base_model import BaseModel
+from benchmark_framework.models.bielik import BielikModel
 from benchmark_framework.models.gemini import GeminiModel
 
 # Model registry mapping model names to their corresponding classes
@@ -6,6 +7,7 @@ MODEL_REGISTRY = {
     "gemini-2.5-pro": GeminiModel,
     "gemini-2.5-flash": GeminiModel,
     "gemini-2.5-flash-lite": GeminiModel,
+    "speakleash/Bielik-11B-v2.2-Instruct": BielikModel,
 }
 
 

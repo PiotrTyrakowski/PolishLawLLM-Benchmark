@@ -5,3 +5,5 @@ anthropic==0.61.0
 typer==0.16.1
 black==25.1.0
 pylint==3.3.3
+torch
+transformers
