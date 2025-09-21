@@ -24,7 +24,7 @@ class BaseManager(ABC):
         self.results = []
         base_dir = output_path if output_path else (Path(__file__).parent.parent.parent / "results" / dataset_name)
         base_dir.mkdir(parents=True, exist_ok=True)
-        self.output_file = base_dir / f"{self.model_name.replace("_", "-")}.jsonl"
+        self.output_file = base_dir / f"{self.model_name.replace("/", "-")}.jsonl"
 
     def get_tasks(self) -> list[Task]:
         return self.tasks
