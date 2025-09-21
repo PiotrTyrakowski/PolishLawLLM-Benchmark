@@ -18,15 +18,13 @@ class BaseManager(ABC):
     def __init__(self, model_name: str, dataset_name: str, tasks_path: Optional[str] = None,
                  output_path: Optional[str] = None):
         super().__init__()
-        dataset_name = dataset_name.replace("/", "-")
         self.model_name = model_name
         self.tasks = initialize_tasks(tasks_path if tasks_path else Path(__file__).parent.parent.parent / "data",
                                       dataset_name)
         self.results = []
-
         base_dir = output_path if output_path else (Path(__file__).parent.parent.parent / "results" / dataset_name)
         base_dir.mkdir(parents=True, exist_ok=True)
-        self.output_file = base_dir / f"{self.model_name}.jsonl"
+        self.output_file = base_dir / f"{self.model_name.replace("_", "-")}.jsonl"
 
     def get_tasks(self) -> list[Task]:
         return self.tasks
