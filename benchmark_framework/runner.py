@@ -27,7 +27,6 @@ class BenchmarkRunner:
         min_delay_between_requests = 60.0 / self.requests_per_minute + 1
         time.sleep(min_delay_between_requests)
 
-
     def run(self):
         total_processed = 0
         tasks = self.manager.get_tasks()
