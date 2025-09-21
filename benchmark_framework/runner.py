@@ -11,6 +11,8 @@ class BenchmarkRunner:
         self.model = model
         self.manager = manager
         self.start_task_index = 0
+        self.requests_per_minute = None
+        self.daily_limit = None
     
     def set_requests_per_minute(self, requests_per_minute: int):
         self.requests_per_minute = requests_per_minute
