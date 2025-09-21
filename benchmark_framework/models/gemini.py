@@ -20,17 +20,10 @@ class GeminiModel(BaseModel):
     def generate_response(self, prompt: str):
         """
         Generate an answer for a multiple-choice question.
-
-        Args:
-            prompt: The question prompt (with question and choices).
-
-        Returns:
-            A string containing the model’s response.
         """
         resp = self.client.models.generate_content(
             model=self.model_name,
             config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT),
             contents=prompt,
         )
-        
         return resp.text

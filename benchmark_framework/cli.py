@@ -1,6 +1,4 @@
-from pathlib import Path
 import typer
-
 from benchmark_framework.runner import BenchmarkRunner
 from benchmark_framework.getters.get_model import get_model_by_name
 from benchmark_framework.getters.get_manager import get_manager_by_dataset
@@ -30,12 +28,10 @@ def run(
     runner.set_daily_limit(100)
     runner.set_start_from_task_index(0)
 
-    # Run benchmark
     typer.echo(f"Running benchmark for {model_name} on {len(manager.get_tasks())} tasks...")
     accuracy = runner.run()
 
     typer.echo(f"Accuracy: {accuracy:.2%}")
-
 
 if __name__ == "__main__":
     app()

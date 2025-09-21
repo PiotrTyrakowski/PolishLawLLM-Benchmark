@@ -11,7 +11,6 @@ class BaseModel(ABC):
     Concrete implementations must implement the `generate_response` method to handle
     model-specific API calls and response formatting.
     """
-
     def __init__(self, model_name: str, **kwargs):
         super().__init__()
         self.model_name = model_name
@@ -23,12 +22,6 @@ class BaseModel(ABC):
     def generate_response(self, prompt: str) -> str:
         """
         Generate a response from the language model for a given prompt.
-
-        Args:
-            prompt: The formatted question prompt including the question and multiple choice options.
-
-        Returns:
-            str: The raw text response from the model, typically containing the selected answer.
         """
         pass
 

@@ -3,7 +3,6 @@ from pathlib import Path
 from benchmark_framework.types.task import Task
 from benchmark_framework.constants import ENCODING
 
-
 class Exam(Task):
     """
     Represents a legal exam question with multiple choice answers.
@@ -11,7 +10,6 @@ class Exam(Task):
     Contains all the information needed for a single exam question including
     the question text, answer choices, correct answer, and legal basis.
     """
-
     def __init__(self, id, year, exam_type, question, choices, answer, legal_basis):
         super().__init__()
         self.id = id

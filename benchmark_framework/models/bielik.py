@@ -8,7 +8,6 @@ class BielikModel(BaseModel):
     """
     Bielik language model implementation from Hugging Face.
     """
-
     def __init__(self, model_name: str, **kwargs):
         super().__init__(model_name, **kwargs)
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
