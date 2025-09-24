@@ -17,3 +17,6 @@ __pycache__/
 .env
 .claude/
 changes.txt
+
+results/exams/  
+data/exams/
