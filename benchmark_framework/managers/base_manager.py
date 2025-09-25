@@ -22,14 +22,14 @@ class BaseManager(ABC):
         self.results = []
 
         # Set fixed output directory structure: PolishLawLLM-Benchmark/results/dataset_name/
-        base_dir = RESULTS_PATH / dataset_name
-        base_dir.mkdir(parents=True, exist_ok=True)
-        self.output_file = base_dir / f"{self.model_name}.jsonl"
+        self.base_dir = RESULTS_PATH / dataset_name
+        self.base_dir.mkdir(parents=True, exist_ok=True)
+        
 
     def get_tasks(self) -> list[Task]:
         return self.tasks
 
-    def get_result(self, task: Task, model_response: str) -> dict:
+    def get_result(self, task: Task, model_response: str, model_tools: str) -> dict:
         """
         Generate a result dictionary for a completed task.
 
@@ -42,14 +42,16 @@ class BaseManager(ABC):
         """
         pass
 
-    def append_to_file(self, result: dict):
+    def append_to_file(self, output_file: str, result: dict):
         """Append a single result to the output file."""
-        with open(self.output_file, 'a', encoding=ENCODING) as f:
+        full_path = self.base_dir / output_file
+        with open(full_path, 'a', encoding=ENCODING) as f:
             f.write(json.dumps(result, ensure_ascii=False) + '\n')
     
-    def save_all_results(self):
+    def save_all_results(self, output_file: str):
         """Save all results to a JSONL file."""
-        with open(self.output_file, 'w', encoding=ENCODING) as f:
+        full_path = self.base_dir / output_file
+        with open(full_path, 'w', encoding=ENCODING) as f:
             for result in self.results:
                 f.write(json.dumps(result, ensure_ascii=False) + '\n')
     

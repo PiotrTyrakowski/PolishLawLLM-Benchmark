@@ -19,7 +19,7 @@ def get_manager_by_dataset(dataset_name: str, model_name: str) -> BaseManager:
     """
     manager_class = MANAGER_REGISTRY.get(dataset_name)
     if not manager_class:
-        raise ValueError(f"Model name '{dataset_name}' is not recognized.")
+        raise ValueError(f"Dataset name '{dataset_name}' is not recognized.")
 
     manager_instance = manager_class(model_name)
 

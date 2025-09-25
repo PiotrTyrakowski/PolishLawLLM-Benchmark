@@ -9,12 +9,13 @@ MODEL_REGISTRY = {
 }
 
 
-def get_model_by_name(model_name) -> BaseModel:
+def get_model_by_name(model_name, model_tools: str = None) -> BaseModel:
     """
     Factory function to get a model instance by name.
 
     Args:
         model_name: The name of the model to instantiate.
+        model_tools: The tools to use for the model.
 
     Returns:
         An instance of the specified model class.
@@ -23,6 +24,6 @@ def get_model_by_name(model_name) -> BaseModel:
     if not model_class:
         raise ValueError(f"Model name '{model_name}' is not recognized.")
 
-    model_instance = model_class(model_name)
+    model_instance = model_class(model_name, model_tools)
 
     return model_instance
