@@ -9,8 +9,8 @@ class BielikModel(BaseModel):
     Bielik language model implementation from Hugging Face.
     """
 
-    def __init__(self, model_name: str, **kwargs):
-        super().__init__(model_name, **kwargs)
+    def __init__(self, model_name: str, model_tools: str = None, **kwargs):
+        super().__init__(model_name, model_tools, **kwargs)
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         self.model = AutoModelForCausalLM.from_pretrained(

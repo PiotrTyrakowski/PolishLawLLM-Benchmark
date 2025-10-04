@@ -29,11 +29,6 @@ class BaseManager(ABC):
     def get_result(self, task: Task, model_response: str, model_tools: str) -> dict:
         """
         Generate a result dictionary for a completed task.
-
-        Args:
-            task: The task that was evaluated
-            model_response: The raw response from the model
-
         Returns:
             dict: A dictionary containing task details, model response, and evaluation results
         """
