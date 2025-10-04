@@ -1,4 +1,5 @@
 import json
+import os
 from abc import ABC
 from pathlib import Path
 from benchmark_framework.types.task import Task
@@ -39,11 +40,13 @@ class BaseManager(ABC):
 
     def append_to_file(self, output_file: str, result: dict):
         full_path = self.base_dir / output_file
+        os.makedirs(full_path.parent, exist_ok=True)
         with open(full_path, "a", encoding=ENCODING) as f:
             f.write(json.dumps(result, ensure_ascii=False) + "\n")
 
     def save_all_results(self, output_file: str):
         full_path = self.base_dir / output_file
+        os.makedirs(full_path.parent, exist_ok=True)
         with open(full_path, "w", encoding=ENCODING) as f:
             for result in self.results:
                 f.write(json.dumps(result, ensure_ascii=False) + "\n")

@@ -10,7 +10,6 @@ class BenchmarkRunner:
         self.start_task_index = 0
         self.requests_per_minute = None
         self.daily_limit = None
-
         self.output_file = f"{self.model.model_name}.jsonl"
         if self.model.model_tools is not None:
             self.output_file = f"{self.model.model_name}_{'_'.join(self.model.model_tools.split(','))}.jsonl"
