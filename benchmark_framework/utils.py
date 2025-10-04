@@ -1,9 +1,10 @@
 import json
 from pathlib import Path
 import re
-from benchmark_framework.constants import ENCODING
+from benchmark_framework.constants import ENCODING, DATA_PATH, RESULTS_PATH
 from benchmark_framework.types.task import Task
 from benchmark_framework.getters.get_type import get_task_by_dataset
+
 
 def initialize_tasks_from_jsonl(tasks_path: Path, dataset_name: str) -> list[Task]:
     """
@@ -18,15 +19,16 @@ def initialize_tasks_from_jsonl(tasks_path: Path, dataset_name: str) -> list[Tas
             tasks.append(get_task_by_dataset(dataset_name, task_raw))
     return tasks
 
-def initialize_tasks(tasks_dir_path: Path, dataset_name: str) -> list[Task]:
+
+def initialize_tasks(dataset_name: str) -> list[Task]:
     """
     Load tasks from a directory (searches recursively for *.jsonl files).
     """
     tasks = []
-    
-    for file in (tasks_dir_path / dataset_name).rglob("*.jsonl"):
+    for file in (DATA_PATH / dataset_name).rglob("*.jsonl"):
         tasks.extend(initialize_tasks_from_jsonl(file, dataset_name))
     return tasks
+
 
 def extract_answer_from_response(response_text: str) -> str:
     """
@@ -36,12 +38,12 @@ def extract_answer_from_response(response_text: str) -> str:
     """
     response_text = response_text.strip()
 
-    match = re.search(r'ANSWER:\s*([ABC])', response_text, re.IGNORECASE)
+    match = re.search(r"ANSWER:\s*([ABC])", response_text, re.IGNORECASE)
     if match:
         return match.group(1).upper()
 
     # Fallback: look for single letter at the end
-    for letter in ['A', 'B', 'C']:
+    for letter in ["A", "B", "C"]:
         if letter in response_text[-5:]:
             return letter
 

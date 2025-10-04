@@ -1,8 +1,5 @@
 import time
-from datetime import datetime, date
-from pathlib import Path
 from benchmark_framework.models.base_model import BaseModel
-from benchmark_framework.types.task import Task
 from benchmark_framework.managers.base_manager import BaseManager
 
 
@@ -13,7 +10,11 @@ class BenchmarkRunner:
         self.start_task_index = 0
         self.requests_per_minute = None
         self.daily_limit = None
-    
+
+        self.output_file = f"{self.model.model_name}.jsonl"
+        if self.model.model_tools is not None:
+            self.output_file = f"{self.model.model_name}_{'_'.join(self.model.model_tools.split(','))}.jsonl"
+
     def set_requests_per_minute(self, requests_per_minute: int):
         self.requests_per_minute = requests_per_minute
 
@@ -30,18 +31,17 @@ class BenchmarkRunner:
     def run(self):
         total_processed = 0
         tasks = self.manager.get_tasks()
-        for task in tasks[self.start_task_index:]:
+        for task in tasks[self.start_task_index :]:
             if self.requests_per_minute is not None:
                 self._rate_limit_wait()
-            
-            resp = self.model.generate_response(task.get_prompt())
-            result = self.manager.get_result(task, resp)
-            self.manager.append_to_file(result)
 
+            resp = self.model.generate_response(task.get_prompt())
+            result = self.manager.get_result(task, resp, self.model.model_tools)
+            self.manager.append_to_file(self.output_file, result)
             total_processed += 1
 
             if self.daily_limit is not None and total_processed >= self.daily_limit:
                 break
-            
+
         accuracy = self.manager.get_summary()["accuracy"]
         return accuracy

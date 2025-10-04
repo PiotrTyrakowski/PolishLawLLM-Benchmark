@@ -88,6 +88,7 @@ def create_unified_jsonl(questions: List[Dict], answers: List[Dict], exam_type: 
 def parse_questions(file_path: str, validate: bool = True) -> dict:
     """
     Parses a PDF file with questions and returns a dictionary.
+    Assumes questions start from page 2 and there are exactly 150 questions.
 
     Args:
         file_path: The path to the PDF file.
@@ -97,44 +98,41 @@ def parse_questions(file_path: str, validate: bool = True) -> dict:
         A dictionary with questions and metadata.
     """
     print(f"Parsing questions from: {file_path}")
-    
+
     with pdfplumber.open(file_path) as pdf:
         full_text = ""
         total_pages = len(pdf.pages)
-        for i, page in enumerate(pdf.pages, 1):
+        # Start from page 2 (index 1) as page 1 contains exam information
+        for i, page in enumerate(pdf.pages[1:], 2):
             print(f"  Processing page {i}/{total_pages}...", end='\r')
             full_text += page.extract_text() + "\n"
         print()
 
-    # Regex to find question blocks. This regex is designed to be robust.
-    # It looks for a number followed by a dot (the question number),
-    # then captures the question text until it finds "A.", then captures answer A,
-    # then "B.", captures answer B, then "C.", and captures answer C.
-    # It handles multi-line questions and answers.
+    # Enhanced regex to find question blocks starting with question number
+    # Matches: number. question_text A. option_a B. option_b C. option_c
     question_pattern = re.compile(
-        r"(\d+\.)\s*(.*?)\s*A\.\s*(.*?)\s*B\.\s*(.*?)\s*C\.\s*(.*?)(?=\d+\.|$)",
-        re.DOTALL
+        r"(\d+)\.\s+(.*?)\s+A\.\s+(.*?)\s+B\.\s+(.*?)\s+C\.\s+(.*?)(?=\n\s*\d+\.\s+|\Z)",
+        re.DOTALL | re.MULTILINE
     )
 
     questions = []
     matches = list(question_pattern.finditer(full_text))
     invalid_questions = []
-    
+
     print(f"  Found {len(matches)} potential questions")
 
     for i, match in enumerate(matches):
         # Extract question number from the match
-        question_num_str = match.group(1).strip('.')
         try:
-            question_num = int(question_num_str)
+            question_num = int(match.group(1))
         except ValueError:
             question_num = i + 1
-        
+
         # Clean up the extracted text by replacing newlines and multiple spaces
-        question_text = ' '.join(match.group(2).strip().split())
-        option_a = ' '.join(match.group(3).strip().split())
-        option_b = ' '.join(match.group(4).strip().split())
-        option_c = ' '.join(match.group(5).strip().split())
+        question_text = re.sub(r'\s+', ' ', match.group(2).strip())
+        option_a = re.sub(r'\s+', ' ', match.group(3).strip())
+        option_b = re.sub(r'\s+', ' ', match.group(4).strip())
+        option_c = re.sub(r'\s+', ' ', match.group(5).strip())
 
         question = {
             "question_number": question_num,
@@ -143,7 +141,7 @@ def parse_questions(file_path: str, validate: bool = True) -> dict:
             "B": option_b,
             "C": option_c
         }
-        
+
         if validate:
             is_valid, errors = validate_question(question)
             if not is_valid:
@@ -152,28 +150,34 @@ def parse_questions(file_path: str, validate: bool = True) -> dict:
                 questions.append(question)
         else:
             questions.append(question)
-    
+
+    # Ensure we have exactly 150 questions
+    if len(questions) != 150:
+        print(f"  Warning: Expected 150 questions, found {len(questions)}")
+
     metadata = {
         "source_file": os.path.basename(file_path),
         "parsed_at": datetime.now().isoformat(),
         "total_questions": len(questions),
-        "invalid_questions": len(invalid_questions)
+        "invalid_questions": len(invalid_questions),
+        "expected_questions": 150
     }
-    
+
     result = {
         "questions": questions,
         "metadata": metadata
     }
-    
+
     if invalid_questions:
         result["invalid_questions"] = invalid_questions
-    
+
     return result
 
 
 def parse_answers(file_path: str, validate: bool = True) -> dict:
     """
-    Parses a PDF file with answers and returns a dictionary.
+    Parses a PDF file with answers in table format and returns a dictionary.
+    Expects exactly 150 answers in a structured table format.
 
     Args:
         file_path: The path to the PDF file.
@@ -183,7 +187,7 @@ def parse_answers(file_path: str, validate: bool = True) -> dict:
         A dictionary with answers and metadata.
     """
     print(f"Parsing answers from: {file_path}")
-    
+
     with pdfplumber.open(file_path) as pdf:
         full_text = ""
         total_pages = len(pdf.pages)
@@ -192,59 +196,109 @@ def parse_answers(file_path: str, validate: bool = True) -> dict:
             full_text += page.extract_text() + "\n"
         print()
 
-    # Regex to find answers. It looks for a number followed by a dot,
-    # a single letter (A, B, or C), and then captures the rest as legal basis.
-    # It stops before the next question number.
-    answer_pattern = re.compile(r"(\d+)\.\s+([A-C])\s+(.*?)(?=\n\d+\.|\Z)", re.DOTALL)
-
     answers = []
-    matches = list(answer_pattern.finditer(full_text))
-    
-    print(f"  Found {len(matches)} answers")
+
+    # Primary pattern for table format: question_number | correct_answer | legal_basis
+    # Handles the structured table format shown in the image
+    table_pattern = re.compile(
+        r"(\d+)\.\s+([A-C])\s+(.*?)(?=\n\s*\d+\.\s+[A-C]\s+|\Z)",
+        re.DOTALL | re.MULTILINE
+    )
+
+    matches = list(table_pattern.finditer(full_text))
+    print(f"  Found {len(matches)} answers using table pattern")
 
     for match in matches:
         try:
             question_number = int(match.group(1))
         except ValueError:
             continue
-        
-        correct_answer = match.group(2)
-        legal_basis = ' '.join(match.group(3).strip().split())
-        
+
+        correct_answer = match.group(2).strip()
+        legal_basis = re.sub(r'\s+', ' ', match.group(3).strip())
+
         answer = {
             "question_number": question_number,
             "correct_answer": correct_answer,
             "legal_basis": legal_basis
         }
-        
+
         if validate and correct_answer not in ['A', 'B', 'C']:
             print(f"  Warning: Invalid answer '{correct_answer}' for question {question_number}")
             continue
-        
+
         answers.append(answer)
 
-    # Fallback for a simpler format if the above regex fails to find matches
-    if not answers:
-        print("  Using fallback pattern for answers...")
-        answer_pattern = re.compile(r"(\d+)\.\s+([A-C])")
-        matches = answer_pattern.finditer(full_text)
-        for match in matches:
+    # Alternative pattern for simpler table format (fallback)
+    if len(answers) < 100:  # If we didn't find enough answers, try alternative patterns
+        print("  Using alternative pattern for table format...")
+
+        # Pattern for rows like "1. A art. 65 ust. 3 Konstytucji..."
+        alt_pattern = re.compile(r"(\d+)\.\s+([A-C])\s+(.*?)(?=\n|\Z)", re.MULTILINE)
+        alt_matches = list(alt_pattern.finditer(full_text))
+
+        print(f"  Found {len(alt_matches)} additional answers using alternative pattern")
+
+        for match in alt_matches:
             try:
                 question_number = int(match.group(1))
-                correct_answer = match.group(2)
+                # Skip if we already have this question
+                if any(a['question_number'] == question_number for a in answers):
+                    continue
+
+                correct_answer = match.group(2).strip()
+                legal_basis = re.sub(r'\s+', ' ', match.group(3).strip())
+
+                answer = {
+                    "question_number": question_number,
+                    "correct_answer": correct_answer,
+                    "legal_basis": legal_basis
+                }
+
+                if validate and correct_answer not in ['A', 'B', 'C']:
+                    continue
+
+                answers.append(answer)
+            except ValueError:
+                continue
+
+    # Final fallback - extract from potential table structure using basic pattern
+    if len(answers) < 100:
+        print("  Using basic fallback pattern...")
+        basic_pattern = re.compile(r"(\d+)\s+([A-C])\s+(.+?)(?=\n\d+\s+[A-C]|\Z)", re.DOTALL)
+        basic_matches = list(basic_pattern.finditer(full_text))
+
+        for match in basic_matches:
+            try:
+                question_number = int(match.group(1))
+                if any(a['question_number'] == question_number for a in answers):
+                    continue
+
+                correct_answer = match.group(2).strip()
+                legal_basis = re.sub(r'\s+', ' ', match.group(3).strip())
+
                 answers.append({
                     "question_number": question_number,
-                    "correct_answer": correct_answer
+                    "correct_answer": correct_answer,
+                    "legal_basis": legal_basis
                 })
             except ValueError:
                 continue
-    
+
+    # Sort answers by question number
+    answers.sort(key=lambda x: x['question_number'])
+
+    # Ensure we have exactly 150 answers
+    if len(answers) != 150:
+        print(f"  Warning: Expected 150 answers, found {len(answers)}")
+
     metadata = {
         "source_file": os.path.basename(file_path),
         "parsed_at": datetime.now().isoformat(),
-        "total_answers": len(answers)
+        "total_answers": len(answers),
+        "expected_answers": 150
     }
-    
+
     return {"answers": answers, "metadata": metadata}
 
 def generate_statistics(exam_data: Dict) -> Dict:
@@ -274,8 +328,10 @@ if __name__ == "__main__":
     # Get all pdf files in the pdfs directory
     pdf_dir = 'pdfs'
     if not os.path.exists(pdf_dir):
-        print(f"Error: '{pdf_dir}' directory not found")
-        exit(1)
+        if not os.path.exists(f"../{pdf_dir}"):
+            print(f"Error: '{pdf_dir}' directory not found")
+            exit(1)
+        pdf_dir = f"../{pdf_dir}"
     
     all_files = [f for f in os.listdir(pdf_dir) if f.endswith('.pdf')]
 
@@ -320,8 +376,9 @@ if __name__ == "__main__":
         for exam_type, files in types.items():
             print(f"Processing exam: Year - {year}, Type - {exam_type}")
 
-            # Create the output directory with new structure
-            output_dir = os.path.join('data', 'exams', exam_type)
+            # Create the output directory with new structure in root directory
+            root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            output_dir = os.path.join(root_dir, 'data', 'exams', exam_type)
             os.makedirs(output_dir, exist_ok=True)
 
             # Parse questions and answers

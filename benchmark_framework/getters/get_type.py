@@ -5,6 +5,7 @@ TYPE_REGISTRY = {
     "exams": Exam,
 }
 
+
 def get_task_by_dataset(dataset_name: str, task_raw: dict) -> Task:
     """
     Factory function to get a task instance by dataset name.
