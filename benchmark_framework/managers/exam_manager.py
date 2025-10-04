@@ -1,7 +1,8 @@
-from typing import Optional
+from pathlib import Path
 from benchmark_framework.types.exam import Exam
 from benchmark_framework.utils import extract_answer_from_response
 from benchmark_framework.managers.base_manager import BaseManager
+from benchmark_framework.constants import DATA_PATH
 
 
 class ExamManager(BaseManager):
@@ -9,13 +10,8 @@ class ExamManager(BaseManager):
     Manager for handling legal exam benchmark evaluations.
     """
 
-    def __init__(
-        self,
-        model_name: str,
-        tasks_path: Optional[str] = None,
-        output_path: Optional[str] = None,
-    ):
-        super().__init__(model_name, "exams", tasks_path, output_path)
+    def __init__(self, model_name: str, tasks_path: Path = DATA_PATH):
+        super().__init__(model_name, "exams", tasks_path)
 
     def get_tasks(self) -> list[Exam]:
         return self.tasks

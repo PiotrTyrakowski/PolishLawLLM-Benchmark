@@ -1,8 +1,9 @@
 import json
 from abc import ABC
+from pathlib import Path
 from benchmark_framework.types.task import Task
 from benchmark_framework.utils import initialize_tasks
-from benchmark_framework.constants import ENCODING, RESULTS_PATH
+from benchmark_framework.constants import ENCODING, RESULTS_PATH, DATA_PATH
 
 
 class BaseManager(ABC):
@@ -13,10 +14,12 @@ class BaseManager(ABC):
     different types of benchmark evaluations.
     """
 
-    def __init__(self, model_name: str, dataset_name: str):
+    def __init__(
+        self, model_name: str, dataset_name: str, tasks_path: Path = DATA_PATH
+    ):
         super().__init__()
         self.model_name = model_name
-        self.tasks = initialize_tasks(dataset_name)
+        self.tasks = initialize_tasks(dataset_name, tasks_path)
         self.results = []
 
         # Set fixed output directory structure: PolishLawLLM-Benchmark/results/dataset_name/
