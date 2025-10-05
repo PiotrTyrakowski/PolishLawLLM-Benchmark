@@ -2,6 +2,7 @@ from typing import Final
 from pathlib import Path
 
 ENCODING: Final[str] = "utf-8"
+MAX_NEW_TOKENS: Final[int] = 256
 
 SYSTEM_PROMPT: Final[str] = (
     "Jesteś ekspertem w prawie polskim biorącym udział w egzaminie zawodowym. "
@@ -20,9 +21,8 @@ SYSTEM_PROMPT: Final[str] = (
     "WAŻNE: Zawsze zakończ dokładnie tekstem 'ANSWER: ' oraz jedną literą (A, B lub C)."
     "Pamiętaj aby zwracana odpowiedź była czystym teksetem bez formatowania."
     "Odpowiedź nie może być formatowana jak dla pliku md."
+    f"Odpowiedź powinna miec maksymalnie {MAX_NEW_TOKENS} tokens."
 )
-
-MAX_NEW_TOKENS: Final[int] = 512
 
 DATA_PATH: Final[Path] = Path(__file__).parent.parent / "data"
 RESULTS_PATH: Final[Path] = Path(__file__).parent.parent / "results"
