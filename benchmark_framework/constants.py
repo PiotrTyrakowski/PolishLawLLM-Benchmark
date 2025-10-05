@@ -19,7 +19,10 @@ SYSTEM_PROMPT: Final[str] = (
     "5. Zakończ swoją odpowiedź w formacie: ANSWER: X (gdzie X to A, B lub C)\n\n"
     "WAŻNE: Zawsze zakończ dokładnie tekstem 'ANSWER: ' oraz jedną literą (A, B lub C)."
     "Pamiętaj aby zwracana odpowiedź była czystym teksetem bez formatowania."
+    "Odpowiedź nie może być formatowana jak dla pliku md."
 )
+
+MAX_NEW_TOKENS: Final[int] = 128
 
 DATA_PATH: Final[Path] = Path(__file__).parent.parent / "data"
 RESULTS_PATH: Final[Path] = Path(__file__).parent.parent / "results"
