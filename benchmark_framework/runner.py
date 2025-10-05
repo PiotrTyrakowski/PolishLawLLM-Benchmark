@@ -1,4 +1,5 @@
 import time
+from tqdm import tqdm
 from benchmark_framework.models.base_model import BaseModel
 from benchmark_framework.managers.base_manager import BaseManager
 
@@ -30,17 +31,21 @@ class BenchmarkRunner:
     def run(self):
         total_processed = 0
         tasks = self.manager.get_tasks()
-        for task in tasks[self.start_task_index :]:
-            if self.requests_per_minute is not None:
-                self._rate_limit_wait()
+        task_slice = tasks[self.start_task_index :]
 
-            resp = self.model.generate_response(task.get_prompt())
-            result = self.manager.get_result(task, resp, self.model.model_tools)
-            self.manager.append_to_file(self.output_file, result)
-            total_processed += 1
+        with tqdm(total=len(task_slice), desc="Processing tasks", unit="task") as pbar:
+            for task in task_slice:
+                if self.requests_per_minute is not None:
+                    self._rate_limit_wait()
 
-            if self.daily_limit is not None and total_processed >= self.daily_limit:
-                break
+                resp = self.model.generate_response(task.get_prompt())
+                result = self.manager.get_result(task, resp, self.model.model_tools)
+                self.manager.append_to_file(self.output_file, result)
+                total_processed += 1
+                pbar.update(1)
+
+                if self.daily_limit is not None and total_processed >= self.daily_limit:
+                    break
 
         accuracy = self.manager.get_summary()["accuracy"]
         return accuracy
