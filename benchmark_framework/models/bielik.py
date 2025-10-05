@@ -14,31 +14,46 @@ class BielikModel(BaseModel):
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         self.model = AutoModelForCausalLM.from_pretrained(
-            self.model_name,
-            torch_dtype=torch.bfloat16,
-            low_cpu_mem_usage=True,
-            device_map="auto",
+            self.model_name, low_cpu_mem_usage=True, device_map="auto"
         )
 
     def generate_response(self, prompt: str) -> str:
-        """
-        Generate an answer for the given prompt using the Bielik model.
-        """
-        messages = [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": prompt},
-        ]
-        inputs = self.tokenizer.apply_chat_template(
-            messages, return_tensors="pt", return_attention_mask=True, return_dict=True
-        )
-        input_ids = inputs["input_ids"].to(self.device)
+        full_prompt = SYSTEM_PROMPT + "\n\nUser: " + prompt + "\nAssistant:"
+
+        inputs = self.tokenizer(full_prompt, return_tensors="pt", truncation=True)
+        model_device = next(self.model.parameters()).device
+
+        input_ids = inputs["input_ids"].to(model_device)
+        attention_mask = inputs.get("attention_mask")
+        if attention_mask is not None:
+            attention_mask = attention_mask.to(model_device)
+
         input_len = input_ids.shape[1]
 
-        attention_mask = inputs["attention_mask"].to(self.device)
         outputs = self.model.generate(
-            input_ids=input_ids, attention_mask=attention_mask, max_new_tokens=1000
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            do_sample=False,
+            eos_token_id=(
+                self.tokenizer.eos_token_id
+                if self.tokenizer.eos_token_id is not None
+                else self.tokenizer.pad_token_id
+            ),
+            pad_token_id=(
+                self.tokenizer.pad_token_id
+                if self.tokenizer.pad_token_id is not None
+                else self.tokenizer.eos_token_id
+            ),
         )
-        generated_tokens = outputs[0, input_len:]
-        response = self.tokenizer.decode(generated_tokens, skip_special_tokens=True)
+
+        if outputs.shape[1] > input_len:
+            generated_tokens = outputs[0, input_len:]
+            response = self.tokenizer.decode(
+                generated_tokens, skip_special_tokens=True
+            ).strip()
+        else:
+            response = self.tokenizer.decode(
+                outputs[0], skip_special_tokens=True
+            ).strip()
 
         return response

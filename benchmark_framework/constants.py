@@ -18,6 +18,7 @@ SYSTEM_PROMPT: Final[str] = (
     "4. Wybierz odpowiedź najbardziej zgodną z polskim prawem\n"
     "5. Zakończ swoją odpowiedź w formacie: ANSWER: X (gdzie X to A, B lub C)\n\n"
     "WAŻNE: Zawsze zakończ dokładnie tekstem 'ANSWER: ' oraz jedną literą (A, B lub C)."
+    "Pamiętaj aby zwracana odpowiedź była czystym teksetem bez formatowania."
 )
 
 DATA_PATH: Final[Path] = Path(__file__).parent.parent / "data"
