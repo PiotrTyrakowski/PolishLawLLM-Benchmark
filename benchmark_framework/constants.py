@@ -22,7 +22,7 @@ SYSTEM_PROMPT: Final[str] = (
     "Odpowiedź nie może być formatowana jak dla pliku md."
 )
 
-MAX_NEW_TOKENS: Final[int] = 128
+MAX_NEW_TOKENS: Final[int] = 512
 
 DATA_PATH: Final[Path] = Path(__file__).parent.parent / "data"
 RESULTS_PATH: Final[Path] = Path(__file__).parent.parent / "results"
