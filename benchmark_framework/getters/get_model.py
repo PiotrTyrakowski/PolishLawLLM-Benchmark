@@ -1,12 +1,13 @@
 from benchmark_framework.models.base_model import BaseModel
-from benchmark_framework.models.bielik import BielikModel
 from benchmark_framework.models.gemini import GeminiModel
+from benchmark_framework.models.local_model import LocalModel
 
 MODEL_REGISTRY = {
     "gemini-2.5-pro": GeminiModel,
     "gemini-2.5-flash": GeminiModel,
     "gemini-2.5-flash-lite": GeminiModel,
-    "speakleash/Bielik-4.5B-v3.0-Instruct": BielikModel,
+    "speakleash/Bielik-4.5B-v3.0-Instruct": LocalModel,
+    "CYFRAGOVPL/Llama-PLLuM-8B-chat": LocalModel,
 }
 
 

@@ -21,6 +21,7 @@ changes.txt
 
 results/exams/
 data/exams/
+data.zip
 
 # package
 *.egg-info/

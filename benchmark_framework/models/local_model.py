@@ -4,9 +4,9 @@ from benchmark_framework.models.base_model import BaseModel
 from benchmark_framework.constants import SYSTEM_PROMPT, MAX_NEW_TOKENS
 
 
-class BielikModel(BaseModel):
+class LocalModel(BaseModel):
     """
-    Bielik language model implementation from Hugging Face.
+    Local model utilizing the pipeline interface for text-generation task implementation from Hugging Face.
     """
 
     def __init__(self, model_name: str, model_tools: str = None, **kwargs):
@@ -17,13 +17,12 @@ class BielikModel(BaseModel):
         )
 
     def generate_response(self, prompt: str) -> str:
-        full_prompt = (
-            "System: " + SYSTEM_PROMPT.strip() + "\n\n"
-            "User: " + prompt.strip() + "\n\n"
-            "Assistant:"
-        )
+        messages = [
+            {"role": "system", "content": SYSTEM_PROMPT.strip()},
+            {"role": "user", "content": prompt.strip()},
+        ]
         outputs = self.pipe(
-            full_prompt,
+            messages,
             max_new_tokens=MAX_NEW_TOKENS,
             do_sample=False,
             return_full_text=False,
@@ -31,4 +30,9 @@ class BielikModel(BaseModel):
         response = outputs[0].get("generated_text")
         if response is None:
             return ""
-        return response.strip()
+
+        assert len(response) == 3
+        assert response[2].get("role") == "assistant"
+        assert response[2].get("content") is not None
+
+        return response[2].get("content").strip()
