@@ -8,6 +8,6 @@ pdfplumber==0.11.7
 pylint==3.3.3
 typer==0.16.1
 
-torch
-transformers
-accelerate
+torch==2.6.0+cu124
+transformers==4.57.0
+accelerate==1.9.0
