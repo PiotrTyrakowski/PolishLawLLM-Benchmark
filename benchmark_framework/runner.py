@@ -15,7 +15,7 @@ class BenchmarkRunner:
         self.manager = manager
         self.output_file = f"{self.model.model_name}.jsonl"
 
-    def run(self):
+    def _run_iterative(self):
         runner_config = self.model.get_default_runner_config()
 
         total_processed = 0
@@ -41,3 +41,26 @@ class BenchmarkRunner:
 
         accuracy = self.manager.get_summary()["accuracy"]
         return accuracy
+
+    def _run_batch(self):
+        tasks = self.manager.get_tasks()
+        all_prompts = [task.get_prompt() for task in tasks]
+        model_responses = self.model.generate_batch_response(
+            all_prompts, self.model.model_config.pipe_batch_size
+        )
+
+        for i, task in enumerate(tqdm(tasks, desc="Processing results")):
+            model_response = model_responses[i]
+            result = self.manager.get_result(
+                task, model_response, self.model.model_config
+            )
+            self.manager.append_to_file(self.output_file, result)
+
+        accuracy = self.manager.get_summary()["accuracy"]
+        return accuracy
+
+    def run(self):
+        if self.model.model_config.pipe_batch_size is None:
+            return self._run_iterative()
+        else:
+            return self._run_batch()

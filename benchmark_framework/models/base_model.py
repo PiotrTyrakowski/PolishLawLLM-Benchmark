@@ -24,3 +24,6 @@ class BaseModel(ABC):
     @abstractmethod
     def generate_response(self, prompt: str) -> str:
         pass
+
+    def generate_batch_response(self, prompts: list[str], batch_size: int) -> list[str]:
+        return [self.generate_response(prompt) for prompt in prompts]
