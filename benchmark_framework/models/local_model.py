@@ -25,6 +25,8 @@ class LocalModel(BaseModel):
             do_sample=False,
             return_full_text=False,
         )
+        print(f"DEBUG: {outputs}")
+
         response = outputs[0].get("generated_text")
         if response is None:
             return ""
