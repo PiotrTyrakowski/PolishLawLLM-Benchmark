@@ -2,6 +2,8 @@ import json
 import os
 from abc import ABC
 from pathlib import Path
+
+from benchmark_framework.models.model_config import ModelConfig
 from benchmark_framework.types.task import Task
 from benchmark_framework.utils import initialize_tasks
 from benchmark_framework.constants import ENCODING, RESULTS_PATH, DATA_PATH
@@ -23,14 +25,15 @@ class BaseManager(ABC):
         self.tasks = initialize_tasks(dataset_name, tasks_path)
         self.results = []
 
-        # Set fixed output directory structure: PolishLawLLM-Benchmark/results/dataset_name/
         self.base_dir = RESULTS_PATH / dataset_name
         self.base_dir.mkdir(parents=True, exist_ok=True)
 
     def get_tasks(self) -> list[Task]:
         return self.tasks
 
-    def get_result(self, task: Task, model_response: str, model_tools: str) -> dict:
+    def get_result(
+        self, task: Task, model_response: str, model_config: ModelConfig
+    ) -> dict:
         """
         Generate a result dictionary for a completed task.
         Returns:

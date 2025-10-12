@@ -12,8 +12,6 @@ class BenchmarkRunner:
         self.requests_per_minute = None
         self.daily_limit = None
         self.output_file = f"{self.model.model_name}.jsonl"
-        if self.model.model_tools is not None:
-            self.output_file = f"{self.model.model_name}_{'_'.join(self.model.model_tools.split(','))}.jsonl"
 
     def set_requests_per_minute(self, requests_per_minute: int):
         self.requests_per_minute = requests_per_minute
@@ -39,7 +37,7 @@ class BenchmarkRunner:
                     self._rate_limit_wait()
 
                 resp = self.model.generate_response(task.get_prompt())
-                result = self.manager.get_result(task, resp, self.model.model_tools)
+                result = self.manager.get_result(task, resp, self.model.model_config)
                 self.manager.append_to_file(self.output_file, result)
                 total_processed += 1
                 pbar.update(1)

@@ -1,4 +1,8 @@
+import json
 from pathlib import Path
+from dataclasses import asdict
+
+from benchmark_framework.models.model_config import ModelConfig
 from benchmark_framework.types.exam import Exam
 from benchmark_framework.utils import extract_answer_from_response
 from benchmark_framework.managers.base_manager import BaseManager
@@ -16,7 +20,9 @@ class ExamManager(BaseManager):
     def get_tasks(self) -> list[Exam]:
         return self.tasks
 
-    def get_result(self, exam: Exam, model_response: str, model_tools: str) -> dict:
+    def get_result(
+        self, exam: Exam, model_response: str, model_config: ModelConfig
+    ) -> dict:
         extracted_answer = extract_answer_from_response(model_response)
         is_correct = extracted_answer == exam.answer
 
@@ -28,7 +34,7 @@ class ExamManager(BaseManager):
             "answer": exam.answer,
             "legal_basis": exam.legal_basis,
             "model_name": self.model_name,
-            "model_tools": model_tools if model_tools is not None else "None",
+            "model_config": json.dumps(asdict(model_config)),
             "model_response": model_response,
             "extracted_answer": extracted_answer,
             "is_correct": is_correct,

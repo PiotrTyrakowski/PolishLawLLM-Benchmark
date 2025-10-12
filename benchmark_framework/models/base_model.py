@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from typing import List
 import re
 
+from benchmark_framework.models.model_config import ModelConfig
+
 
 class BaseModel(ABC):
     """
@@ -12,16 +14,10 @@ class BaseModel(ABC):
     model-specific API calls and response formatting.
     """
 
-    def __init__(self, model_name: str, model_tools: str = None, **kwargs):
+    def __init__(self, model_name: str, model_config: ModelConfig, **kwargs):
         super().__init__()
         self.model_name = model_name
-        self.model_tools = model_tools
-
-    def get_model_name(self):
-        return self.model_name
-
-    def get_model_tools(self):
-        return self.model_tools
+        self.model_config = model_config
 
     @abstractmethod
     def generate_response(self, prompt: str) -> str:
