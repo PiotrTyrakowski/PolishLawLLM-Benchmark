@@ -29,6 +29,8 @@ class LocalModel(BaseModel):
         if response is None:
             return ""
 
+        print(f"DEBUG: {response}")
+
         assert len(response) == 3
         assert response[2].get("role") == "assistant"
         assert response[2].get("content") is not None
