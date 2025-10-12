@@ -1,7 +1,7 @@
 from benchmark_framework.models.base_model import BaseModel
 from benchmark_framework.models.gemini import GeminiModel
 from benchmark_framework.models.local_model import LocalModel
-from benchmark_framework.models.model_config import ModelConfig
+from benchmark_framework.configs.model_config import ModelConfig
 
 MODEL_REGISTRY = {
     "gemini-2.5-pro": GeminiModel,

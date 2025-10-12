@@ -2,7 +2,7 @@ import torch
 from transformers import pipeline, BitsAndBytesConfig
 from benchmark_framework.models.base_model import BaseModel
 from benchmark_framework.constants import SYSTEM_PROMPT, MAX_NEW_TOKENS
-from benchmark_framework.models.model_config import ModelConfig
+from benchmark_framework.configs.model_config import ModelConfig
 
 
 class LocalModel(BaseModel):

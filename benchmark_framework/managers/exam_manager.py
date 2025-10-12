@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from dataclasses import asdict
 
-from benchmark_framework.models.model_config import ModelConfig
+from benchmark_framework.configs.model_config import ModelConfig
 from benchmark_framework.types.exam import Exam
 from benchmark_framework.utils import extract_answer_from_response
 from benchmark_framework.managers.base_manager import BaseManager

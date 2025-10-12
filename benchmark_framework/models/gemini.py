@@ -1,9 +1,10 @@
 from google import genai
 from google.genai import types
 
+from benchmark_framework.configs.runner_config import RunnerConfig
 from benchmark_framework.models.base_model import BaseModel
 from benchmark_framework.constants import SYSTEM_PROMPT
-from benchmark_framework.models.model_config import ModelConfig
+from benchmark_framework.configs.model_config import ModelConfig
 
 
 class GeminiModel(BaseModel):
@@ -20,9 +21,6 @@ class GeminiModel(BaseModel):
         self.client = genai.Client()
 
     def generate_response(self, prompt: str):
-        """
-        Generate an answer for a multiple-choice question.
-        """
         resp = self.client.models.generate_content(
             model=self.model_name,
             config=self.create_generate_config(),
@@ -39,3 +37,6 @@ class GeminiModel(BaseModel):
         else:
             config = types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT)
         return config
+
+    def get_default_runner_config(self):
+        return RunnerConfig(requests_per_minute=5, daily_limit=50)

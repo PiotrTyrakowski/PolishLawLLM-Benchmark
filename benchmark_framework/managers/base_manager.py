@@ -3,7 +3,7 @@ import os
 from abc import ABC
 from pathlib import Path
 
-from benchmark_framework.models.model_config import ModelConfig
+from benchmark_framework.configs.model_config import ModelConfig
 from benchmark_framework.types.task import Task
 from benchmark_framework.utils import initialize_tasks
 from benchmark_framework.constants import ENCODING, RESULTS_PATH, DATA_PATH

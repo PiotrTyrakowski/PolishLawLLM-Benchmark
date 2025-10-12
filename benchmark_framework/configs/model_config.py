@@ -10,3 +10,4 @@ class ModelConfig:
 
     google_search: bool = False
     quantize: Optional[str] = None
+    pipe_batch_size: Optional[int] = None

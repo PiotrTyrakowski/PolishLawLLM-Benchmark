@@ -4,37 +4,28 @@ from benchmark_framework.models.base_model import BaseModel
 from benchmark_framework.managers.base_manager import BaseManager
 
 
+def rate_limit_wait(requests_per_minute):
+    min_delay_between_requests = 60.0 / requests_per_minute + 1
+    time.sleep(min_delay_between_requests)
+
+
 class BenchmarkRunner:
     def __init__(self, model: BaseModel, manager: BaseManager):
         self.model = model
         self.manager = manager
-        self.start_task_index = 0
-        self.requests_per_minute = None
-        self.daily_limit = None
         self.output_file = f"{self.model.model_name}.jsonl"
 
-    def set_requests_per_minute(self, requests_per_minute: int):
-        self.requests_per_minute = requests_per_minute
-
-    def set_daily_limit(self, daily_limit: int):
-        self.daily_limit = daily_limit
-
-    def set_start_from_task_index(self, task_index: int):
-        self.start_task_index = task_index
-
-    def _rate_limit_wait(self):
-        min_delay_between_requests = 60.0 / self.requests_per_minute + 1
-        time.sleep(min_delay_between_requests)
-
     def run(self):
+        runner_config = self.model.get_default_runner_config()
+
         total_processed = 0
         tasks = self.manager.get_tasks()
-        task_slice = tasks[self.start_task_index :]
+        task_slice = tasks[runner_config.start_index :]
 
         with tqdm(total=len(task_slice), desc="Processing tasks", unit="task") as pbar:
             for task in task_slice:
-                if self.requests_per_minute is not None:
-                    self._rate_limit_wait()
+                if runner_config.requests_per_minute is not None:
+                    rate_limit_wait(runner_config.requests_per_minute)
 
                 resp = self.model.generate_response(task.get_prompt())
                 result = self.manager.get_result(task, resp, self.model.model_config)
@@ -42,7 +33,10 @@ class BenchmarkRunner:
                 total_processed += 1
                 pbar.update(1)
 
-                if self.daily_limit is not None and total_processed >= self.daily_limit:
+                if (
+                    runner_config.daily_limit is not None
+                    and total_processed >= runner_config.daily_limit
+                ):
                     break
 
         accuracy = self.manager.get_summary()["accuracy"]

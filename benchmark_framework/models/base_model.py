@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import List
-import re
 
-from benchmark_framework.models.model_config import ModelConfig
+from benchmark_framework.configs.model_config import ModelConfig
+from benchmark_framework.configs.runner_config import RunnerConfig
 
 
 class BaseModel(ABC):
@@ -19,23 +18,9 @@ class BaseModel(ABC):
         self.model_name = model_name
         self.model_config = model_config
 
+    def get_default_runner_config(self):
+        return RunnerConfig()
+
     @abstractmethod
     def generate_response(self, prompt: str) -> str:
-        """
-        Generate a response from the language model for a given prompt.
-        """
         pass
-
-    def setup(self):
-        """
-        Optional: load models, warm up, or authenticate.
-        Called once before batch generation.
-        """
-        return
-
-    def teardown(self):
-        """
-        Optional: cleanup resources (e.g. close sessions).
-        Called once after all generations.
-        """
-        return
