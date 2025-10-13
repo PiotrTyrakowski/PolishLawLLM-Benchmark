@@ -25,9 +25,8 @@ def run(
     Run the benchmark on a given model and questions dataset.
     """
     
-    model = get_model_by_name(model_name, model_tools)
-    manager = get_manager_by_dataset(dataset_name, model_name)
-    runner = BenchmarkRunner(model, manager)
+    manager = get_manager_by_dataset(dataset_name, model_name, model_tools)
+    runner = BenchmarkRunner(manager)
 
     # TODO: remove this
     # settings to use gemini for free https://ai.google.dev/gemini-api/docs/rate-limits

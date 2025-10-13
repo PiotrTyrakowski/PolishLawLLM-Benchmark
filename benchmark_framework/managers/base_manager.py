@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 import re
+from benchmark_framework.models.base_model import BaseModel
 from benchmark_framework.types.task import Task
 from benchmark_framework.utils import initialize_tasks
 from pathlib import Path
@@ -15,9 +16,10 @@ class BaseManager(ABC):
     different types of benchmark evaluations.
     """
 
-    def __init__(self, model_name: str, dataset_name: str):
+    def __init__(self, model: BaseModel, dataset_name: str):
         super().__init__()
-        self.model_name = model_name
+        self.model = model
+        self.model_name = model.name
         self.tasks = initialize_tasks(dataset_name)
         self.results = []
 

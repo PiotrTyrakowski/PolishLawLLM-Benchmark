@@ -7,16 +7,18 @@ from benchmark_framework.managers.base_manager import BaseManager
 
 
 class BenchmarkRunner:
-    def __init__(self, model: BaseModel, manager: BaseManager):
-        self.model = model
-        self.model_name = model.get_model_name()
-        self.model_tools = model.get_model_tools()
+    def __init__(self, manager: BaseManager):
         self.manager = manager
+        self.model = manager.model
+        self.model_name = self.model.get_model_name()
+        self.model_tools = self.model.get_model_tools()
         self.start_task_index = 0
         self.output_file = f"{self.model_name}.jsonl"
         if self.model_tools is not None:
             # split model_tools by , and join them with _
-            self.output_file = f"{self.model_name}_{'_'.join(self.model_tools.split(','))}.jsonl"
+            self.output_file = (
+                f"{self.model_name}_{'_'.join(self.model_tools.split(','))}.jsonl"
+            )
         
     def set_requests_per_minute(self, requests_per_minute: int):
         self.requests_per_minute = requests_per_minute
