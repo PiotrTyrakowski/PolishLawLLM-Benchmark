@@ -45,22 +45,39 @@ class BenchmarkRunner:
     def _run_batch(self):
         tasks = self.manager.get_tasks()
         all_prompts = [task.get_prompt() for task in tasks]
-        model_responses = self.model.generate_batch_response(
-            all_prompts, self.model.model_config.pipe_batch_size
-        )
+        chunk_size = self.model.model_config.chunk_size
+        batch_size = self.model.model_config.batch_size
 
-        for i, task in enumerate(tqdm(tasks, desc="Processing results")):
-            model_response = model_responses[i]
-            result = self.manager.get_result(
-                task, model_response, self.model.model_config
-            )
-            self.manager.append_to_file(self.output_file, result)
+        if chunk_size % batch_size != 0:
+            print("WARNING: Chunk size is not divisible by batch size")
+
+        with tqdm(total=len(tasks), desc="Processing tasks", unit="task") as pbar_outer:
+            for i in range(0, len(tasks), chunk_size):
+                chunk_prompts = all_prompts[i : i + chunk_size]
+                chunk_responses = self.model.generate_batch_response(
+                    chunk_prompts, batch_size
+                )
+
+                for j, model_response in enumerate(
+                    tqdm(
+                        chunk_responses,
+                        desc=f"Chunk {i // chunk_size + 1}",
+                        leave=False,
+                        unit="item",
+                    )
+                ):
+                    idx = i + j
+                    result = self.manager.get_result(
+                        tasks[idx], model_response, self.model.model_config
+                    )
+                    self.manager.append_to_file(self.output_file, result)
+                    pbar_outer.update(1)
 
         accuracy = self.manager.get_summary()["accuracy"]
         return accuracy
 
     def run(self):
-        if self.model.model_config.pipe_batch_size is None:
+        if self.model.model_config.batch_size is None:
             return self._run_iterative()
         else:
             return self._run_batch()
