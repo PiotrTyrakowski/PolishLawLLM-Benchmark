@@ -2,8 +2,8 @@ from pathlib import Path
 import typer
 
 from benchmark_framework.runner import BenchmarkRunner
-from benchmark_framework.getters.get_model import get_model_by_name
-from benchmark_framework.getters.get_manager import get_manager_by_dataset
+from benchmark_framework.getters.get_model import get_llm_model
+from benchmark_framework.getters.get_manager import get_manager
 
 app = typer.Typer(help="CLI for LLM Benchmark Framework")
 
@@ -25,14 +25,14 @@ def run(
     Run the benchmark on a given model and questions dataset.
     """
     
-    manager = get_manager_by_dataset(dataset_name, model_name, model_tools)
+    manager = get_manager(dataset_name, model_name, model_tools)
     runner = BenchmarkRunner(manager)
 
     # TODO: remove this
     # settings to use gemini for free https://ai.google.dev/gemini-api/docs/rate-limits
     runner.set_requests_per_minute(5) 
-    runner.set_daily_limit(50)
-    runner.set_start_from_task_index(0)
+    runner.set_daily_limit(100)
+    runner.set_start_from_task_index(102) # indexed from 0
 
     # Run benchmark
     typer.echo(f"Running benchmark for {model_name} with tools {model_tools} on {len(manager.get_tasks())} tasks...")

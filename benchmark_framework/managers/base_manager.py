@@ -19,7 +19,6 @@ class BaseManager(ABC):
     def __init__(self, model: BaseModel, dataset_name: str):
         super().__init__()
         self.model = model
-        self.model_name = model.name
         self.tasks = initialize_tasks(dataset_name)
         self.results = []
 
@@ -31,7 +30,7 @@ class BaseManager(ABC):
     def get_tasks(self) -> list[Task]:
         return self.tasks
 
-    def get_result(self, task: Task, model_response: str, model_tools: str) -> dict:
+    def get_result(self, task: Task, model_response: str) -> dict:
         """
         Generate a result dictionary for a completed task.
 
@@ -63,7 +62,7 @@ class BaseManager(ABC):
         correct = sum(1 for result in self.results if result["is_correct"])
         
         return {
-            "model_name": self.model_name,
+            "model_name": self.model.get_model_name(),
             "total_tasks": total,
             "correct_answers": correct,
             "accuracy": correct / total if total > 0 else 0.0

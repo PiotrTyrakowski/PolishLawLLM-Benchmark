@@ -19,7 +19,7 @@ class ExamManager(BaseManager):
     def get_tasks(self) -> list[Exam]:
         return self.tasks
         
-    def get_result(self, exam: Exam, model_response: str, model_tools: str) -> dict:
+    def get_result(self, exam: Exam, model_response: str) -> dict:
         extracted_answer = extract_answer_from_response(model_response)
         is_correct = extracted_answer == exam.answer
         
@@ -30,8 +30,8 @@ class ExamManager(BaseManager):
             "choices": exam.choices,
             "answer": exam.answer,
             "legal_basis": exam.legal_basis,
-            "model_name": self.model_name,
-            "model_tools": model_tools if model_tools is not None else "None",
+            "model_name": self.model.get_model_name(),
+            "model_tools": self.model.get_model_tools() if self.model.get_model_tools() is not None else "None",
             "model_response": model_response,
             "extracted_answer": extracted_answer,
             "is_correct": is_correct

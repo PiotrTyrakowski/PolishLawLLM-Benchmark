@@ -9,7 +9,7 @@ MODEL_REGISTRY = {
 }
 
 
-def get_model_by_name(model_name, model_tools: str = None) -> BaseModel:
+def get_llm_model(model_name, model_tools: str = None) -> BaseModel:
     """
     Factory function to get a model instance by name.
 

@@ -45,7 +45,7 @@ class BenchmarkRunner:
                 self._rate_limit_wait()
             
             resp = self.model.generate_response(task.get_prompt())
-            result = self.manager.get_result(task, resp, self.model_tools)
+            result = self.manager.get_result(task, resp)
             self.manager.append_to_file(self.output_file, result)
             total_processed += 1
             print(f"Processed {total_processed} tasks")
