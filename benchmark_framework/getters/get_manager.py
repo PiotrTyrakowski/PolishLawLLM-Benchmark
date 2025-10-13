@@ -1,4 +1,4 @@
-from benchmark_framework.models.base_model import BaseModel
+from benchmark_framework.getters.get_model import get_llm_model
 from benchmark_framework.managers.exam_manager import ExamManager
 from benchmark_framework.managers.base_manager import BaseManager
 
@@ -7,7 +7,10 @@ MANAGER_REGISTRY = {
     "exams": ExamManager,
 }
 
-def get_manager_by_dataset(dataset_name: str, model_name: str) -> BaseManager:
+
+def get_manager(
+    dataset_name: str, model_name: str, model_tools: str
+) -> BaseManager:
     """
     Factory function to get a manager instance by dataset name.
 
@@ -19,8 +22,9 @@ def get_manager_by_dataset(dataset_name: str, model_name: str) -> BaseManager:
     """
     manager_class = MANAGER_REGISTRY.get(dataset_name)
     if not manager_class:
-        raise ValueError(f"Model name '{dataset_name}' is not recognized.")
+        raise ValueError(f"Dataset name '{dataset_name}' is not recognized.")
 
-    manager_instance = manager_class(model_name)
+    model = get_llm_model(model_name, model_tools)
+    manager_instance = manager_class(model)
 
     return manager_instance

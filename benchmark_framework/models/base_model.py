@@ -12,12 +12,16 @@ class BaseModel(ABC):
     model-specific API calls and response formatting.
     """
 
-    def __init__(self, model_name: str, **kwargs):
+    def __init__(self, model_name: str, model_tools: str = None, **kwargs):
         super().__init__()
         self.model_name = model_name
+        self.model_tools = model_tools
 
     def get_model_name(self):
         return self.model_name
+    
+    def get_model_tools(self):
+        return self.model_tools
 
     @abstractmethod
     def generate_response(self, prompt: str) -> str:
@@ -28,7 +32,7 @@ class BaseModel(ABC):
             prompt: The formatted question prompt including the question and multiple choice options.
 
         Returns:
-            str: The raw text response from the model, typically containing the selected answer.
+            str: The raw text response from the model, containing the selected answer with string "ANSWER: X".
         """
         pass
 

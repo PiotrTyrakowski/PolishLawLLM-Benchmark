@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 from benchmark_framework.constants import ENCODING
+from benchmark_framework.models.base_model import BaseModel
 from benchmark_framework.types.exam import Exam
 from benchmark_framework.utils import extract_answer_from_response
 from benchmark_framework.managers.base_manager import BaseManager
@@ -12,8 +13,8 @@ class ExamManager(BaseManager):
     Manager for handling legal exam benchmark evaluations.
     """
 
-    def __init__(self, model_name: str):
-        super().__init__(model_name, "exams")
+    def __init__(self, model: BaseModel):
+        super().__init__(model, "exams")
 
     def get_tasks(self) -> list[Exam]:
         return self.tasks
@@ -29,7 +30,8 @@ class ExamManager(BaseManager):
             "choices": exam.choices,
             "answer": exam.answer,
             "legal_basis": exam.legal_basis,
-            "model_name": self.model_name,
+            "model_name": self.model.get_model_name(),
+            "model_tools": self.model.get_model_tools() if self.model.get_model_tools() is not None else "None",
             "model_response": model_response,
             "extracted_answer": extracted_answer,
             "is_correct": is_correct

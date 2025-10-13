@@ -1,11 +1,12 @@
 from abc import ABC, abstractmethod
 from typing import List
 import re
+from benchmark_framework.models.base_model import BaseModel
 from benchmark_framework.types.task import Task
 from benchmark_framework.utils import initialize_tasks
 from pathlib import Path
 import json
-from benchmark_framework.constants import ENCODING
+from benchmark_framework.constants import ENCODING, RESULTS_PATH
 
 class BaseManager(ABC):
     """
@@ -15,16 +16,16 @@ class BaseManager(ABC):
     different types of benchmark evaluations.
     """
 
-    def __init__(self, model_name: str, dataset_name: str):
+    def __init__(self, model: BaseModel, dataset_name: str):
         super().__init__()
-        self.model_name = model_name
-        self.tasks = initialize_tasks(Path(__file__).parent.parent.parent / "data", dataset_name)
+        self.model = model
+        self.tasks = initialize_tasks(dataset_name)
         self.results = []
 
         # Set fixed output directory structure: PolishLawLLM-Benchmark/results/dataset_name/
-        base_dir = Path(__file__).parent.parent.parent / "results" / dataset_name
-        base_dir.mkdir(parents=True, exist_ok=True)
-        self.output_file = base_dir / f"{self.model_name}.jsonl"
+        self.base_dir = RESULTS_PATH / dataset_name
+        self.base_dir.mkdir(parents=True, exist_ok=True)
+        
 
     def get_tasks(self) -> list[Task]:
         return self.tasks
@@ -42,14 +43,16 @@ class BaseManager(ABC):
         """
         pass
 
-    def append_to_file(self, result: dict):
+    def append_to_file(self, output_file: str, result: dict):
         """Append a single result to the output file."""
-        with open(self.output_file, 'a', encoding=ENCODING) as f:
+        full_path = self.base_dir / output_file
+        with open(full_path, 'a', encoding=ENCODING) as f:
             f.write(json.dumps(result, ensure_ascii=False) + '\n')
     
-    def save_all_results(self):
+    def save_all_results(self, output_file: str):
         """Save all results to a JSONL file."""
-        with open(self.output_file, 'w', encoding=ENCODING) as f:
+        full_path = self.base_dir / output_file
+        with open(full_path, 'w', encoding=ENCODING) as f:
             for result in self.results:
                 f.write(json.dumps(result, ensure_ascii=False) + '\n')
     
@@ -59,7 +62,7 @@ class BaseManager(ABC):
         correct = sum(1 for result in self.results if result["is_correct"])
         
         return {
-            "model_name": self.model_name,
+            "model_name": self.model.get_model_name(),
             "total_tasks": total,
             "correct_answers": correct,
             "accuracy": correct / total if total > 0 else 0.0
