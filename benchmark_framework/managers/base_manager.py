@@ -17,7 +17,9 @@ class BaseManager(ABC):
     different types of benchmark evaluations.
     """
 
-    def __init__(self, model: BaseModel, dataset_name: str, tasks_path: Path = DATA_PATH):
+    def __init__(
+        self, model: BaseModel, dataset_name: str, tasks_path: Path = DATA_PATH
+    ):
         super().__init__()
         self.model = model
         self.tasks = initialize_tasks(dataset_name, tasks_path)

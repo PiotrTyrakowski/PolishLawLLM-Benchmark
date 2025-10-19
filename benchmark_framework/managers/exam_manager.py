@@ -19,7 +19,7 @@ class ExamManager(BaseManager):
 
     def get_tasks(self) -> list[Exam]:
         return self.tasks
-        
+
     def get_result(self, exam: Exam, model_response: str) -> dict:
         extracted_answer = extract_answer_from_response(model_response)
         is_correct = extracted_answer == exam.answer
