@@ -14,7 +14,7 @@ MODEL_REGISTRY = {
 
 def _get_model_type(model_name: str) -> str:
     """
-    Get the model type from the model name (e.g. gemini, speakleaash, CYFRAGOVPL)
+    Get the model type from the model name (e.g. gemini, speakleash, CYFRAGOVPL)
     """
     model_name_split = re.split(r"[/ -]+", model_name)
     assert len(model_name_split) >= 1
