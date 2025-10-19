@@ -1,16 +1,19 @@
 import json
 import sys
 import os
+import typer
 from google.cloud import firestore
 from constants import ROOT_PATH
 
+app = typer.Typer()
 
-def upload_exam_data_to_firestore(year):
+
+@app.command()
+def upload_exam_data_to_firestore(
+    year: str = typer.Argument(..., help='Year of the exam (e.g., "2024")')
+):
     """
     Upload exam data from all JSONL files for a given year to Firestore.
-
-    Args:
-        year: Year of the exam (e.g., "2024")
     """
     exam_types = ["adwokacki_radcowy", "komorniczy", "notarialny"]
 
@@ -24,7 +27,7 @@ def upload_exam_data_to_firestore(year):
             jsonl_path = ROOT_PATH / "data" / "exams" / exam_type / f"{year}.jsonl"
 
             if not os.path.exists(jsonl_path):
-                print(f"Warning: File not found: {jsonl_path}")
+                typer.echo(f"Warning: File not found: {jsonl_path}")
                 continue
 
             # Read JSONL file
@@ -35,7 +38,7 @@ def upload_exam_data_to_firestore(year):
                     if line:
                         exam_data.append(json.loads(line))
 
-            print(f"Found {len(exam_data)} entries in {jsonl_path}")
+            typer.echo(f"Found {len(exam_data)} entries in {jsonl_path}")
 
             # Create collection reference
             collection_ref = (
@@ -61,33 +64,19 @@ def upload_exam_data_to_firestore(year):
 
                 # Commit the batch
                 batch.commit()
-                print(
-                    f"  Uploaded batch {i//batch_size + 1}: {len(batch_data)} documents"
-                )
+                typer.echo(f"  Uploaded batch {i//batch_size + 1}: {len(batch_data)} documents")
 
-            print(
+            typer.echo(
                 f"Successfully uploaded {uploaded_count} documents to collection: data/exams/{exam_type}_{year}"
             )
             total_uploaded += uploaded_count
 
-        print(f"\nTotal uploaded: {total_uploaded} documents across all exam types")
-        return True
+        typer.echo(f"\nTotal uploaded: {total_uploaded} documents across all exam types")
 
     except Exception as e:
-        print(f"Error: {str(e)}")
-        return False
+        typer.echo(f"Error: {str(e)}")
+        raise typer.Exit(code=1)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python upload_exam_data.py <year>")
-        print("Example: python upload_exam_data.py 2024")
-        print(
-            "This will upload all three exam types: adwokacki_radcowy, komorniczy, notarialny"
-        )
-        sys.exit(1)
-
-    year = sys.argv[1]
-
-    success = upload_exam_data_to_firestore(year)
-    sys.exit(0 if success else 1)
+    app()

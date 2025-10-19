@@ -1,6 +1,5 @@
 import time
 from tqdm import tqdm
-from benchmark_framework.models.base_model import BaseModel
 from benchmark_framework.managers.base_manager import BaseManager
 
 
@@ -10,8 +9,8 @@ def rate_limit_wait(requests_per_minute):
 
 
 class BenchmarkRunner:
-    def __init__(self, model: BaseModel, manager: BaseManager):
-        self.model = model
+    def __init__(self, manager: BaseManager):
+        self.model = manager.model
         self.manager = manager
         self.output_file = f"{self.model.model_name}.jsonl"
 
@@ -28,7 +27,7 @@ class BenchmarkRunner:
                     rate_limit_wait(runner_config.requests_per_minute)
 
                 resp = self.model.generate_response(task.get_prompt())
-                result = self.manager.get_result(task, resp, self.model.model_config)
+                result = self.manager.get_result(task, resp)
                 self.manager.append_to_file(self.output_file, result)
                 total_processed += 1
                 pbar.update(1)
@@ -67,9 +66,7 @@ class BenchmarkRunner:
                     )
                 ):
                     idx = i + j
-                    result = self.manager.get_result(
-                        tasks[idx], model_response, self.model.model_config
-                    )
+                    result = self.manager.get_result(tasks[idx], model_response)
                     self.manager.append_to_file(self.output_file, result)
                     pbar_outer.update(1)
 

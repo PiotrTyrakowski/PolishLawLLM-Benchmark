@@ -21,7 +21,7 @@ def _get_model_type(model_name: str) -> str:
     return model_name_split[0]
 
 
-def get_model_by_name(model_name, model_config: ModelConfig) -> BaseModel:
+def get_llm_model(model_name, model_config: ModelConfig) -> BaseModel:
     """
     Factory function to get a model instance by name.
     """

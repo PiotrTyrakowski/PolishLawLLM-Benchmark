@@ -3,9 +3,9 @@ import os
 from abc import ABC
 from pathlib import Path
 
-from benchmark_framework.configs.model_config import ModelConfig
 from benchmark_framework.types.task import Task
 from benchmark_framework.utils import initialize_tasks
+from benchmark_framework.models.base_model import BaseModel
 from benchmark_framework.constants import ENCODING, RESULTS_PATH, DATA_PATH
 
 
@@ -17,11 +17,9 @@ class BaseManager(ABC):
     different types of benchmark evaluations.
     """
 
-    def __init__(
-        self, model_name: str, dataset_name: str, tasks_path: Path = DATA_PATH
-    ):
+    def __init__(self, model: BaseModel, dataset_name: str, tasks_path: Path = DATA_PATH):
         super().__init__()
-        self.model_name = model_name
+        self.model = model
         self.tasks = initialize_tasks(dataset_name, tasks_path)
         self.results = []
 
@@ -31,9 +29,7 @@ class BaseManager(ABC):
     def get_tasks(self) -> list[Task]:
         return self.tasks
 
-    def get_result(
-        self, task: Task, model_response: str, model_config: ModelConfig
-    ) -> dict:
+    def get_result(self, task: Task, model_response: str) -> dict:
         """
         Generate a result dictionary for a completed task.
         Returns:
@@ -59,7 +55,7 @@ class BaseManager(ABC):
         correct = sum(1 for result in self.results if result["is_correct"])
 
         return {
-            "model_name": self.model_name,
+            "model_name": self.model.model_name,
             "total_tasks": total,
             "correct_answers": correct,
             "accuracy": correct / total if total > 0 else 0.0,

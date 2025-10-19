@@ -20,12 +20,12 @@ def initialize_tasks_from_jsonl(tasks_path: Path, dataset_name: str) -> list[Tas
     return tasks
 
 
-def initialize_tasks(dataset_name: str, tasks_path: Path = DATA_PATH) -> list[Task]:
+def initialize_tasks(dataset_name: str, tasks_dir_path: Path=DATA_PATH) -> list[Task]:
     """
     Load tasks from a directory (searches recursively for *.jsonl files).
     """
     tasks = []
-    for file in (tasks_path / dataset_name).rglob("*.jsonl"):
+    for file in (tasks_dir_path / dataset_name).rglob("*.jsonl"):
         tasks.extend(initialize_tasks_from_jsonl(file, dataset_name))
     return tasks
 

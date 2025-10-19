@@ -2,8 +2,8 @@ import typer
 
 from benchmark_framework.configs.model_config import ModelConfig
 from benchmark_framework.runner import BenchmarkRunner
-from benchmark_framework.getters.get_model import get_model_by_name
-from benchmark_framework.getters.get_manager import get_manager_by_dataset
+from benchmark_framework.getters.get_manager import get_manager
+from benchmark_framework.getters.get_llm_model import get_llm_model
 
 app = typer.Typer(help="CLI for LLM Benchmark Framework")
 
@@ -24,9 +24,9 @@ def run(
     Run the benchmark on a given model and questions dataset.
     """
     model_config = ModelConfig(google_search=google_search)
-    model = get_model_by_name(model_name, model_config)
-    manager = get_manager_by_dataset(dataset_name, model_name)
-    runner = BenchmarkRunner(model, manager)
+    model = get_llm_model(model_name, model_config)
+    manager = get_manager(dataset_name, model)
+    runner = BenchmarkRunner(manager)
 
     typer.echo(
         f"Running benchmark for {model_name} on {len(manager.get_tasks())} tasks..."

@@ -1,4 +1,5 @@
 from pathlib import Path
+from benchmark_framework.models.base_model import BaseModel
 from benchmark_framework.managers.exam_manager import ExamManager
 from benchmark_framework.managers.base_manager import BaseManager
 from benchmark_framework.constants import DATA_PATH
@@ -8,8 +9,8 @@ MANAGER_REGISTRY = {
 }
 
 
-def get_manager_by_dataset(
-    dataset_name: str, model_name: str, tasks_path: Path = DATA_PATH
+def get_manager(
+    dataset_name: str, model: BaseModel, tasks_path: Path = DATA_PATH
 ) -> BaseManager:
     """
     Factory function to get a manager instance by dataset name.
@@ -17,5 +18,5 @@ def get_manager_by_dataset(
     manager_class = MANAGER_REGISTRY.get(dataset_name)
     if not manager_class:
         raise ValueError(f"Dataset name '{dataset_name}' is not recognized.")
-    manager_instance = manager_class(model_name, tasks_path)
+    manager_instance = manager_class(model, tasks_path)
     return manager_instance
