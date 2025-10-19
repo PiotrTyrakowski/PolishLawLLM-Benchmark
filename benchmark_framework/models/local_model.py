@@ -1,3 +1,5 @@
+import json
+
 import torch
 from transformers import pipeline, BitsAndBytesConfig
 from benchmark_framework.models.base_model import BaseModel
@@ -68,4 +70,6 @@ class LocalModel(BaseModel):
         )
 
         responses = [output[0]["generated_text"].strip() for output in outputs]
+        print(responses)
+        print(json.dumps(responses, indent=2))
         return responses
