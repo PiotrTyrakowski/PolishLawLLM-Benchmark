@@ -56,6 +56,8 @@ class BenchmarkRunner:
                 chunk_responses = self.model.generate_batch_response(
                     chunk_prompts, batch_size
                 )
+                print("DEBUG len(chunk_prompts)=", len(chunk_prompts))
+                print("DEBUG len(chunk_responses)=", len(chunk_responses))
 
                 for j, model_response in enumerate(
                     tqdm(
