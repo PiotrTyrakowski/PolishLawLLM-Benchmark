@@ -21,7 +21,7 @@ SYSTEM_PROMPT: Final[str] = (
     "WAŻNE: Zawsze zakończ dokładnie tekstem 'ANSWER: ' oraz jedną literą (A, B lub C)."
     "Pamiętaj aby zwracana odpowiedź była czystym tekstem bez formatowania."
     "Odpowiedź nie może być formatowana jak dla pliku md."
-    f"Odpowiedź powinna miec maksymalnie {MAX_NEW_TOKENS} tokenów."
+    f"Odpowiedź powinna mieć maksymalnie {MAX_NEW_TOKENS} tokenów."
 )
 
 DATA_PATH: Final[Path] = Path(__file__).parent.parent / "data"
