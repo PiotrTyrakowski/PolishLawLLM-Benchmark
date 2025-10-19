@@ -19,7 +19,7 @@ SYSTEM_PROMPT: Final[str] = (
     "4. Wybierz odpowiedź najbardziej zgodną z polskim prawem\n"
     "5. Zakończ swoją odpowiedź w formacie: ANSWER: X (gdzie X to A, B lub C)\n\n"
     "WAŻNE: Zawsze zakończ dokładnie tekstem 'ANSWER: ' oraz jedną literą (A, B lub C)."
-    "Pamiętaj aby zwracana odpowiedź była czystym teksetem bez formatowania."
+    "Pamiętaj aby zwracana odpowiedź była czystym tekstem bez formatowania."
     "Odpowiedź nie może być formatowana jak dla pliku md."
     f"Odpowiedź powinna miec maksymalnie {MAX_NEW_TOKENS} tokenów."
 )
