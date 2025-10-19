@@ -56,17 +56,8 @@ class BenchmarkRunner:
                 chunk_responses = self.model.generate_batch_response(
                     chunk_prompts, batch_size
                 )
-                print("DEBUG len(chunk_prompts)=", len(chunk_prompts))
-                print("DEBUG len(chunk_responses)=", len(chunk_responses))
 
-                for j, model_response in enumerate(
-                    tqdm(
-                        chunk_responses,
-                        desc=f"Chunk {i // chunk_size + 1}",
-                        leave=False,
-                        unit="item",
-                    )
-                ):
+                for j, model_response in enumerate(chunk_responses):
                     idx = i + j
                     result = self.manager.get_result(tasks[idx], model_response)
                     self.manager.append_to_file(self.output_file, result)

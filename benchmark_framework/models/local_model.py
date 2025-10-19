@@ -70,6 +70,4 @@ class LocalModel(BaseModel):
         )
 
         responses = [output[0]["generated_text"].strip() for output in outputs]
-        print(responses)
-        print(json.dumps(responses, indent=2))
         return responses
