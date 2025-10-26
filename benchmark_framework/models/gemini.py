@@ -1,8 +1,11 @@
 from google import genai
 from google.genai import types
 
+from benchmark_framework.configs.runner_config import RunnerConfig
 from benchmark_framework.models.base_model import BaseModel
 from benchmark_framework.constants import SYSTEM_PROMPT
+from benchmark_framework.configs.model_config import ModelConfig
+
 
 class GeminiModel(BaseModel):
     """
@@ -12,44 +15,28 @@ class GeminiModel(BaseModel):
     Requires GEMINI_API_KEY environment variable to be set.
     """
 
-    def __init__(self, model_name: str, model_tools: str = None, **kwargs):
+    def __init__(self, model_name: str, model_config: ModelConfig, **kwargs):
         # uses GEMINI_API_KEY env var
-        super().__init__(model_name, model_tools, **kwargs)
+        super().__init__(model_name, model_config, **kwargs)
         self.client = genai.Client()
 
     def generate_response(self, prompt: str):
-        """
-        Generate an answer for a multiple-choice question.
-
-        Args:
-            prompt: The question prompt (with question and choices).
-
-        Returns:
-            A string containing the model’s response.
-        """
         resp = self.client.models.generate_content(
             model=self.model_name,
             config=self.create_generate_config(),
             contents=prompt,
         )
-        
         return resp.text
 
     def create_generate_config(self):
-        if self.model_tools is None:
+        if self.model_config.google_search:
+            grounding_tool = types.Tool(google_search=types.GoogleSearch())
             config = types.GenerateContentConfig(
-                system_instruction=SYSTEM_PROMPT
+                system_instruction=SYSTEM_PROMPT, tools=[grounding_tool]
             )
         else:
-            if self.model_tools == "google_search":
-                grounding_tool = types.Tool(
-                    google_search=types.GoogleSearch()
-                )
-            
-            else:
-                raise ValueError(f"Tools {tools} not supported")
-            config = types.GenerateContentConfig(
-                system_instruction=SYSTEM_PROMPT,
-                tools=[grounding_tool]
-            )
+            config = types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT)
         return config
+
+    def get_default_runner_config(self):
+        return RunnerConfig(requests_per_minute=5, daily_limit=50)

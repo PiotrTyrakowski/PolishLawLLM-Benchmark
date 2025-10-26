@@ -19,5 +19,9 @@ __pycache__/
 .claude/
 changes.txt
 
-results/exams/  
+results/exams/
 data/exams/
+data.zip
+
+# package
+*.egg-info/
