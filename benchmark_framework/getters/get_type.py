@@ -1,10 +1,10 @@
 from benchmark_framework.types.exam import Exam
 from benchmark_framework.types.task import Task
 
-# Model registry mapping model names to their corresponding classes
 TYPE_REGISTRY = {
     "exams": Exam,
 }
+
 
 def get_task_by_dataset(dataset_name: str, task_raw: dict) -> Task:
     """
@@ -20,7 +20,5 @@ def get_task_by_dataset(dataset_name: str, task_raw: dict) -> Task:
     type_class = TYPE_REGISTRY.get(dataset_name)
     if not type_class:
         raise ValueError(f"Model name '{dataset_name}' is not recognized.")
-
     type_instance = type_class.from_dict(task_raw)
-
     return type_instance

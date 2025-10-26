@@ -31,7 +31,7 @@ class Exam(Task):
             data["question"],
             data["choices"],
             data["answer"],
-            data["legal_basis"]
+            data["legal_basis"],
         )
 
     def get_prompt(self) -> str:
@@ -43,19 +43,22 @@ class Exam(Task):
         for choice in self.choices:
             prompt += f"{choice}\n"
         return prompt
-    
+
+
 def load_exams(jsonl_path: Path) -> list[Exam]:
     exams = []
     with open(jsonl_path, encoding=ENCODING) as f:
         for line in f:
             obj = json.loads(line)
-            exams.append(Exam(
-                obj["id"],
-                obj["year"],
-                obj["exam_type"],
-                obj["question"],
-                obj["choices"],
-                obj["answer"],
-                obj["legal_basis"]
-            ))
+            exams.append(
+                Exam(
+                    obj["id"],
+                    obj["year"],
+                    obj["exam_type"],
+                    obj["question"],
+                    obj["choices"],
+                    obj["answer"],
+                    obj["legal_basis"],
+                )
+            )
     return exams

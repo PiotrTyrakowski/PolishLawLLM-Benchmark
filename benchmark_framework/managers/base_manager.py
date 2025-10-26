@@ -1,12 +1,13 @@
-from abc import ABC, abstractmethod
-from typing import List
-import re
-from benchmark_framework.models.base_model import BaseModel
+import json
+import os
+from abc import ABC
+from pathlib import Path
+
 from benchmark_framework.types.task import Task
 from benchmark_framework.utils import initialize_tasks
-from pathlib import Path
-import json
-from benchmark_framework.constants import ENCODING, RESULTS_PATH
+from benchmark_framework.models.base_model import BaseModel
+from benchmark_framework.constants import ENCODING, RESULTS_PATH, DATA_PATH
+
 
 class BaseManager(ABC):
     """
@@ -16,16 +17,16 @@ class BaseManager(ABC):
     different types of benchmark evaluations.
     """
 
-    def __init__(self, model: BaseModel, dataset_name: str):
+    def __init__(
+        self, model: BaseModel, dataset_name: str, tasks_path: Path = DATA_PATH
+    ):
         super().__init__()
         self.model = model
-        self.tasks = initialize_tasks(dataset_name)
+        self.tasks = initialize_tasks(dataset_name, tasks_path)
         self.results = []
 
-        # Set fixed output directory structure: PolishLawLLM-Benchmark/results/dataset_name/
         self.base_dir = RESULTS_PATH / dataset_name
         self.base_dir.mkdir(parents=True, exist_ok=True)
-        
 
     def get_tasks(self) -> list[Task]:
         return self.tasks
@@ -33,37 +34,31 @@ class BaseManager(ABC):
     def get_result(self, task: Task, model_response: str) -> dict:
         """
         Generate a result dictionary for a completed task.
-
-        Args:
-            task: The task that was evaluated
-            model_response: The raw response from the model
-
         Returns:
             dict: A dictionary containing task details, model response, and evaluation results
         """
         pass
 
     def append_to_file(self, output_file: str, result: dict):
-        """Append a single result to the output file."""
         full_path = self.base_dir / output_file
-        with open(full_path, 'a', encoding=ENCODING) as f:
-            f.write(json.dumps(result, ensure_ascii=False) + '\n')
-    
+        os.makedirs(full_path.parent, exist_ok=True)
+        with open(full_path, "a", encoding=ENCODING) as f:
+            f.write(json.dumps(result, ensure_ascii=False) + "\n")
+
     def save_all_results(self, output_file: str):
-        """Save all results to a JSONL file."""
         full_path = self.base_dir / output_file
-        with open(full_path, 'w', encoding=ENCODING) as f:
+        os.makedirs(full_path.parent, exist_ok=True)
+        with open(full_path, "w", encoding=ENCODING) as f:
             for result in self.results:
-                f.write(json.dumps(result, ensure_ascii=False) + '\n')
-    
+                f.write(json.dumps(result, ensure_ascii=False) + "\n")
+
     def get_summary(self) -> dict:
-        """Get a summary of the benchmark results."""
         total = len(self.results)
         correct = sum(1 for result in self.results if result["is_correct"])
-        
+
         return {
-            "model_name": self.model.get_model_name(),
+            "model_name": self.model.model_name,
             "total_tasks": total,
             "correct_answers": correct,
-            "accuracy": correct / total if total > 0 else 0.0
+            "accuracy": correct / total if total > 0 else 0.0,
         }
