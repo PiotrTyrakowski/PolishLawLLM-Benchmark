@@ -28,6 +28,7 @@ def parse_answers(file_path: str, validate: bool = True) -> dict:
     """
     print(f"Parsing answers from: {file_path}")
 
+    # TODO: Add processing of upper index numbers
     with pdfplumber.open(file_path) as pdf:
         full_text = ""
         total_pages = len(pdf.pages)
