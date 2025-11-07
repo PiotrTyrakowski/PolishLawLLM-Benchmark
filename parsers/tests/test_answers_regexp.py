@@ -1,7 +1,3 @@
-import re
-
-import pytest
-
 from parsers.parse_answers import ANSWERS_REGEXP
 
 
