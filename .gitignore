@@ -20,8 +20,11 @@ __pycache__/
 changes.txt
 
 results/exams/
-data/exams/
+data
 data.zip
 
 # package
 *.egg-info/
+
+# macOS
+.DS_Store

@@ -6,7 +6,8 @@ from pathlib import Path
 import typer
 
 from parsers.combiner import create_unified_jsonl
-from parsers.pdf_parser import parse_answers, parse_questions
+from parsers.pdf_parser import parse_questions
+from parsers.parse_answers import parse_answers
 from parsers.stats import generate_statistics
 from parsers.utils import save_as_jsonl
 
@@ -48,7 +49,9 @@ def parse(
             exam_type = "notarialny"
 
         if not exam_type:
-            typer.echo(f"Warning: Could not determine exam type for '{pdf_file}', skipping.")
+            typer.echo(
+                f"Warning: Could not determine exam type for '{pdf_file}', skipping."
+            )
             continue
 
         if year not in exams:
@@ -74,7 +77,9 @@ def parse(
 
             if "questions_pdf" in files:
                 questions_pdf_path = os.path.join(pdf_dir, files["questions_pdf"])
-                parsed_questions = parse_questions(questions_pdf_path, validate=validate)
+                parsed_questions = parse_questions(
+                    questions_pdf_path, validate=validate
+                )
                 typer.echo(
                     f"  - Successfully parsed {len(parsed_questions['questions'])} questions."
                 )
