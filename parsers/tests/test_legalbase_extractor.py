@@ -20,7 +20,7 @@ def test_extract_article_1(extractor_instance):
     article = extractor_instance.get_article(1)
     assert article is not None, "Article 1 was not found in the provided PDF"
     assert "Art. 1." in article
-    print(article + "\n--- End of Article 1 ---\n")
+    print("\n--- Article 1 ---\n" + article)
     assert len(article) > 20
 
 
@@ -28,5 +28,13 @@ def test_extract_article_2(extractor_instance):
     article = extractor_instance.get_article(2)
     assert article is not None, "Article 2 was not found in the provided PDF"
     assert "Art. 2." in article
-    print(article + "\n--- End of Article 2 ---\n")
+    print("\n--- Article 2 ---\n" + article)
+    assert len(article) > 20
+
+
+def test_extract_article_47(extractor_instance):
+    article = extractor_instance.get_article(47)
+    assert article is not None, "Article 47 was not found in the provided PDF"
+    assert "Art. 47." in article
+    print("\n--- Article 47 ---\n" + article)
     assert len(article) > 20

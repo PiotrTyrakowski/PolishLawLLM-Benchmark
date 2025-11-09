@@ -11,6 +11,14 @@ class LegalBaseExtractor:
 
         self.content = self._extract_text_from_pdf()
 
+    def _filter_superscripts(self, char):
+        """Filter function to exclude superscripts based on character size."""
+        # Filter out characters with size smaller than normal text (typically superscripts)
+        # Normal text is 9-12pt, superscripts are 6.5-8pt
+        if "size" in char:
+            return char["size"] >= 9.0  # Filter out anything smaller than 9pt
+        return True
+
     def _extract_text_from_pdf(self) -> str:
         text_parts = []
 
@@ -21,7 +29,8 @@ class LegalBaseExtractor:
                 print(f"Loading PDF: {len(pdf.pages)} pages...")
 
                 for i, page in enumerate(pdf.pages, 1):
-                    page_text = page.extract_text()
+                    filtered_page = page.filter(self._filter_superscripts)
+                    page_text = filtered_page.extract_text(x_tolerance=3, y_tolerance=3)
                     if page_text:
                         text_parts.append(page_text)
 
@@ -30,7 +39,10 @@ class LegalBaseExtractor:
         except Exception as e:
             raise RuntimeError(f"Error while loading PDF: {e}")
 
-        text = "\n".join(text_parts)
+        text_with_markers = [
+            f"PAGE:\n{self._clear_page_markers(page_text)}" for page_text in text_parts
+        ]
+        text = "\n".join(text_with_markers)
 
         try:
             out_path = self.pdf_path.with_name(self.pdf_path.stem + "_extracted.txt")
@@ -40,6 +52,16 @@ class LegalBaseExtractor:
             print(f"Warning: failed to save extracted text for debugging: {e}")
 
         return text
+
+    def _clear_page_markers(self, page_text: str) -> str:
+        """Remove first and last line from a single page's text."""
+        lines = page_text.split("\n")
+
+        if len(lines) > 2:
+            cleaned_lines = lines[1:-1]
+            return "\n".join(cleaned_lines)
+
+        return ""
 
     def get_article(self, article_number: int) -> Optional[str]:
         # Pattern for the given article - looks for "Art. X." where X is the number
@@ -57,56 +79,3 @@ class LegalBaseExtractor:
             return article_text.strip()
 
         return None
-
-    def get_article_formatted(self, article_number: int) -> Optional[str]:
-        """Get formatted article text (split into paragraphs)."""
-        article = self.get_article(article_number)
-        if not article:
-            return None
-
-        # Formatting - add blank lines before paragraphs
-        formatted = re.sub(r"(§\s+\d+\.)", r"\n\1", article)
-        # Remove excessive blank lines
-        formatted = re.sub(r"\n{3,}", "\n\n", formatted)
-
-        return formatted.strip()
-
-
-if __name__ == "__main__":
-    # Use with a PDF file
-    try:
-        # Load code from PDF
-        extractor = LegalBaseExtractor("kk.pdf")
-
-        # Get article 6
-        print("=== Article 6 (raw) ===")
-        article_6 = extractor.get_article(6)
-        if article_6:
-            print(article_6)
-        else:
-            print("Article 6 not found")
-
-        print("\n" + "=" * 50 + "\n")
-
-        # Get formatted article 6
-        print("=== Article 6 (formatted) ===")
-        article_6_formatted = extractor.get_article_formatted(6)
-        if article_6_formatted:
-            print(article_6_formatted)
-        else:
-            print("Article 6 not found")
-
-        print("\n" + "=" * 50 + "\n")
-
-        # Example with another article
-        print("=== Article 148 (murder) ===")
-        article_148 = extractor.get_article_formatted(148)
-        if article_148:
-            print(article_148)
-        else:
-            print("Article 148 not found")
-
-    except FileNotFoundError as e:
-        print(f"Error: {e}")
-    except RuntimeError as e:
-        print(f"Error: {e}")
