@@ -102,7 +102,9 @@ class LegalBaseExtractor:
                         keep_y0=keep_y0, keep_y1=keep_y1, min_size=9.0
                     )
                     filtered_page = page.filter(filter_fn)
-                    page_text = filtered_page.extract_text(x_tolerance=3, y_tolerance=3)
+                    page_text = filtered_page.extract_text(
+                        x_tolerance=3, y_tolerance=3, layout=True
+                    )
                     if page_text:
                         text_parts.append(page_text)
 
@@ -120,7 +122,18 @@ class LegalBaseExtractor:
         except Exception as e:
             print(f"Warning: failed to save extracted text for debugging: {e}")
 
-        return text
+        return self._format_extracted_text(text)
+
+    def _format_extracted_text(self, text: str) -> str:
+        lines = text.split("\n")
+        formatted_lines = []
+        for line in lines:
+            if not line.strip():
+                continue
+            else:
+                formatted_lines.append(line.strip())
+        result = " ".join(formatted_lines)
+        return result
 
     def get_article(self, article_number: int) -> Optional[str]:
         # Pattern for the given article - looks for "Art. X." where X is the number
@@ -135,6 +148,6 @@ class LegalBaseExtractor:
             # Clean up excessive whitespace
             article_text = re.sub(r"\n+", "\n", article_text)
             article_text = re.sub(r" +", " ", article_text)
-            return article_text.strip()
+            return self._format_extracted_text(article_text.strip())
 
         return None
