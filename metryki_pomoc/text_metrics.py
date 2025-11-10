@@ -34,21 +34,25 @@ class ExactMatchMetric(BaseMetric):
 
 
 class BleuMetric(BaseMetric):
-    """Standard BLEU-N precision with Brevity Penalty."""
+    """Standard BLEU-N precision with Brevity Penalty and customizable n-gram importances."""
 
-    def __init__(self, max_n: int = 4, weights: Sequence[float] | None = None) -> None:
-        super().__init__(f"bleu_{max_n}gram")
-        self.max_n = max_n
-        if weights is None:
-            self.weights = [1 / max_n] * max_n
-        elif len(weights) != max_n:
-            raise ValueError("weights must have the same length as max_n")
-        else:
-            self.weights = weights
+    def __init__(
+        self, 
+        ngram_importances: Sequence[float] = [1, 1, 1, 1]
+    ) -> None:
+        """
+        Args:
+            ngram_importances: Importance for each n-gram size (from 1 to max_n) default [1, 1, 1, 1]
+            
+        """
+        self.max_n = len(ngram_importances) 
+        super().__init__(f"bleu_max_{self.max_n}gram")
+        self.ngram_importances = [x / sum(ngram_importances) for x in ngram_importances] 
+
 
     def _compute(self, prediction: str, reference: str) -> float:
-        cand_tokens = prediction.split()
-        ref_tokens = reference.split()
+        cand_tokens = prediction.lower().split()
+        ref_tokens = reference.lower().split()
         if not cand_tokens or not ref_tokens:
             return 0.0
 
@@ -57,21 +61,16 @@ class BleuMetric(BaseMetric):
         )
 
         log_precision_sum = 0.0
-        for n, weight in enumerate(self.weights, start=1):
+        for n, importance in enumerate(self.ngram_importances, start=1):
             cand_counts = _ngrams(cand_tokens, n)
             ref_counts = _ngrams(ref_tokens, n)
-
-            print(cand_counts)
-            print(ref_counts)
             if not cand_counts:
                 return 0.0
             overlap = sum(
                 min(count, ref_counts.get(ngram, 0)) for ngram, count in cand_counts.items()
             )
-            precision = overlap / sum(cand_counts.values()) + EPSYLON
-            if precision == 0.0:
-                return 0.0
-            log_precision_sum += weight * math.log(precision)
+            precision = overlap / sum(cand_counts.values()) + EPSYLON  # >0
+            log_precision_sum += importance * math.log(precision)
 
         return float(bp * math.exp(log_precision_sum))
 
@@ -85,12 +84,26 @@ class WeightedBleuResources:
 
 
 class WeightedBleuMetric(BaseMetric):
-    """BLEU modyfikowany wagami TF-IDF opisanymi w Lab2 (sekcja 8.4)."""
+    """BLEU modyfikowany wagami TF-IDF opisanymi w Lab2 (sekcja 8.4).
+    Pozwala także ustawić ważność rozmiaru n-gramów przez ngram_importances."""
 
-    def __init__(self, resources: WeightedBleuResources, max_n: int = 4) -> None:
-        super().__init__("weighted_bleu")
+    def __init__(
+        self, 
+        ngram_importances: Sequence[float] = [1, 1, 1, 1],
+        resources: WeightedBleuResources = None
+    ) -> None:
+        """
+        Args:
+            ngram_importances: Importance for each n-gram size (from 1 to max_n) default [1, 1, 1, 1]
+            resources: WeightedBleuResources with IDF mapping
+        """
+        if not resources:
+            raise ValueError("resources were not provided")
+
+        self.max_n = len(ngram_importances)
+        super().__init__(f"weighted_bleu_max_{self.max_n}gram")
         self.resources = resources
-        self.max_n = max_n
+        self.ngram_importances = [x / sum(ngram_importances) for x in ngram_importances] 
 
     @classmethod
     def build_resources(cls, documents: Iterable[str]) -> WeightedBleuResources:
@@ -111,8 +124,8 @@ class WeightedBleuMetric(BaseMetric):
         return WeightedBleuResources(idf_lookup=idf_lookup, default_idf=default_idf)
 
     def _compute(self, prediction: str, reference: str) -> float:
-        cand_tokens = prediction.split()
-        ref_tokens = reference.split()
+        cand_tokens = prediction.lower().split()
+        ref_tokens = reference.lower().split()
         if not cand_tokens or not ref_tokens:
             return 0.0
 
@@ -122,7 +135,7 @@ class WeightedBleuMetric(BaseMetric):
         )
 
         log_precision_sum = 0.0
-        for n in range(1, self.max_n + 1):
+        for n, importance in enumerate(self.ngram_importances, start=1):
             cand_counts = _ngrams(cand_tokens, n)
             ref_counts = _ngrams(ref_tokens, n)
             if not cand_counts:
@@ -135,9 +148,11 @@ class WeightedBleuMetric(BaseMetric):
                 numerator += min(count, ref_counts.get(ngram, 0)) * weight
                 denominator += count * weight
 
-            if numerator == 0.0 or denominator == 0.0:
-                return 0.0
-            log_precision_sum += (1 / self.max_n) * math.log(numerator / denominator)
+            precision = EPSYLON  # >0
+            if numerator > 0.0 and denominator > 0.0:
+                precision += numerator / denominator
+
+            log_precision_sum += importance * math.log(precision)
 
         return float(bp * math.exp(log_precision_sum))
 
@@ -197,7 +212,6 @@ class SentenceBertSimilarityMetric(BaseMetric):
         )
         score = float(st_util.cos_sim(embeddings[0], embeddings[1]))
         return (score + 1) / 2
-
 
 def _ngrams(tokens: Sequence[str], n: int) -> Counter[tuple[str, ...]]:
     return Counter(tuple(tokens[i : i + n]) for i in range(max(len(tokens) - n + 1, 0)))

@@ -9,6 +9,7 @@ from metryki_pomoc.text_metrics import WeightedBleuMetric
 
 
 REFERENCE_FILE = Path(__file__).with_name("przyklad_referencji.jsonl")
+REFERENCE_FILE = Path(__file__).with_name("kk_extracted.txt")
 
 REFERENCE = (
     "Zgodnie z art. 415 kodeksu cywilnego kto z winy swej wyrządził drugiemu szkodę,"
@@ -36,20 +37,21 @@ def load_references() -> list[str]:
     with REFERENCE_FILE.open(encoding="utf-8") as stream:
         for line in stream:
             if line.strip():
-                data.append(json.loads(line)["reference"])
+                data.append((line))
     return data
 
 
 def main() -> None:
     references = load_references()
     resources = WeightedBleuMetric.build_resources(references)
-    metric = WeightedBleuMetric(resources, 2, [0.7, 0.3])
+    metric = WeightedBleuMetric([0.7, 0.3], resources)
 
     print("Weighted BLEU demo\n====================")
     print(f"Loaded {len(references)} reference texts for TF-IDF baseline.\n")
     example_tokens = list(resources.idf_lookup.items())[:5]
     print("Sample IDF weights:")
     for token, value in example_tokens:
+        print(len(example_tokens))
         print(f"  {token!r}: {value:.3f}")
     print()
 

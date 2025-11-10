@@ -34,7 +34,7 @@ CASES = [
 
 
 def main() -> None:
-    metric = BleuMetric(2, [0.7, 0.3])
+    metric = BleuMetric([0.7, 0.3])
     print("BLEU demo\n=========")
     for case in CASES:
         score = metric(case["prediction"], REFERENCE)
