@@ -43,7 +43,7 @@ def load_references() -> list[str]:
 def main() -> None:
     references = load_references()
     resources = WeightedBleuMetric.build_resources(references)
-    metric = WeightedBleuMetric(resources, 2)
+    metric = WeightedBleuMetric(resources, 2, [0.7, 0.3])
 
     print("Weighted BLEU demo\n====================")
     print(f"Loaded {len(references)} reference texts for TF-IDF baseline.\n")
