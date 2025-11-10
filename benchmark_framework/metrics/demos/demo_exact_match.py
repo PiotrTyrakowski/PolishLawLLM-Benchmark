@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from metrics.exact_match import ExactMatchMetric
+from exact_match import ExactMatchMetric
 
 
 CASES = [
