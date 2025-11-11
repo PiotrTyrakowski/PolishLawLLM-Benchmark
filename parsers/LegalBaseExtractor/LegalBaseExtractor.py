@@ -11,6 +11,9 @@ class LegalBaseExtractor:
 
         self.content = self._extract_text_from_pdf()
 
+    # ----------------------------------
+    # PDF processing
+    # ----------------------------------
     def _make_char_filter(
         self,
         keep_y0: Optional[float] = None,
@@ -27,7 +30,6 @@ class LegalBaseExtractor:
             if "size" in char and char["size"] < min_size:
                 return False
 
-            # 2) bounding y filter (if requested)
             if keep_y0 is not None and keep_y1 is not None:
                 # compute vertical midpoint of the character box
                 y0 = char.get("y0", None)
@@ -122,8 +124,11 @@ class LegalBaseExtractor:
         except Exception as e:
             print(f"Warning: failed to save extracted text for debugging: {e}")
 
-        return self._format_extracted_text(text)
+        return text
 
+    # ----------------------------------
+    # Text processing
+    # ----------------------------------
     def _format_extracted_text(self, text: str) -> str:
         lines = text.split("\n")
         formatted_lines = []
@@ -132,10 +137,22 @@ class LegalBaseExtractor:
                 continue
             else:
                 formatted_lines.append(line.strip())
-        result = " ".join(formatted_lines)
-        return result
 
-    def get_article(self, article_number: int) -> Optional[str]:
+        result_parts = []
+        for i, line in enumerate(formatted_lines):
+            if line.endswith("-"):
+                result_parts.append(line[:-1])
+            else:
+                result_parts.append(line)
+                if i < len(formatted_lines) - 1:
+                    result_parts.append(" ")
+
+        result = "".join(result_parts)
+        result = re.sub(r"\n+", "\n", result)
+        result = re.sub(r" +", " ", result)
+        return result.strip()
+
+    def _get_raw_article(self, article_number: int) -> Optional[str]:
         # Pattern for the given article - looks for "Art. X." where X is the number
         # and captures everything up to the next "Art." or the end of the chapter
         pattern = rf"Art\.\s+{article_number}\.\s+.*?(?=(?:Art\.\s+\d+\.|Rozdział\s+[IVXLCDM]+|$))"
@@ -144,10 +161,33 @@ class LegalBaseExtractor:
         match = re.search(pattern, self.content, re.DOTALL)
 
         if match:
-            article_text = match.group(0)
-            # Clean up excessive whitespace
-            article_text = re.sub(r"\n+", "\n", article_text)
-            article_text = re.sub(r" +", " ", article_text)
-            return self._format_extracted_text(article_text.strip())
+            return match.group(0)
 
-        return None
+        return ValueError(f"Article {article_number} not found")
+
+    def get_article(self, article_number: int) -> Optional[str]:
+        return self._format_extracted_text(self._get_raw_article(article_number))
+
+    def get_paragraph(
+        self, article_number: int, paragraph_number: int
+    ) -> Optional[str]:
+        article_text = self._get_raw_article(article_number)
+        if article_text is None:
+            return ValueError(f"Article {article_number} not found")
+
+        # Pattern to match paragraph definitions
+        # Paragraphs can appear in two ways:
+        # 1. After article header: "Art. X. § Y."
+        # 2. Indented with 11 spaces: "           § Y."
+        # Captures everything until the next paragraph (always indented with 11 spaces) or end of article
+        paragraph_pattern = rf"(?:^ {{11}}|Art\.\s+{article_number}\.\s+)§\s+{paragraph_number}\.\s+(.+?)(?=^ {{11}}§\s+\d+[a-z]?\.|\Z)"
+
+        match = re.search(paragraph_pattern, article_text, re.MULTILINE | re.DOTALL)
+
+        if match:
+            paragraph_content = match.group(1)
+            return self._format_extracted_text(paragraph_content)
+
+        return ValueError(
+            f"Paragraph {paragraph_number} not found in article {article_number}"
+        )
