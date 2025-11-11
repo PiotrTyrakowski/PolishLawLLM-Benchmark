@@ -15,11 +15,26 @@ def extractor_instance():
     return extractor
 
 
-def test_extract_article_1_paragraph_1(extractor_instance):
-    paragraph = extractor_instance.get_paragraph(1, 1)
-    print("\n--- Article 1, Paragraph 1 ---\n" + paragraph)
-
-
-def test_extract_article_1_paragraph_2(extractor_instance):
-    paragraph = extractor_instance.get_paragraph(1, 2)
-    print("\n--- Article 1, Paragraph 2 ---\n" + paragraph)
+@pytest.mark.parametrize(
+    "article_num,paragraph_num,expected_text",
+    [
+        (
+            1,
+            1,
+            "Odpowiedzialności karnej podlega ten tylko, kto popełnia czyn zabroniony pod groźbą kary przez ustawę obowiązującą w czasie jego popełnienia.",
+        ),
+        (
+            1,
+            2,
+            "Nie stanowi przestępstwa czyn zabroniony, którego społeczna szkodliwość jest znikoma.",
+        ),
+    ],
+)
+def test_extract_paragraph(
+    extractor_instance, article_num, paragraph_num, expected_text
+):
+    """Test that paragraph extraction returns the expected text."""
+    result = extractor_instance.get_paragraph(article_num, paragraph_num)
+    assert (
+        result == expected_text
+    ), f"Art. {article_num} § {paragraph_num} does not match expected text"

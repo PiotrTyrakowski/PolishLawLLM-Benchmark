@@ -153,9 +153,9 @@ class LegalBaseExtractor:
         return result.strip()
 
     def _get_raw_article(self, article_number: int) -> Optional[str]:
-        # Pattern for the given article - looks for "Art. X." where X is the number
+        # Pattern for the given article - looks for "Art. X." or "Art. Xa." where X is the number
         # and captures everything up to the next "Art." or the end of the chapter
-        pattern = rf"Art\.\s+{article_number}\.\s+.*?(?=(?:Art\.\s+\d+\.|Rozdział\s+[IVXLCDM]+|$))"
+        pattern = rf"Art\.\s+{article_number}[a-z]?\.\s+.*?(?=(?:Art\.\s+\d+[a-z]?\.|Rozdział\s+[IVXLCDM]+|$))"
 
         # Search with DOTALL flag (. also matches \n)
         match = re.search(pattern, self.content, re.DOTALL)
