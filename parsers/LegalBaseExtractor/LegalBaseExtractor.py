@@ -152,7 +152,7 @@ class LegalBaseExtractor:
         result = re.sub(r" +", " ", result)
         return result.strip()
 
-    def _get_raw_article(self, article_number: int) -> Optional[str]:
+    def _get_raw_article(self, article_number: str) -> Optional[str]:
         # Pattern for the given article - looks for "Art. X." or "Art. Xa." where X is the number
         # and captures everything up to the next "Art." or the end of the chapter
         pattern = rf"Art\.\s+{article_number}[a-z]?\.\s+.*?(?=(?:Art\.\s+\d+[a-z]?\.|Rozdział\s+[IVXLCDM]+|$))"
@@ -165,11 +165,11 @@ class LegalBaseExtractor:
 
         return ValueError(f"Article {article_number} not found")
 
-    def get_article(self, article_number: int) -> Optional[str]:
+    def get_article(self, article_number: str) -> Optional[str]:
         return self._format_extracted_text(self._get_raw_article(article_number))
 
     def get_paragraph(
-        self, article_number: int, paragraph_number: int
+        self, article_number: str, paragraph_number: str
     ) -> Optional[str]:
         article_text = self._get_raw_article(article_number)
         if article_text is None:
@@ -180,7 +180,7 @@ class LegalBaseExtractor:
         # 1. After article header: "Art. X. § Y."
         # 2. Indented with 11 spaces: "           § Y."
         # Captures everything until the next paragraph (always indented with 11 spaces) or end of article
-        paragraph_pattern = rf"(?:^ {{11}}|Art\.\s+{article_number}\.\s+)§\s+{paragraph_number}\.\s+(.+?)(?=^ {{11}}§\s+\d+[a-z]?\.|\Z)"
+        paragraph_pattern = rf"(?:^ {{11}}|Art\.\s+{article_number}\.\s+)§\s+{paragraph_number}\.\s+(.+?)(?=^ {{11}}§\s+\d+[a-z]*\.|\Z)"
 
         match = re.search(paragraph_pattern, article_text, re.MULTILINE | re.DOTALL)
 

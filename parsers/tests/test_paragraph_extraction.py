@@ -28,6 +28,11 @@ def extractor_instance():
             2,
             "Nie stanowi przestępstwa czyn zabroniony, którego społeczna szkodliwość jest znikoma.",
         ),
+        (
+            10,
+            "2a",
+            "Nieletni, który po ukończeniu 14 lat, a przed ukończeniem 15 lat, dopuszcza się czynu zabronionego określonego w art. 148 § 2 lub 3, może odpowiadać na zasadach określonych w tym kodeksie, jeżeli okoliczności sprawy oraz stopień rozwoju sprawcy, jego właściwości i warunki osobiste za tym przemawiają oraz zachodzi uzasadnione przypuszczenie, że stosowanie środków wychowawczych lub poprawczych nie jest w stanie zapewnić resocjalizacji nieletniego.",
+        ),
     ],
 )
 def test_extract_paragraph(
