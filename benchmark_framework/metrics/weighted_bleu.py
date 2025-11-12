@@ -27,13 +27,11 @@ class WeightedBleuMetric(BaseMetric):
         """
         Args:
             ngram_importances: Importance for each n-gram size (from 1 to max_n) default [1, 1, 1, 1]
-            resources: WeightedBleuResources with IDF mapping
+            resources: WeightedBleuResources with IDF mapping. If None, behaves like standard BLEU.
         """
-        if not resources:
-            raise ValueError("resources were not provided")
-
         self.max_n = len(ngram_importances)
-        super().__init__(f"weighted_bleu_max_{self.max_n}gram")
+        metric_name = f"weighted_bleu_max_{self.max_n}gram" if resources else f"bleu_max_{self.max_n}gram"
+        super().__init__(metric_name)
         self.resources = resources
         self.ngram_importances = [x / sum(ngram_importances) for x in ngram_importances] 
 
@@ -61,7 +59,6 @@ class WeightedBleuMetric(BaseMetric):
         if not cand_tokens or not ref_tokens:
             return 0.0
 
-        token_weights = self._token_weights(ref_tokens)
         bp = 1.0 if len(cand_tokens) > len(ref_tokens) else math.exp(
             1 - len(ref_tokens) / max(len(cand_tokens), 1)
         )
@@ -73,22 +70,33 @@ class WeightedBleuMetric(BaseMetric):
             if not cand_counts:
                 return 0.0
 
-            numerator = 0.0
-            denominator = 0.0
-            for ngram, count in cand_counts.items():
-                weight = self._weight_ngram(ngram, token_weights)
-                numerator += min(count, ref_counts.get(ngram, 0)) * weight
-                denominator += count * weight
+            if self.resources is None:
+                # Standard BLEU calculation (no weighting)
+                overlap = sum(
+                    min(count, ref_counts.get(ngram, 0)) for ngram, count in cand_counts.items()
+                )
+                precision = overlap / sum(cand_counts.values()) + self.eps  # >0
+            else:
+                # Weighted BLEU calculation (with IDF weights)
+                token_weights = self._token_weights(ref_tokens)
+                numerator = 0.0
+                denominator = 0.0
+                for ngram, count in cand_counts.items():
+                    weight = self._weight_ngram(ngram, token_weights)
+                    numerator += min(count, ref_counts.get(ngram, 0)) * weight
+                    denominator += count * weight
 
-            precision = self.eps  # >0
-            if numerator > 0.0 and denominator > 0.0:
-                precision += numerator / denominator
+                precision = self.eps  # >0
+                if numerator > 0.0 and denominator > 0.0:
+                    precision += numerator / denominator
 
             log_precision_sum += importance * math.log(precision)
 
         return float(bp * math.exp(log_precision_sum))
 
     def _token_weights(self, tokens: Sequence[str]) -> dict[str, float]:
+        if self.resources is None:
+            raise ValueError("_token_weights called but resources is None")
         lookup = self.resources.idf_lookup
         default = self.resources.default_idf
         return {token.lower(): lookup.get(token.lower(), default) for token in tokens}
