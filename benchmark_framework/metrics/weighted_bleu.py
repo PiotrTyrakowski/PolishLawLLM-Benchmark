@@ -9,15 +9,16 @@ from base_metric import BaseMetric
 
 @dataclass
 class WeightedBleuResources:
-    """Cache przechowujący preobliczone wartości IDF dla tokenów."""
+    """Cache storing precomputed IDF values for tokens."""
 
     idf_lookup: dict[str, float]
     default_idf: float
 
 
 class WeightedBleuMetric(BaseMetric):
-    """BLEU modyfikowany wagami TF-IDF opisanymi w Lab2 (sekcja 8.4).
-    Pozwala także ustawić ważność rozmiaru n-gramów przez ngram_importances."""
+    """BLEU metric that can use TF-IDF weights or standard BLEU calculation.
+    When resources is None, behaves like standard BLEU. When resources are provided,
+    uses TF-IDF weighted BLEU. Also allows setting n-gram size importance through ngram_importances."""
 
     def __init__(
         self, 
