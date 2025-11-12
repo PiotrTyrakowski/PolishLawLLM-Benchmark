@@ -10,7 +10,7 @@ class BaseMetric(ABC):
 
     def __init__(self, name: str):
         self.name = name
-        self.epsylon = 0.0001
+        self.eps = 0.0001
 
     def __call__(self, prediction: str, reference: str) -> float:
         """Compute a single metric score clipped to the [0.0, 1.0] interval."""
@@ -34,9 +34,6 @@ class BaseMetric(ABC):
         """Hook for subclasses to tweak normalization without overriding __call__."""
 
         return text.strip()
-
-    def _ngrams(self, tokens: Sequence[str], n: int) -> Counter[tuple[str, ...]]:
-        return Counter(tuple(tokens[i : i + n]) for i in range(max(len(tokens) - n + 1, 0)))
 
     @abstractmethod
     def _compute(self, prediction: str, reference: str) -> float:

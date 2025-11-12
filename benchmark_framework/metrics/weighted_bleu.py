@@ -80,7 +80,7 @@ class WeightedBleuMetric(BaseMetric):
                 numerator += min(count, ref_counts.get(ngram, 0)) * weight
                 denominator += count * weight
 
-            precision = self.epsylon  # >0
+            precision = self.eps  # >0
             if numerator > 0.0 and denominator > 0.0:
                 precision += numerator / denominator
 
