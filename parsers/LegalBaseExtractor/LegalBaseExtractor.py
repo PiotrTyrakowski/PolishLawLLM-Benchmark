@@ -191,3 +191,33 @@ class LegalBaseExtractor:
         return ValueError(
             f"Paragraph {paragraph_number} not found in article {article_number}"
         )
+
+    def get_point(
+        self,
+        article_number: str,
+        point_number: str,
+        paragraph_number: Optional[str] = None,
+    ) -> Optional[str]:
+        text = (
+            self.get_paragraph(article_number, paragraph_number)
+            if paragraph_number is not None
+            else self.get_article(article_number)
+        )
+        if text is None:
+            return ValueError(
+                f"Article {article_number} or paragraph {paragraph_number} not found"
+            )
+
+        # Pattern to match point definitions
+        # Points are formatted as: "X)" where X is a number optionally followed by letters
+        # Example: "1) text" or "1a) text"
+        # Captures everything until the next point or end of text
+        point_pattern = rf"(?:^|\s){point_number}\)\s+(.+?)(?=(?:^|\s)\d+[a-z]*\)|\Z)"
+        match = re.search(point_pattern, text, re.MULTILINE | re.DOTALL)
+        if match:
+            point_content = match.group(1)
+            return self._format_extracted_text(point_content)
+
+        return ValueError(
+            f"Point {point_number} not found in article {article_number} and paragraph {paragraph_number}"
+        )
