@@ -18,7 +18,8 @@ class BaseMetric(ABC):
         normalized_prediction = self._normalize_text(prediction)
         normalized_reference = self._normalize_text(reference)
         score = float(self._compute(normalized_prediction, normalized_reference))
-        return max(0.0, min(1.0, score))
+        assert 0 <= score <= 1
+        return score
 
     def score_batch(
         self, predictions: Sequence[str], references: Sequence[str]
