@@ -16,18 +16,17 @@ app = typer.Typer()
 
 @app.command()
 def parse(
+    pdfs_path: str = typer.Argument(..., help="Path to the pdfs directory"),
     stats: bool = typer.Option(False, "--stats", help="Generate statistics"),
     validate: bool = typer.Option(True, "--validate", help="Validate parsed data"),
 ):
     """
-    Parse Polish law exam PDFs from the 'pdfs' directory and create unified JSONL files.
+    Parse Polish law exam PDFs from the specified directory and create unified JSONL files.
     """
-    pdf_dir = "pdfs"
+    pdf_dir = pdfs_path
     if not os.path.exists(pdf_dir):
-        if not os.path.exists(f"../{pdf_dir}"):
-            typer.echo(f"Error: '{pdf_dir}' directory not found")
-            raise typer.Exit(code=1)
-        pdf_dir = f"../{pdf_dir}"
+        typer.echo(f"Error: '{pdf_dir}' directory not found")
+        raise typer.Exit(code=1)
 
     all_files = [f for f in os.listdir(pdf_dir) if f.endswith(".pdf")]
 
