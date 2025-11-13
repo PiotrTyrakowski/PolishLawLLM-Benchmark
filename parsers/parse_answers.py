@@ -4,12 +4,16 @@ from datetime import datetime
 
 import pdfplumber
 
-# Primary pattern for table format: question_number | correct_answer | legal_basis
-# Handles the structured table format shown in the image
+# Primary pattern for table format where legal basis appears BEFORE question number
+# The PDF structure is:
+# art. 6 § 2 k.k.
+# 1. A
+# art. 9 § 2 k.k.
+# 2. C
 # Legal basis format: art. NUMBER [§ NUMBER] ABBREVIATION
 # Examples: art. 17 § 1 k.s.h. | art. 272 k.s.h. | art. 505 § 1 k.p.c.
 ANSWERS_REGEXP = re.compile(
-    r"(\d+)\.\s+([A-C])\s+(art\.\s+\d+(?:\s+§\s+\d+)?\s+(?:[a-z]\.)+)",
+    r"(art\.\s+\d+[a-z]*(?:\s+§\s+\d+[a-z]*)?\s+[a-z\.]+)\s*\n\s*(\d+)\.\s+([A-C])",
     re.IGNORECASE | re.MULTILINE,
 )
 
@@ -44,12 +48,12 @@ def parse_answers(file_path: str, validate: bool = True) -> dict:
 
     for match in matches:
         try:
-            question_number = int(match.group(1))
+            question_number = int(match.group(2))
         except ValueError:
             continue
 
-        correct_answer = match.group(2).strip()
-        legal_basis = re.sub(r"\s+", " ", match.group(3).strip())
+        legal_basis = re.sub(r"\s+", " ", match.group(1).strip())
+        correct_answer = match.group(3).strip()
 
         answer = {
             "question_number": question_number,
