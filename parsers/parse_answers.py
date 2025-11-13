@@ -4,16 +4,27 @@ from datetime import datetime
 
 import pdfplumber
 
-# Primary pattern for table format where legal basis appears BEFORE question number
-# The PDF structure is:
-# art. 6 § 2 k.k.
-# 1. A
-# art. 9 § 2 k.k.
-# 2. C
-# Legal basis format: art. NUMBER [§ NUMBER] ABBREVIATION
-# Examples: art. 17 § 1 k.s.h. | art. 272 k.s.h. | art. 505 § 1 k.p.c.
+ARTICLE_PREFIX = r"art\."  # "art."
+ARTICLE_NUMBER = r"\d+[a-z]*"  # article number (e.g., "6", "6a")
+OPTIONAL_POINT = r"(?:\s+pkt\s+\d+[a-z]*)?"  # optional point (e.g., "pkt 1")
+OPTIONAL_SECTION = r"(?:\s+§\s+\d+[a-z]*)?"  # optional paragraph (e.g., "§ 2")
+CODE_ABBREVIATION = r"(?:[a-z\.]+|k\.r\.\s+i\s+o\.|k\.\s+r\.\s+i\s+o\.)"  # code abbreviation (e.g., "k.k.", "k.r. i o.")
+
+# Full legal basis pattern
+LEGAL_BASIS = rf"({ARTICLE_PREFIX}\s+{ARTICLE_NUMBER}{OPTIONAL_POINT}{OPTIONAL_SECTION}{OPTIONAL_POINT}\s+{CODE_ABBREVIATION})"
+
+# Separator between legal basis and question number
+SEPARATOR = r"\s*\n\s*"
+
+# Question number
+QUESTION_NUMBER = r"(\d+)\."
+
+# Answer letter
+ANSWER_LETTER = r"([A-C])"
+
+# Complete pattern
 ANSWERS_REGEXP = re.compile(
-    r"(art\.\s+\d+[a-z]*(?:\s+§\s+\d+[a-z]*)?\s+[a-z\.]+)\s*\n\s*(\d+)\.\s+([A-C])",
+    rf"{LEGAL_BASIS}{SEPARATOR}{QUESTION_NUMBER}\s+{ANSWER_LETTER}",
     re.IGNORECASE | re.MULTILINE,
 )
 
