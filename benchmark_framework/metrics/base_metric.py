@@ -10,7 +10,6 @@ class BaseMetric(ABC):
 
     def __init__(self, name: str):
         self.name = name
-        self.eps = 0.0001
 
     def __call__(self, prediction: str, reference: str) -> float:
         """Compute a single metric score clipped to the [0.0, 1.0] interval."""
