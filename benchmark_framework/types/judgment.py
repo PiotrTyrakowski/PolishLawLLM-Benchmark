@@ -3,7 +3,7 @@ from pathlib import Path
 from benchmark_framework.types.task import Task
 from benchmark_framework.constants import ENCODING
 
-
+# TODO: align with future implementaion of judgments with metrics
 class Judgment(Task):
     """
     Represents a legal judgment with masked legal references.
@@ -35,29 +35,6 @@ class Judgment(Task):
         """
         return self.masked_text
 
-
+# TODO
 def load_judgments(jsonl_path: Path) -> list[Judgment]:
-    """
-    Load judgments from a JSONL file.
-
-    Expected format per line:
-    {
-        "id": "...",
-        "masked_text": "...",
-        "expected_article": "art. 1 k.c.",
-        "expected_content": "Art. 1. § 1. Kodeks niniejszy..."
-    }
-    """
-    judgments = []
-    with open(jsonl_path, encoding=ENCODING) as f:
-        for line in f:
-            obj = json.loads(line)
-            judgments.append(
-                Judgment(
-                    obj["id"],
-                    obj["masked_text"],
-                    obj["expected_article"],
-                    obj["expected_content"],
-                )
-            )
-    return judgments
+    

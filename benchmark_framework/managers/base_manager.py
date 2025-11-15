@@ -32,7 +32,7 @@ class BaseManager(ABC):
     ):
         super().__init__()
         self.model = model
-        self.metric = metric
+        self.metrics = metrics
         self.tasks = initialize_tasks(manager_type.lower(), tasks_path)
         self.results = []
         self.system_prompt = SYSTEM_PROMPTS[manager_type.upper()]
@@ -43,18 +43,15 @@ class BaseManager(ABC):
         self.base_dir = RESULTS_PATH / manager_type
         self.base_dir.mkdir(parents=True, exist_ok=True)
 
-    def get_model(self) -> BaseModel:
-        return self.model
+    # TODO: implement method for extracting answer from model response
+    def extract_answer_from_response(self, model_response: str) -> str:
+        """
+        Extract answer from model response.
+        """
+        pass
 
-    def get_metric(self) -> BaseMetric:
-        return self.metric
 
-    def get_tasks(self) -> list[Task]:
-        return self.tasks
-
-    def get_system_prompt(self) -> str:
-        return system_prompt
-
+    @abstractmethod
     def get_result(self, task: Task, model_response: str) -> dict:
         """
         Generate a result dictionary for a completed task.

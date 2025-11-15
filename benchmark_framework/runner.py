@@ -11,15 +11,15 @@ def rate_limit_wait(requests_per_minute):
 class BenchmarkRunner:
     def __init__(self, manager: BaseManager):
         self.manager = manager
-        self.model = manager.get_model()
-        self.system_prompt = manager.get_system_prompt()
+        self.model = manager.model
+        self.system_prompt = manager.system_prompt
         self.output_file = f"{self.model.model_name}.jsonl"
 
     def _run_iterative(self):
         runner_config = self.model.get_default_runner_config()
 
         total_processed = 0
-        tasks = self.manager.get_tasks()
+        tasks = self.manager.tasks
         task_slice = tasks[runner_config.start_index :]
 
         with tqdm(total=len(task_slice), desc="Processing tasks", unit="task") as pbar:

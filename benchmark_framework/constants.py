@@ -27,9 +27,8 @@ SYSTEM_PROMPTS: Final[Dict[str, str]] = {
     "JUDGMENTS": (
         "ROLA: Jesteś ekspertem prawnym i analitykiem procesów sądowych, "
         "pracującym z dokumentami, w których celowo usunięto kluczowe odniesienia "
-        "do prawa materialnego. \n"
+        "do prawa. \n"
         "ZADANIE: Na podstawie zamaskowanego tekstu uzasadnienia zidentyfikuj kluczowy artykuł prawny "
-        "oznaczenie aktu normatywnego \n"
         "WYMAGANY FORMAT ODPOWIEDZI: \n"
         "Wskaż tylko numer artykułu i oznaczenie aktu normatywnego "
         "(bez paragrafu i bez jednostki redakcyjnej, np. 'art. 1 k.c.') oraz odtwórz dokładne brzmienie "
