@@ -50,8 +50,7 @@ class WeightedBleuMetric(BaseMetric):
         idf_lookup = {
             token: math.log((total_docs + 1) / (freq + 1)) + 1 for token, freq in document_frequency.items()
         }
-        default_idf = math.log(total_docs + 1) + 1
-        return WeightedBleuResources(idf_lookup=idf_lookup, default_idf=default_idf)
+        return WeightedBleuResources(idf_lookup=idf_lookup)
 
     def _compute(self, prediction: str, reference: str) -> float:
         cand_tokens = prediction.lower().split()
