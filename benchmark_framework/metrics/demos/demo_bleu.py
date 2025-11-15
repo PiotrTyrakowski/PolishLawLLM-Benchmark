@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from bleu import BleuMetric
+from weighted_bleu import WeightedBleuMetric
 
 
 REFERENCE = (
@@ -34,7 +34,7 @@ CASES = [
 
 
 def main() -> None:
-    metric = BleuMetric([0.7, 0.3])
+    metric = WeightedBleuMetric([0.7, 0.3])
     print("BLEU demo\n=========")
     for case in CASES:
         score = metric(case["prediction"], REFERENCE)

@@ -76,7 +76,7 @@ class WeightedBleuMetric(BaseMetric):
                 overlap = sum(
                     min(count, ref_counts.get(ngram, 0)) for ngram, count in cand_counts.items()
                 )
-                precision = overlap / sum(cand_counts.values()) + self.eps  # >0
+                precision = overlap / sum(cand_counts.values())
             else:
                 # Weighted BLEU calculation (with IDF weights)
                 token_weights = self._token_weights(ref_tokens)
@@ -87,11 +87,10 @@ class WeightedBleuMetric(BaseMetric):
                     numerator += min(count, ref_counts.get(ngram, 0)) * weight
                     denominator += count * weight
 
-                precision = self.eps  # >0
-                if numerator > 0.0 and denominator > 0.0:
-                    precision += numerator / denominator
+                precision += numerator / denominator
 
-            log_precision_sum += importance * math.log(precision)
+            if precision > 0:
+                log_precision_sum += importance * math.log(precision)
 
         return float(bp * math.exp(log_precision_sum))
 
