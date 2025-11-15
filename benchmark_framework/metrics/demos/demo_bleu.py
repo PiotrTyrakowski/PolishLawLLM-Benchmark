@@ -20,7 +20,7 @@ CASES = [
     },
     {
         "name": "parafraza z ważnymi tokenami",
-        "prediction": "Art. 415 kodeksu cywilnego stanowi, że kto z własnej winy spowodował szkodę, zobowiązany jest ją naprawić."
+        "prediction": "Art. 415 kodeksu cywilnego stanowi, że kto z własnej winy spowodował szkodę, zobowiązany jest ją naprawić.",
     },
     {
         "name": "część zdania",

@@ -1,5 +1,6 @@
 from base_metric import BaseMetric
 
+
 class ExactMatchMetric(BaseMetric):
     """Binary metric for comparing discrete labels (e.g., answers A/B/C/D)."""
 

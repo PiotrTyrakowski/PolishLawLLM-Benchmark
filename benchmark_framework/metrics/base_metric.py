@@ -38,5 +38,3 @@ class BaseMetric(ABC):
     @abstractmethod
     def _compute(self, prediction: str, reference: str) -> float:
         """Return the raw metric value before clipping to [0.0, 1.0]."""
-
-   
