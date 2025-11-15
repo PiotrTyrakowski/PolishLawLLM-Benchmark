@@ -1,11 +1,13 @@
 from pathlib import Path
 from benchmark_framework.models.base_model import BaseModel
 from benchmark_framework.managers.exam_manager import ExamManager
+from benchmark_framework.managers.judgment_manager import JudgmentManager
 from benchmark_framework.managers.base_manager import BaseManager
 from benchmark_framework.constants import DATA_PATH
 
 MANAGER_REGISTRY = {
     "exams": ExamManager,
+    "judgments": JudgmentManager
 }
 
 
