@@ -6,6 +6,7 @@ from pathlib import Path
 from benchmark_framework.types.task import Task
 from benchmark_framework.utils import initialize_tasks
 from benchmark_framework.models.base_model import BaseModel
+from benchmark_framework.metrics.base_metric import BaseMetric
 from benchmark_framework.constants import (
     ENCODING,
     RESULTS_PATH,
@@ -13,7 +14,7 @@ from benchmark_framework.constants import (
     SYSTEM_PROMPTS,
 )
 
-
+# TODO: implement with metrics
 class BaseManager(ABC):
     """
     Abstract base class for benchmark managers.
