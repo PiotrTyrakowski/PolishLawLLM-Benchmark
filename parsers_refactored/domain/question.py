@@ -16,9 +16,11 @@ class Question:
         return {
             "id": self.id,
             "question": self.text,
-            "A": self.option_a,
-            "B": self.option_b,
-            "C": self.option_c,
+            "choices": {
+                "A": self.option_a,
+                "B": self.option_b,
+                "C": self.option_c,
+            },
         }
 
     @classmethod
@@ -26,7 +28,7 @@ class Question:
         return cls(
             id=data["id"],
             text=data["question"],
-            option_a=data["A"],
-            option_b=data["B"],
-            option_c=data["C"],
+            option_a=data["choices"]["A"],
+            option_b=data["choices"]["B"],
+            option_c=data["choices"]["C"],
         )
