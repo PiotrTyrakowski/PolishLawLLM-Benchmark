@@ -4,14 +4,14 @@ from datetime import datetime
 
 import pdfplumber
 
-ARTICLE_PREFIX = r"art\."  # "art."
-ARTICLE_NUMBER = r"\d+[a-z]*"  # article number (e.g., "6", "6a")
-OPTIONAL_POINT = r"(?:\s+pkt\s+\d+[a-z]*)?"  # optional point (e.g., "pkt 1")
-OPTIONAL_SECTION = r"(?:\s+§\s+\d+[a-z]*)?"  # optional paragraph (e.g., "§ 2")
-CODE_ABBREVIATION = r"(?:[a-z\.]+|k\.r\.\s+i\s+o\.|k\.\s+r\.\s+i\s+o\.)"  # code abbreviation (e.g., "k.k.", "k.r. i o.")
+ARTICLE_PREFIX = r"art\."
+ENTITY_ID = r"\d+[a-z]*"
+POINT_PATTERN = rf"pkt\s+{ENTITY_ID}"
+PARAGRAPH_PATTERN = rf"§\s+{ENTITY_ID}"
+CODE_ABBREVIATION = r"(?:[a-z\.]+|k\.r\.\s+i\s+o\.|k\.\s+r\.\s+i\s+o\.)"
 
-# Full legal basis pattern
-LEGAL_BASIS = rf"({ARTICLE_PREFIX}\s+{ARTICLE_NUMBER}{OPTIONAL_POINT}{OPTIONAL_SECTION}{OPTIONAL_POINT}\s+{CODE_ABBREVIATION})"
+# Full legal basis pattern (only one capture group for the entire legal basis)
+LEGAL_BASIS = rf"({ARTICLE_PREFIX}\s+{ENTITY_ID}(?:\s+{POINT_PATTERN})?(?:\s+{PARAGRAPH_PATTERN})?(?:\s+{POINT_PATTERN})?\s+{CODE_ABBREVIATION})"
 
 # Separator between legal basis and question number
 SEPARATOR = r"\s*\n\s*"
@@ -32,17 +32,8 @@ ANSWERS_REGEXP = re.compile(
 def parse_answers(file_path: str, validate: bool = True) -> dict:
     """
     Parses a PDF file with answers in table format and returns a dictionary.
-    Expects exactly 150 answers in a structured table format.
-
-    Args:
-        file_path: The path to the PDF file.
-        validate: Whether to validate parsed answers.
-
-    Returns:
-        A dictionary with answers and metadata.
+    Returns dictionary with answers and metadata.
     """
-    print(f"Parsing answers from: {file_path}")
-
     # TODO: Add processing of upper index numbers
     with pdfplumber.open(file_path) as pdf:
         full_text = ""
