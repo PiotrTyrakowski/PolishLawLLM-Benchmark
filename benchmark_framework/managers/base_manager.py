@@ -6,15 +6,9 @@ from pathlib import Path
 from benchmark_framework.types.task import Task
 from benchmark_framework.utils import initialize_tasks
 from benchmark_framework.models.base_model import BaseModel
-from benchmark_framework.metrics.base_metric import BaseMetric
-from benchmark_framework.constants import (
-    ENCODING,
-    RESULTS_PATH,
-    DATA_PATH,
-    SYSTEM_PROMPTS,
-)
+from benchmark_framework.constants import ENCODING, RESULTS_PATH, DATA_PATH
 
-# TODO: implement with metrics
+
 class BaseManager(ABC):
     """
     Abstract base class for benchmark managers.
@@ -24,36 +18,18 @@ class BaseManager(ABC):
     """
 
     def __init__(
-        self,
-        model: BaseModel,
-        manager_type: str,
-        metric: BaseMetric,
-        tasks_path: Path = DATA_PATH,
+        self, model: BaseModel, dataset_name: str, tasks_path: Path = DATA_PATH
     ):
         super().__init__()
         self.model = model
-        self.metric = metric
-        self.tasks = initialize_tasks(manager_type.lower(), tasks_path)
+        self.tasks = initialize_tasks(dataset_name, tasks_path)
         self.results = []
-        self.system_prompt = SYSTEM_PROMPTS[manager_type.upper()]
 
-        assert system_prompt is not None
-        assert tasks is not None
-
-        self.base_dir = RESULTS_PATH / manager_type
+        self.base_dir = RESULTS_PATH / dataset_name
         self.base_dir.mkdir(parents=True, exist_ok=True)
-
-    def get_model(self) -> BaseModel:
-        return self.model
-
-    def get_metric(self) -> BaseMetric:
-        return self.metric
 
     def get_tasks(self) -> list[Task]:
         return self.tasks
-
-    def get_system_prompt(self) -> str:
-        return system_prompt
 
     def get_result(self, task: Task, model_response: str) -> dict:
         """
