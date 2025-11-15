@@ -4,27 +4,12 @@ from datetime import datetime
 
 import pdfplumber
 
-ARTICLE_PREFIX = r"art\."
-ENTITY_ID = r"\d+[a-z]*"
-POINT_PATTERN = rf"pkt\s+{ENTITY_ID}"
-PARAGRAPH_PATTERN = rf"§\s+{ENTITY_ID}"
-CODE_ABBREVIATION = r"(?:[a-z\.]+|k\.r\.\s+i\s+o\.|k\.\s+r\.\s+i\s+o\.)"
-
-# Full legal basis pattern (only one capture group for the entire legal basis)
-LEGAL_BASIS = rf"({ARTICLE_PREFIX}\s+{ENTITY_ID}(?:\s+{POINT_PATTERN})?(?:\s+{PARAGRAPH_PATTERN})?(?:\s+{POINT_PATTERN})?\s+{CODE_ABBREVIATION})"
-
-# Separator between legal basis and question number
-SEPARATOR = r"\s*\n\s*"
-
-# Question number
-QUESTION_NUMBER = r"(\d+)\."
-
-# Answer letter
-ANSWER_LETTER = r"([A-C])"
-
-# Complete pattern
+# Primary pattern for table format: question_number | correct_answer | legal_basis
+# Handles the structured table format shown in the image
+# Legal basis format: art. NUMBER [§ NUMBER] ABBREVIATION
+# Examples: art. 17 § 1 k.s.h. | art. 272 k.s.h. | art. 505 § 1 k.p.c.
 ANSWERS_REGEXP = re.compile(
-    rf"{LEGAL_BASIS}{SEPARATOR}{QUESTION_NUMBER}\s+{ANSWER_LETTER}",
+    r"(\d+)\.\s+([A-C])\s+(art\.\s+\d+(?:\s+§\s+\d+)?\s+(?:[a-z]\.)+)",
     re.IGNORECASE | re.MULTILINE,
 )
 
@@ -32,8 +17,17 @@ ANSWERS_REGEXP = re.compile(
 def parse_answers(file_path: str, validate: bool = True) -> dict:
     """
     Parses a PDF file with answers in table format and returns a dictionary.
-    Returns dictionary with answers and metadata.
+    Expects exactly 150 answers in a structured table format.
+
+    Args:
+        file_path: The path to the PDF file.
+        validate: Whether to validate parsed answers.
+
+    Returns:
+        A dictionary with answers and metadata.
     """
+    print(f"Parsing answers from: {file_path}")
+
     # TODO: Add processing of upper index numbers
     with pdfplumber.open(file_path) as pdf:
         full_text = ""
@@ -50,12 +44,12 @@ def parse_answers(file_path: str, validate: bool = True) -> dict:
 
     for match in matches:
         try:
-            question_number = int(match.group(2))
+            question_number = int(match.group(1))
         except ValueError:
             continue
 
-        legal_basis = re.sub(r"\s+", " ", match.group(1).strip())
-        correct_answer = match.group(3).strip()
+        correct_answer = match.group(2).strip()
+        legal_basis = re.sub(r"\s+", " ", match.group(3).strip())
 
         answer = {
             "question_number": question_number,

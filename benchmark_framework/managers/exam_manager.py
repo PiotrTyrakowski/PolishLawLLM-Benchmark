@@ -6,6 +6,7 @@ from typing import List
 
 from benchmark_framework.models.base_model import BaseModel
 from benchmark_framework.types.exam import Exam
+from benchmark_framework.utils import extract_answer_from_response
 from benchmark_framework.managers.base_manager import BaseManager
 from benchmark_framework.constants import DATA_PATH
 from benchmark_framework.metrics.base_metric import BaseMetric

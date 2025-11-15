@@ -46,6 +46,14 @@ class JudgmentManager(BaseManager):
         self.results.append(result)
         return result
 
+    def _extract_answer_from_response(self, response_text: str) -> str:
+        """
+        Extract answer from model response (required by base class).
+        Returns a string representation of the extracted answer.
+        """
+        extracted = self._extract_judgment_answer(response_text)
+        return json.dumps(extracted, ensure_ascii=False)
+
     def _extract_judgment_answer(self, response_text: str) -> dict:
         """
         Extract answer from model response in JSON format: {art: '...', content: '...'}
