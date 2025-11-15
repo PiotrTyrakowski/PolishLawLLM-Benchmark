@@ -13,18 +13,16 @@ This parser processes Polish bar exam PDFs (questions and answers) and creates u
 
 ### 1. Create the PDFs Directory
 
-Create a directory for your exam PDFs (e.g., `pdfs/` or `pdfs/2024/`). This directory should contain:
-- Exam PDF files (questions and answers)
-- A `legal_base/` subdirectory with legal reference documents
+First, create a `pdfs/` directory in the repository root:
 
 ```bash
 cd /path/to/PolishLawLLM-Benchmark
-mkdir -p pdfs/legal_base
+mkdir pdfs
 ```
 
 ### 2. PDF File Naming Conventions
 
-Place your exam PDFs in your chosen directory following these naming requirements:
+Place your exam PDFs in the `pdfs/` directory following these naming requirements:
 
 #### Questions File
 - **Must start with**: `Zestaw_pytań`
@@ -46,11 +44,6 @@ Place your exam PDFs in your chosen directory following these naming requirement
 ```
 PolishLawLLM-Benchmark/
 ├── pdfs/
-│   ├── legal_base/          # Required subdirectory for legal reference documents
-│   │   ├── kc.pdf           # Civil Code
-│   │   ├── kk.pdf           # Criminal Code
-│   │   ├── kpc.pdf          # Civil Procedure Code
-│   │   └── ...              # Other legal references
 │   ├── Zestaw_pytań_2024_adwokacki.pdf
 │   ├── Wykaz_prawidłowych_odpowiedzi_2024_adwokacki.pdf
 │   ├── Zestaw_pytań_2024_notarialny.pdf
@@ -64,40 +57,34 @@ PolishLawLLM-Benchmark/
 
 ### Basic Command
 
-Run the parser from the repository root, providing the path to your PDFs directory:
+Run the parser from the repository root:
 
 ```bash
-python -m parsers.cli parse pdfs/
+python -m parsers.cli
 ```
 
-### Command Arguments & Options
+### Command Options
 
-| Argument/Option | Type | Description | Default |
-|----------------|------|-------------|---------|
-| `pdfs_path` | Argument (required) | Path to the directory containing exam PDFs and legal_base/ folder | - |
-| `--stats` | Option | Generate detailed statistics about parsed data | `False` |
-| `--no-validate` | Option | Disable validation of parsed questions/answers | `True` (validation enabled) |
+| Option | Flag | Description | Default |
+|--------|------|-------------|---------|
+| Statistics | `--stats` | Generate detailed statistics about parsed data | `False` |
+| Validation | `--no-validate` | Disable validation of parsed questions/answers | `True` (validation enabled) |
 
 ### Examples
 
-**Basic parsing:**
-```bash
-python -m parsers.cli pdfs/
-```
-
 **Parse with statistics:**
 ```bash
-python -m parsers.cli pdfs/ --stats
+python -m parsers.cli --stats
 ```
 
 **Parse without validation (not recommended):**
 ```bash
-python -m parsers.cli pdfs/ --no-validate
+python -m parsers.cli --no-validate
 ```
 
 **Parse with both options:**
 ```bash
-python -m parsers.cli pdfs/ --stats --no-validate
+python -m parsers.cli --stats --no-validate
 ```
 
 ## 📤 Output Structure
@@ -201,8 +188,6 @@ If the parser finds a different number, it will display a warning but still proc
 The parser provides real-time feedback:
 
 ```
-$ python -m parsers.cli pdfs/
-
 Processing exam: Year - 2024, Type - adwokacki_radcowy
 Parsing questions from: pdfs/Zestaw_pytań_2024_adwokacki.pdf
   Processing page 2/42...

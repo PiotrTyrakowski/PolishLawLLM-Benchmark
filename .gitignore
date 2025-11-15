@@ -19,21 +19,9 @@ __pycache__/
 .claude/
 changes.txt
 
-# results
-results/exams/*
-results/judgments/*
-
-# data
-data/exams/*
-data/judgments/*
+results/exams/
+data
 data.zip
-
-# helpers
-metryki_pomoc
-data/check_questions.py
-
-# weighted bleu resources file
-kk_extracted.txt
 
 # package
 *.egg-info/

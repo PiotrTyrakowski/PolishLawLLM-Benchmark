@@ -1,10 +1,8 @@
 from benchmark_framework.types.exam import Exam
-from benchmark_framework.types.judgment import Judgment
 from benchmark_framework.types.task import Task
 
 TYPE_REGISTRY = {
     "exams": Exam,
-    "judgments": Judgment,
 }
 
 

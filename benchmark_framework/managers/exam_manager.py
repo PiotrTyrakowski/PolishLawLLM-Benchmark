@@ -4,6 +4,7 @@ from dataclasses import asdict
 
 from benchmark_framework.models.base_model import BaseModel
 from benchmark_framework.types.exam import Exam
+from benchmark_framework.utils import extract_answer_from_response
 from benchmark_framework.managers.base_manager import BaseManager
 from benchmark_framework.constants import DATA_PATH
 
@@ -13,10 +14,8 @@ class ExamManager(BaseManager):
     Manager for handling legal exam benchmark evaluations.
     """
 
-    def __init__(
-        self, model: BaseModel, metric: BaseMetric, tasks_path: Path = DATA_PATH
-    ):
-        super().__init__(model, "exams", metric, tasks_path)
+    def __init__(self, model: BaseModel, tasks_path: Path = DATA_PATH):
+        super().__init__(model, "exams", tasks_path)
 
     def get_tasks(self) -> list[Exam]:
         return self.tasks
@@ -41,24 +40,3 @@ class ExamManager(BaseManager):
 
         self.results.append(result)
         return result
-
-
-def extract_answer_from_response(response_text: str) -> str:
-    """
-    Extract answer from model response that ends with "ANSWER: X" format.
-    Returns:
-        Single letter answer (A, B, or C) or original text if parsing fails
-    """
-    response_text = response_text.strip()
-
-    match = re.search(r"ANSWER:\s*([ABC])", response_text, re.IGNORECASE)
-    if match:
-        return match.group(1).upper()
-
-    # Fallback: look for single letter at the end
-    for letter in ["A", "B", "C"]:
-        if letter in response_text[-5:]:
-            return letter
-
-    # Return full response if parsing fails
-    return response_text
