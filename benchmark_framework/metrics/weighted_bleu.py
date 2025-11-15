@@ -87,7 +87,7 @@ class WeightedBleuMetric(BaseMetric):
                     numerator += min(count, ref_counts.get(ngram, 0)) * weight
                     denominator += count * weight
 
-                precision += numerator / denominator
+                precision = numerator / denominator
 
             if precision > 0:
                 log_precision_sum += importance * math.log(precision)
@@ -97,9 +97,15 @@ class WeightedBleuMetric(BaseMetric):
     def _token_weights(self, tokens: Sequence[str]) -> dict[str, float]:
         if self.resources is None:
             raise ValueError("_token_weights called but resources is None")
+        dict = {}
         lookup = self.resources.idf_lookup
-        default = self.resources.default_idf
-        return {token.lower(): lookup.get(token.lower(), default) for token in tokens}
+        for token in tokens:
+            lookup_value = lookup.get(token.lower())
+            if lookup_value is None:
+                raise ValueError(f"Token '{token}' not found in resources IDF lookup")
+            dict[token.lower()] = lookup_value
+        
+        return dict
 
     @staticmethod
     def _weight_ngram(ngram: tuple[str, ...], token_weights: dict[str, float]) -> float:

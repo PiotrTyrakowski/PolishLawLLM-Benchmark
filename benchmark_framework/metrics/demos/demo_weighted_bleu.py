@@ -10,8 +10,11 @@ from weighted_bleu import WeightedBleuMetric
 REFERENCE_FILE = Path(__file__).parent.parent / "kk_extracted.txt"
 
 REFERENCE = (
-    "Zgodnie z art. 415 kodeksu cywilnego kto z winy swej wyrządził drugiemu szkodę,"
-    " obowiązany jest do jej naprawienia."
+    "Art. 53. § 1. Sąd wymierza karę według swojego uznania, w granicach "
+    "przewidzianych w ustawie, uwzględniając stopień społecznej szkodliwości czynu, "
+    "okoliczności obciążające i okoliczności łagodzące, cele kary w zakresie społecznego "
+    "oddziaływania, a także cele zapobiegawcze, które ma ona osiągnąć w stosunku do "
+    "skazanego. Dolegliwość kary nie może przekraczać stopnia winy."
 )
 
 CASES = [
@@ -19,13 +22,58 @@ CASES = [
     {
         "name": "parafraza z ważnymi tokenami",
         "prediction": (
-            "Art. 415 kodeksu cywilnego stanowi, że kto z własnej winy spowodował szkodę,"
-            " zobowiązany jest ją naprawić."
+            "Zgodnie z art. 53 § 1 kk, sąd wymierza karę w granicach ustawy, kierując się swoim "
+            "uznaniem i uwzględniając społeczną szkodliwość, cele zapobiegawcze i wychowawcze "
+            "kary oraz stopień winy."
         ),
     },
     {
         "name": "krótkie streszczenie",
-        "prediction": "Sprawca szkody odpowiada za jej naprawienie",
+        "prediction": "Sąd wymierza karę wedle uznania, biorąc pod uwagę szkodliwość czynu, cele kary i winę sprawcy.",
+    },
+    {
+        "name": "inne sformułowanie, to samo znaczenie",
+        "prediction": (
+            "Organ sądowy, w ramach ustawowych, swobodnie decyduje o karze, rozważając społeczną "
+            "szkodliwość, cele prewencyjne i represyjne, przy czym kara nie może być surowsza niż wina."
+        ),
+    },
+    {
+        "name": "częściowa zgodność",
+        "prediction": "Dolegliwość kary nie może przekraczać stopnia winy.",
+    },
+    {
+        "name": "słowa kluczowe, zły kontekst",
+        "prediction": "Wina sądu jest oczywista, kara za społeczną szkodliwość czynu musi być dotkliwa.",
+    },
+    {
+        "name": "lekko błędna informacja",
+        "prediction": (
+            "Sąd wymierza karę według swojego uznania, ale dolegliwość kary może przekraczać "
+            "stopień winy w wyjątkowych okolicznościach."
+        ),
+    },
+    {
+        "name": "bardzo abstrakcyjne streszczenie",
+        "prediction": "Wymiar sprawiedliwości polega na dostosowaniu kary do czynu i sprawcy.",
+    },
+    {
+        "name": "całkowicie niepowiązane",
+        "prediction": (
+            "Zgodnie z art. 415 kodeksu cywilnego kto z winy swej wyrządził drugiemu szkodę, "
+            "obowiązany jest do jej naprawienia."
+        ),
+    },
+    {
+        "name": "dłuższa parafraza z dodatkami",
+        "prediction": (
+            "Artykuł 53, paragraf 1 kodeksu karnego stanowi, że sąd ma swobodę w wymierzaniu "
+            "kary, ale musi działać w granicach prawa. Przy wymiarze kary sąd bierze pod "
+            "uwagę wiele czynników, takich jak społeczna szkodliwość, cele prewencyjne i "
+            "wychowawcze wobec skazanego, a także okoliczności łagodzące i obciążające. "
+            "Co najważniejsze, kara nigdy nie może być bardziej dotkliwa niż stopień "
+            "zawinienia sprawcy."
+        ),
     },
 ]
 
