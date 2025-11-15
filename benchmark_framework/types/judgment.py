@@ -36,6 +36,6 @@ class Judgment(Task):
         """
         return self.masked_text
 
-    # TODO
-    def load_judgments(jsonl_path: Path) -> list[Judgment]:
-        pass
+# TODO
+def load_judgments(jsonl_path: Path) -> list[Judgment]:
+    pass
