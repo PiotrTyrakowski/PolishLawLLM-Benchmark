@@ -3,6 +3,7 @@ from pathlib import Path
 from benchmark_framework.types.task import Task
 from benchmark_framework.constants import ENCODING
 
+
 # TODO: align with future implementaion of judgments with metrics
 class Judgment(Task):
     """
@@ -35,6 +36,6 @@ class Judgment(Task):
         """
         return self.masked_text
 
-# TODO
-def load_judgments(jsonl_path: Path) -> list[Judgment]:
-    
+    # TODO
+    def load_judgments(jsonl_path: Path) -> list[Judgment]:
+        pass

@@ -25,8 +25,9 @@ class BaseMetric(ABC):
     ) -> Iterable[float]:
         """Convenience method for scoring aligned batches of texts."""
 
-        if len(predictions) != len(references):
-            raise ValueError("predictions and references must have the same length")
+        assert len(predictions) == len(
+            references
+        ), "predictions and references must have the same length"
         for pred, ref in zip(predictions, references):
             yield self(pred, ref)
 
