@@ -8,5 +8,8 @@ class ExactMatchMetric(BaseMetric):
         super().__init__("exact_match")
 
     def _compute(self, prediction: str, reference: str) -> float:
+        """
+        Returns 1.0 if normalized prediction matches normalized reference, else 0.0
+        """
         normalize = lambda text: "".join(text.split()).upper()
         return 1.0 if normalize(prediction) == normalize(reference) else 0.0
