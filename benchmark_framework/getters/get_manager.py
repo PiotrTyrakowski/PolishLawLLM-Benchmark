@@ -5,10 +5,7 @@ from benchmark_framework.managers.judgment_manager import JudgmentManager
 from benchmark_framework.managers.base_manager import BaseManager
 from benchmark_framework.constants import DATA_PATH
 
-MANAGER_REGISTRY = {
-    "exams": ExamManager,
-    "judgments": JudgmentManager
-}
+MANAGER_REGISTRY = {"exams": ExamManager, "judgments": JudgmentManager}
 
 
 def get_manager(

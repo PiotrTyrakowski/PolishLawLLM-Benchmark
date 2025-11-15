@@ -27,7 +27,9 @@ class BenchmarkRunner:
                 if runner_config.requests_per_minute is not None:
                     rate_limit_wait(runner_config.requests_per_minute)
 
-                resp = self.model.generate_response(self.system_prompt, task.get_prompt())
+                resp = self.model.generate_response(
+                    self.system_prompt, task.get_prompt()
+                )
                 result = self.manager.get_result(task, resp)
                 self.manager.append_to_file(self.output_file, result)
                 total_processed += 1

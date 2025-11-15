@@ -1,4 +1,4 @@
-from base_metric import BaseMetric
+from benchmark_framework.metrics.base_metric import BaseMetric
 
 
 class ExactMatchMetric(BaseMetric):

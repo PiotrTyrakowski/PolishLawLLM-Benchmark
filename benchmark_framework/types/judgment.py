@@ -39,7 +39,7 @@ class Judgment(Task):
 def load_judgments(jsonl_path: Path) -> list[Judgment]:
     """
     Load judgments from a JSONL file.
-    
+
     Expected format per line:
     {
         "id": "...",

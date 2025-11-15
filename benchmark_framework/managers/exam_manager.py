@@ -8,8 +8,6 @@ from benchmark_framework.managers.base_manager import BaseManager
 from benchmark_framework.constants import DATA_PATH
 
 
-
-
 class ExamManager(BaseManager):
     """
     Manager for handling legal exam benchmark evaluations.

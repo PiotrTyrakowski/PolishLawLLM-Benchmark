@@ -6,8 +6,9 @@ import json
 from pathlib import Path
 
 from weighted_bleu import WeightedBleuMetric
+from constants import DATA_PATH
 
-REFERENCE_FILE = Path(__file__).parent.parent / "kk_extracted.txt"
+REFERENCE_FILE = DATA_PATH / "kk_extracted.txt"
 
 REFERENCE = (
     "Art. 53. § 1. Sąd wymierza karę według swojego uznania, w granicach "

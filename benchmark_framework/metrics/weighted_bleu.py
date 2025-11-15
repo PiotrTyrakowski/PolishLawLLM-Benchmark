@@ -3,7 +3,7 @@ from collections import Counter
 from dataclasses import dataclass
 from statistics import fmean
 from typing import Iterable, Sequence
-from base_metric import BaseMetric
+from benchmark_framework.metrics.base_metric import BaseMetric
 
 
 @dataclass

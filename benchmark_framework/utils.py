@@ -28,5 +28,3 @@ def initialize_tasks(dataset_name: str, tasks_dir_path: Path = DATA_PATH) -> lis
     for file in (tasks_dir_path / dataset_name).rglob("*.jsonl"):
         tasks.extend(initialize_tasks_from_jsonl(file, dataset_name))
     return tasks
-
-

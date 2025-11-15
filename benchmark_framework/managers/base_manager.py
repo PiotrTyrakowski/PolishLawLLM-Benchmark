@@ -36,7 +36,7 @@ class BaseManager(ABC):
 
         self.base_dir = RESULTS_PATH / manager_type
         self.base_dir.mkdir(parents=True, exist_ok=True)
-    
+
     def get_model(self) -> BaseModel:
         return self.model
 
