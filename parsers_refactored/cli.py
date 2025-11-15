@@ -29,16 +29,8 @@ def parse(
         typer.echo(f"Error: Directory '{pdfs_path}' not found", err=True)
         raise typer.Exit(code=1)
 
-    legal_base_dir = pdfs_path / "legal_base"
-    if not legal_base_dir.exists():
-        typer.echo(
-            f"Error: Legal base directory '{legal_base_dir}' not found", err=True
-        )
-        raise typer.Exit(code=1)
-
     # Initialize shared services
     repository = JSONLRepository(Path("data/exams"))
-    legal_basis_service = LegalBasisService(legal_base_dir)
 
     # Discover exam files
     exams = ExamFileDiscovery.discover_exams(pdfs_path)
@@ -50,6 +42,14 @@ def parse(
     # Process each exam
     total_processed = 0
     for year, exam_types in exams.items():
+        legal_base_dir = pdfs_path / year / "legal_base"
+        if not legal_base_dir.exists():
+            typer.echo(
+                f"Error: Legal base directory '{legal_base_dir}' not found", err=True
+            )
+            raise typer.Exit(code=1)
+        legal_basis_service = LegalBasisService(legal_base_dir)
+
         for exam_type, files in exam_types.items():
             typer.echo(f"\n{'=' * 60}")
             typer.echo(f"Processing: {exam_type} - {year}")
