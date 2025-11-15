@@ -22,8 +22,7 @@ class PDFAnswerParser(BaseParser[Answer]):
     def parse(self) -> List[Answer]:
         """Extract answers from PDF."""
         text = self.pdf_reader.extract_text(self.file_path, start_page=1)
-        raw_answers = self.extractor.extract(text)
-        return [Answer.from_dict(a) for a in raw_answers]
+        return self.extractor.extract(text)
 
     def validate(self, answer: Answer) -> Tuple[bool, List[str]]:
         """Validate answer completeness."""

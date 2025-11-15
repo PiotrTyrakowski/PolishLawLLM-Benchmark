@@ -27,11 +27,11 @@ class LegalBasisService:
         self, questions: List[Question], answers: List[Answer]
     ) -> List[ExamTask]:
         """Combine questions with answers and legal basis content."""
-        answer_dict = {a.question_number: a for a in answers}
+        answer_dict = {a.question_id: a for a in answers}
         enriched_questions = []
 
         for question in questions:
-            answer = answer_dict.get(question.number)
+            answer = answer_dict.get(question.id)
             if not answer:
                 continue
 
@@ -43,19 +43,19 @@ class LegalBasisService:
                     )
                 )
             except Exception as e:
-                print(f"  Warning: {e} for question {question.number}")
+                print(f"  Warning: {e} for question {question.id}")
                 continue
 
         return enriched_questions
 
     def _extract_legal_content(self, legal_basis: str) -> str:
         """Extract content for a legal basis reference."""
-        components = self.basis_extractor.parse(legal_basis)
+        legal_reference = self.basis_extractor.parse(legal_basis)
 
-        article_num = components["article_number"]
-        paragraph_num = components["paragraph_number"]
-        point_num = components["point_number"]
-        code_abbr = components["code_abbreviation"]
+        article_num = legal_reference.article
+        paragraph_num = legal_reference.paragraph
+        point_num = legal_reference.point
+        code_abbr = legal_reference.code
 
         if not article_num or not code_abbr:
             raise ValueError(f"Invalid legal basis: {legal_basis}")

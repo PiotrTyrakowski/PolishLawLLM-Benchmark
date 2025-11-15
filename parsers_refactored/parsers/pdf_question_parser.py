@@ -21,8 +21,7 @@ class PDFQuestionParser(BaseParser[Question]):
 
     def parse(self) -> List[Question]:
         text = self.pdf_reader.extract_text(self.file_path, start_page=2)
-        raw_questions = self.extractor.extract(text)
-        return [Question.from_dict(q) for q in raw_questions]
+        return self.extractor.extract(text)
 
     def validate(self, question: Question) -> Tuple[bool, List[str]]:
         errors = []

@@ -8,7 +8,6 @@ class LegalReference:
     code: str
     paragraph: Optional[str] = None
     point: Optional[str] = None
-    content: Optional[str] = None
 
     def to_dict(self) -> Dict:
         return {
@@ -16,7 +15,6 @@ class LegalReference:
             "code": self.code,
             "paragraph": self.paragraph,
             "point": self.point,
-            "content": self.content,
         }
 
     @classmethod
@@ -26,7 +24,6 @@ class LegalReference:
             code=data["code"],
             paragraph=data.get("paragraph"),
             point=data.get("point"),
-            content=data.get("content"),
         )
 
     @property

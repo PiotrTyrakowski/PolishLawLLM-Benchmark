@@ -4,13 +4,13 @@ from typing import Dict
 
 @dataclass
 class Answer:
-    question_number: int
+    question_id: int
     correct_answer: str
     legal_basis: str
 
     def to_dict(self) -> Dict:
         return {
-            "question_number": self.question_number,
+            "question_id": self.question_id,
             "correct_answer": self.correct_answer,
             "legal_basis": self.legal_basis,
         }
@@ -18,7 +18,7 @@ class Answer:
     @classmethod
     def from_dict(cls, data: Dict) -> "Answer":
         return cls(
-            question_number=data["question_number"],
+            question_id=data["question_id"],
             correct_answer=data["correct_answer"],
             legal_basis=data["legal_basis"],
         )

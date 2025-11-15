@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from typing import List, Dict
 from parsers_refactored.domain.question import Question
 from parsers_refactored.domain.answer import Answer
-from parsers_refactored.domain.legal_reference import LegalReference
 
 
 @dataclass

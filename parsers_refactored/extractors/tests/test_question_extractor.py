@@ -19,11 +19,11 @@ def test_extract_single_question(extractor):
     questions = extractor.extract(text)
 
     assert len(questions) == 1
-    assert questions[0]["question_number"] == 1
-    assert "aktem prawa" in questions[0]["question"]
-    assert "Zarządzenie" in questions[0]["A"]
-    assert "Ustawa" in questions[0]["B"]
-    assert "Okólnik" in questions[0]["C"]
+    assert questions[0].id == 1
+    assert "aktem prawa" in questions[0].text
+    assert "Zarządzenie" in questions[0].option_a
+    assert "Ustawa" in questions[0].option_b
+    assert "Okólnik" in questions[0].option_c
 
 
 def test_extract_multiple_questions(extractor):
@@ -48,6 +48,6 @@ def test_extract_multiple_questions(extractor):
     questions = extractor.extract(text)
 
     assert len(questions) == 3
-    assert questions[0]["question_number"] == 1
-    assert questions[1]["question_number"] == 2
-    assert questions[2]["question_number"] == 3
+    assert questions[0].id == 1
+    assert questions[1].id == 2
+    assert questions[2].id == 3

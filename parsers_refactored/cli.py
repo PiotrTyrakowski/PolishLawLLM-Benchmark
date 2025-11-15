@@ -84,7 +84,7 @@ def parse(
                 total_processed += 1
 
             except Exception as e:
-                typer.echo(f"  ✗ Error processing exam: {e}", err=True)
+                typer.echo(f"  ✗ Error processing exam: {str(e)}", err=True)
                 continue
 
     # Summary

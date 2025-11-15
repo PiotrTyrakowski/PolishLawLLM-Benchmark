@@ -86,10 +86,10 @@ def test_parse_valid_legal_basis(extractor, legal_basis, expected):
     """Test parsing of valid legal basis strings."""
     result = extractor.parse(legal_basis)
 
-    assert result["article_number"] == expected["article_number"]
-    assert result["paragraph_number"] == expected["paragraph_number"]
-    assert result["point_number"] == expected["point_number"]
-    assert result["code_abbreviation"] == expected["code_abbreviation"]
+    assert result.article == expected["article_number"]
+    assert result.paragraph == expected["paragraph_number"]
+    assert result.point == expected["point_number"]
+    assert result.code == expected["code_abbreviation"]
 
 
 @pytest.mark.parametrize(
@@ -109,7 +109,7 @@ def test_parse_valid_legal_basis(extractor, legal_basis, expected):
 def test_parse_different_code_abbreviations(extractor, legal_basis, expected_code):
     """Test parsing of different Polish legal code abbreviations."""
     result = extractor.parse(legal_basis)
-    assert result["code_abbreviation"] == expected_code
+    assert result.code == expected_code
 
 
 @pytest.mark.parametrize(

@@ -1,5 +1,6 @@
 from typing import List, Dict, Any
 import re
+from parsers_refactored.domain.answer import Answer
 from parsers_refactored.extractors.base_extractor import BaseExtractor
 from parsers_refactored.extractors.regex_patterns import RegexPatterns
 
@@ -7,7 +8,7 @@ from parsers_refactored.extractors.regex_patterns import RegexPatterns
 class AnswerExtractor(BaseExtractor):
     """Extract answers from PDF text."""
 
-    def extract(self, text: str) -> List[Dict[str, Any]]:
+    def extract(self, text: str) -> List[Answer]:
         """Extract answers from text using regex pattern."""
         answers = []
         matches = list(RegexPatterns.answer_pattern().finditer(text))
@@ -22,11 +23,11 @@ class AnswerExtractor(BaseExtractor):
             correct_answer = match.group(3).strip()
 
             answers.append(
-                {
-                    "question_number": question_number,
-                    "correct_answer": correct_answer,
-                    "legal_basis": legal_basis,
-                }
+                Answer(
+                    question_id=question_number,
+                    correct_answer=correct_answer,
+                    legal_basis=legal_basis,
+                )
             )
 
         return answers
