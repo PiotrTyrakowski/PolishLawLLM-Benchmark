@@ -5,7 +5,7 @@ ENCODING: Final[str] = "utf-8"
 MAX_NEW_TOKENS: Final[int] = 256
 
 SYSTEM_PROMPTS: Final[Dict[str, str]] = {
-    "EXAM": (
+    "EXAMS": (
         "Jesteś ekspertem w prawie polskim biorącym udział w egzaminie zawodowym. "
         "Twoim zadaniem jest rozwiązanie pytań testowych z zakresu polskiego prawa. "
         "Każde pytanie ma dokładnie trzy możliwe odpowiedzi: A, B, C. "
@@ -27,7 +27,7 @@ SYSTEM_PROMPTS: Final[Dict[str, str]] = {
     "JUDGMENTS": (
         "ROLA: Jesteś ekspertem prawnym i analitykiem procesów sądowych, "
         "pracującym z dokumentami, w których celowo usunięto kluczowe odniesienia "
-        "do prawa materialnego. "
+        "do prawa materialnego. \n"
         "ZADANIE: Na podstawie zamaskowanego tekstu uzasadnienia zidentyfikuj kluczowy artykuł prawny "
         "oznaczenie aktu normatywnego \n"
         "WYMAGANY FORMAT ODPOWIEDZI: \n"
@@ -36,15 +36,13 @@ SYSTEM_PROMPTS: Final[Dict[str, str]] = {
         "np. Art. 1.§ 1. Kodeks niniejszy reguluje stosunki cywilnoprawne między jednosikami gospodarki uspolecznionej, "
         "miedży osobami fizycznymi oraz między jednostkami gospodarki uspołecznionej a osobami fizycznymi. "
         "§2. Przepisy kodeksu dotyczące jednostek gospodarki uspołecznionej stosuje się także do instytucji państwowych "
-        "organizacji społecznych ludu pracującego, których zadanie
+        "organizacji społecznych ludu pracującego, których zadanie"
         "nie polega na prowadzeniu działalności gospodarczej."
         "§ 3. Jeżeli z przepisów kodeksu lub innych ustaw nie wynika nic innego, przepisy kodeksu dotyczące osób fizycznych"
         "stosuje się odpowiednio do osób prawnych nie bedących jednostkami gospodarki uspołecznionej. \n"
-
         "którego treść została opisana/zakryta w dokumencie. Wynik zwróć w pojedynczym bloku JSON.\n"
         "{art: '...', content: 'treść artykułu' }"
-
-    )
+    ),
 }
 
 DATA_PATH: Final[Path] = Path(__file__).parent.parent / "data"
