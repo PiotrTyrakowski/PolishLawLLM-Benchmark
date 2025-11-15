@@ -6,7 +6,12 @@ from pathlib import Path
 from benchmark_framework.types.task import Task
 from benchmark_framework.utils import initialize_tasks
 from benchmark_framework.models.base_model import BaseModel
-from benchmark_framework.constants import ENCODING, RESULTS_PATH, DATA_PATH, SYSTEM_PROMPTS
+from benchmark_framework.constants import (
+    ENCODING,
+    RESULTS_PATH,
+    DATA_PATH,
+    SYSTEM_PROMPTS,
+)
 
 
 class BaseManager(ABC):
@@ -31,8 +36,9 @@ class BaseManager(ABC):
 
         self.base_dir = RESULTS_PATH / manager_type
         self.base_dir.mkdir(parents=True, exist_ok=True)
-
-        
+    
+    def get_model(self) -> BaseModel:
+        return self.model
 
     def get_tasks(self) -> list[Task]:
         return self.tasks
