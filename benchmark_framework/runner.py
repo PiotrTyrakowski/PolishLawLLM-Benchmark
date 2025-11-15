@@ -10,8 +10,9 @@ def rate_limit_wait(requests_per_minute):
 
 class BenchmarkRunner:
     def __init__(self, manager: BaseManager):
-        self.model = manager.model
         self.manager = manager
+        self.model = manager.get_model()
+        self.system_prompt = manager.get_system_prompt()
         self.output_file = f"{self.model.model_name}.jsonl"
 
     def _run_iterative(self):
@@ -26,7 +27,9 @@ class BenchmarkRunner:
                 if runner_config.requests_per_minute is not None:
                     rate_limit_wait(runner_config.requests_per_minute)
 
-                resp = self.model.generate_response(task.get_prompt())
+                resp = self.model.generate_response(
+                    self.system_prompt, task.get_prompt()
+                )
                 result = self.manager.get_result(task, resp)
                 self.manager.append_to_file(self.output_file, result)
                 total_processed += 1
@@ -54,7 +57,7 @@ class BenchmarkRunner:
             for i in range(0, len(tasks), chunk_size):
                 chunk_prompts = all_prompts[i : i + chunk_size]
                 chunk_responses = self.model.generate_batch_response(
-                    chunk_prompts, batch_size
+                    self.system_prompt, chunk_prompts, batch_size
                 )
 
                 for j, model_response in enumerate(chunk_responses):
