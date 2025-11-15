@@ -1,10 +1,7 @@
 import pytest
 from pathlib import Path
-from unittest.mock import Mock, MagicMock
 from parsers_refactored.parsers.pdf_question_parser import PDFQuestionParser
 from parsers_refactored.domain.question import Question
-from parsers_refactored.extractors.question_extractor import QuestionExtractor
-from parsers_refactored.utils.pdf_utils import PDFTextExtractor
 
 
 def get_pdf_path():
