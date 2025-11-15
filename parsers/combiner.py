@@ -23,14 +23,20 @@ def create_unified_jsonl(
         q_num = q["question_number"]
         answer_info = answer_dict.get(q_num, {})
 
+        correct_answer = answer_info.get("correct_answer", "")
+        legal_basis = answer_info.get("legal_basis", "")
+
+        if not correct_answer or not legal_basis:
+            continue
+
         unified_item = {
             "id": q_num,
             "year": int(year),
             "exam_type": exam_type,
             "question": q["question"],
             "choices": [f"A) {q['A']}", f"B) {q['B']}", f"C) {q['C']}"],
-            "answer": answer_info.get("correct_answer", ""),
-            "legal_basis": answer_info.get("legal_basis", ""),
+            "answer": correct_answer,
+            "legal_basis": legal_basis,
         }
 
         unified_data.append(unified_item)
