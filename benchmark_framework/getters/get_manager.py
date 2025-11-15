@@ -15,7 +15,6 @@ MANAGER_REGISTRY = {
 }
 
 
-# TODO:
 def get_manager(
     dataset_name: str,
     model: BaseModel,
