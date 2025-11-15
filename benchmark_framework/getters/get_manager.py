@@ -9,7 +9,10 @@ MANAGER_REGISTRY = {"exams": ExamManager, "judgments": JudgmentManager}
 
 
 def get_manager(
-    dataset_name: str, model: BaseModel, tasks_path: Path = DATA_PATH
+    dataset_name: str,
+    model: BaseModel,
+    metric: BaseMetric,
+    tasks_path: Path = DATA_PATH,
 ) -> BaseManager:
     """
     Factory function to get a manager instance by dataset name.
@@ -17,5 +20,5 @@ def get_manager(
     manager_class = MANAGER_REGISTRY.get(dataset_name)
     if not manager_class:
         raise ValueError(f"Dataset name '{dataset_name}' is not recognized.")
-    manager_instance = manager_class(model, tasks_path)
+    manager_instance = manager_class(model, metric, tasks_path)
     return manager_instance

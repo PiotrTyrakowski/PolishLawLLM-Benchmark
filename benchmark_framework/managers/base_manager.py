@@ -23,10 +23,15 @@ class BaseManager(ABC):
     """
 
     def __init__(
-        self, model: BaseModel, manager_type: str, tasks_path: Path = DATA_PATH
+        self,
+        model: BaseModel,
+        manager_type: str,
+        metric: BaseMetric,
+        tasks_path: Path = DATA_PATH,
     ):
         super().__init__()
         self.model = model
+        self.metric = metric
         self.tasks = initialize_tasks(manager_type.lower(), tasks_path)
         self.results = []
         self.system_prompt = SYSTEM_PROMPTS[manager_type.upper()]
@@ -39,6 +44,9 @@ class BaseManager(ABC):
 
     def get_model(self) -> BaseModel:
         return self.model
+
+    def get_metric(self) -> BaseMetric:
+        return self.metric
 
     def get_tasks(self) -> list[Task]:
         return self.tasks

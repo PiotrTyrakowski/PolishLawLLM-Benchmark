@@ -9,6 +9,43 @@ from benchmark_framework.managers.base_manager import BaseManager
 from benchmark_framework.constants import DATA_PATH
 
 
+# TODO: implement with metrics
+class JudgmentManager(BaseManager):
+    """
+    Manager for handling legal judgment benchmark evaluations.
+    """
+
+    def __init__(self, model: BaseModel, tasks_path: Path = DATA_PATH):
+        super().__init__(model, "judgments", tasks_path)
+
+    def get_tasks(self) -> list[Judgment]:
+        return self.tasks
+
+    def get_result(self, judgment: Judgment, model_response: str) -> dict:
+        extracted_answer = extract_judgment_answer(model_response)
+        is_correct = (
+            extracted_answer.get("art", "").strip().lower()
+            == judgment.expected_article.strip().lower()
+            and extracted_answer.get("content", "").strip()
+            == judgment.expected_content.strip()
+        )
+
+        result = {
+            "id": judgment.id,
+            "masked_text": judgment.masked_text,
+            "expected_article": judgment.expected_article,
+            "expected_content": judgment.expected_content,
+            "model_name": self.model.model_name,
+            "model_config": json.dumps(asdict(self.model.model_config)),
+            "model_response": model_response,
+            "extracted_answer": extracted_answer,
+            "is_correct": is_correct,
+        }
+
+        self.results.append(result)
+        return result
+
+
 def extract_judgment_answer(response_text: str) -> dict:
     """
     Extract answer from model response in JSON format: {art: '...', content: '...'}
@@ -44,39 +81,3 @@ def extract_judgment_answer(response_text: str) -> dict:
         pass
 
     return {}
-
-
-class JudgmentManager(BaseManager):
-    """
-    Manager for handling legal judgment benchmark evaluations.
-    """
-
-    def __init__(self, model: BaseModel, tasks_path: Path = DATA_PATH):
-        super().__init__(model, "judgments", tasks_path)
-
-    def get_tasks(self) -> list[Judgment]:
-        return self.tasks
-
-    def get_result(self, judgment: Judgment, model_response: str) -> dict:
-        extracted_answer = extract_judgment_answer(model_response)
-        is_correct = (
-            extracted_answer.get("art", "").strip().lower()
-            == judgment.expected_article.strip().lower()
-            and extracted_answer.get("content", "").strip()
-            == judgment.expected_content.strip()
-        )
-
-        result = {
-            "id": judgment.id,
-            "masked_text": judgment.masked_text,
-            "expected_article": judgment.expected_article,
-            "expected_content": judgment.expected_content,
-            "model_name": self.model.model_name,
-            "model_config": json.dumps(asdict(self.model.model_config)),
-            "model_response": model_response,
-            "extracted_answer": extracted_answer,
-            "is_correct": is_correct,
-        }
-
-        self.results.append(result)
-        return result

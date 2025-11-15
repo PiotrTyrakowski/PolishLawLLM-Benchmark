@@ -13,8 +13,10 @@ class ExamManager(BaseManager):
     Manager for handling legal exam benchmark evaluations.
     """
 
-    def __init__(self, model: BaseModel, tasks_path: Path = DATA_PATH):
-        super().__init__(model, "exams", tasks_path)
+    def __init__(
+        self, model: BaseModel, metric: BaseMetric, tasks_path: Path = DATA_PATH
+    ):
+        super().__init__(model, "exams", metric, tasks_path)
 
     def get_tasks(self) -> list[Exam]:
         return self.tasks
