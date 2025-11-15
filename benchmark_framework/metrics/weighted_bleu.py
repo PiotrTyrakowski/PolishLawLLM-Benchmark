@@ -12,7 +12,6 @@ class WeightedBleuResources:
     """Cache storing precomputed IDF values for tokens."""
 
     idf_lookup: dict[str, float]
-    default_idf: float
 
 
 class WeightedBleuMetric(BaseMetric):
