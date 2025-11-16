@@ -70,7 +70,7 @@ class LegalBaseParser:
         article_pattern = (
             rf"Art\.\s+{article_number}[a-z]?\.\s+"
             rf"(.*?)"
-            rf"(?=(?:Art\.\s+\d+[a-z]?\.|Rozdział\s+[IVXLCDM]+|$))"
+            rf"(?=(?:Art\.\s+\d+[a-z]?\s*\.|Rozdział\s+[IVXLCDM]+|TYTUŁ\s+[IVXLCDM]+|DZIAŁ\s+[IVXLCDM]+|$))"
         )
         match = re.search(article_pattern, self.content, re.DOTALL)
         if not match:

@@ -40,6 +40,16 @@ def kks_parser_instance():
     return parser
 
 
+@pytest.fixture(scope="session")
+def kc_parser_instance():
+    """Create a single LegalBaseParser instance for all tests in the session."""
+    pdf_path = get_pdf_path("kc.pdf")
+    if not os.path.exists(pdf_path):
+        pytest.skip(f"PDF path set in LEGAL_PDF_PATH does not exist: {pdf_path}")
+    parser = LegalBaseParser(pdf_path)
+    return parser
+
+
 @pytest.mark.parametrize(
     "article_num,expected_text",
     [
@@ -127,6 +137,40 @@ def test_extract_paragraph_kks(
 ):
     """Test that paragraph extraction returns the expected text."""
     result = kks_parser_instance.get_paragraph(article_num, paragraph_num)
+    assert (
+        result == expected_text
+    ), f"Art. {article_num} § {paragraph_num} does not match expected text"
+
+
+@pytest.mark.parametrize(
+    "article_num,paragraph_num,expected_text",
+    [
+        (
+            365,
+            3,
+            "Jeżeli strona uprawniona do wyboru świadczenia wyboru tego nie dokona, druga strona może jej wyznaczyć w tym celu odpowiedni termin. Po bezskutecznym upływie wyznaczonego terminu uprawnienie do dokonania wyboru przechodzi na stronę drugą.",
+        ),
+        (
+            7,
+            None,
+            "Jeżeli ustawa uzależnia skutki prawne od dobrej lub złej wiary, domniemywa się istnienie dobrej wiary.",
+        ),
+        (
+            454,
+            None,
+            "§ 1. Jeżeli miejsce spełnienia świadczenia nie jest oznaczone ani nie wynika z właściwości zobowiązania, świadczenie powinno być spełnione w miejscu, gdzie w chwili powstania zobowiązania dłużnik miał zamieszkanie lub siedzibę. Jednakże świadczenie pieniężne powinno być spełnione w miejscu zamieszkania lub w siedzibie wierzyciela w chwili spełnienia świadczenia; jeżeli wierzyciel zmienił miejsce zamieszkania lub siedzibę po powstaniu zobowiązania, ponosi spowodowaną przez tę zmianę nadwyżkę kosztów przesłania. § 2. Jeżeli zobowiązanie ma związek z przedsiębiorstwem dłużnika lub wierzyciela, o miejscu spełnienia świadczenia rozstrzyga siedziba przedsiębiorstwa.",
+        ),
+    ],
+)
+def test_extract_paragraph_kks(
+    kc_parser_instance, article_num, paragraph_num, expected_text
+):
+    """Test that paragraph extraction returns the expected text."""
+    result = (
+        kc_parser_instance.get_paragraph(article_num, paragraph_num)
+        if paragraph_num
+        else kc_parser_instance.get_article(article_num)
+    )
     assert (
         result == expected_text
     ), f"Art. {article_num} § {paragraph_num} does not match expected text"
