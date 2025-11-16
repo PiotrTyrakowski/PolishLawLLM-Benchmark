@@ -9,10 +9,7 @@ from benchmark_framework.constants import DATA_PATH
 from typing import List
 
 
-MANAGER_REGISTRY = {
-    "exams": ExamManager,
-    "judgments": JudgmentManager,
-}
+MANAGER_REGISTRY = {"exams": ExamManager, "judgments": JudgmentManager}
 
 
 def get_manager(

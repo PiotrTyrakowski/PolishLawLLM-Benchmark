@@ -22,8 +22,14 @@ class BaseModel(ABC):
         return RunnerConfig()
 
     @abstractmethod
-    def generate_response(self, prompt: str) -> str:
+    def generate_response(
+        self,
+        system_prompt: str,
+        prompt: str,
+    ) -> str:
         pass
 
-    def generate_batch_response(self, prompts: list[str], batch_size: int) -> list[str]:
-        return [self.generate_response(prompt) for prompt in prompts]
+    def generate_batch_response(
+        self, system_prompt: str, prompts: list[str], batch_size: int
+    ) -> list[str]:
+        return [self.generate_response(system_prompt, prompt) for prompt in prompts]
