@@ -11,5 +11,6 @@ class ExactMatchMetric(BaseMetric):
         """
         Returns 1.0 if normalized prediction matches normalized reference, else 0.0
         """
-        normalize = lambda text: "".join(text.split()).upper()
-        return 1.0 if normalize(prediction) == normalize(reference) else 0.0
+        prediction_words = self.get_normalized_words(prediction)
+        reference_words = self.get_normalized_words(reference)
+        return 1.0 if prediction_words == reference_words else 0.0

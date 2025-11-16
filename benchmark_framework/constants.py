@@ -2,7 +2,7 @@ from typing import Final
 from pathlib import Path
 
 ENCODING: Final[str] = "utf-8"
-MAX_NEW_TOKENS: Final[int] = 512
+MAX_NEW_TOKENS: Final[int] = 1024
 
 SYSTEM_PROMPT: Final[str] = (
     "Jesteś ekspertem w polskim prawie, biorącym udział w egzaminie zawodowym. "
@@ -32,13 +32,13 @@ SYSTEM_PROMPT: Final[str] = (
     "# FORMAT ODPOWIEDZI\n"
     "Musisz zwrócić odpowiedź WYŁĄCZNIE w formacie JSON, bez żadnego dodatkowego tekstu przed lub po:\n\n"
     "{\n"
-    '  "reasoning": "Twoje rozumowanie krok po kroku dla każdej opcji",\n'
+    '  "reasoning": "Krotko opisany proces myślenia i analizy każdej opcji",\n'
     '  "answer": "A",\n'
     '  "legal_basis": "Art. 123 § 2 pkt 3 k.k.",\n'
     '  "legal_basis_content": "Dokładna treść cytowanego przepisu prawnego"\n'
     "}\n\n"
     "# WYMAGANIA\n"
-    "- 'reasoning': Krótka, zwięzła analiza każdej opcji (2-4 zdania na opcję)\n"
+    "- 'reasoning': Krótka, zwięzła analiza każdej opcji max 50 znaków na opcję\n"
     "- 'answer': Pojedyncza litera - A, B lub C\n"
     "- 'legal_basis': Pełne oznaczenie przepisu (np. 'Art. 415 § 1 k.c.', 'Art. 148 § 2 pkt 1 k.p.k.')\n"
     "- 'legal_basis_content': Dosłowna treść przepisu, na którym oparłeś swoją odpowiedź\n"

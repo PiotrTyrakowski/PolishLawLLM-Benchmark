@@ -35,8 +35,6 @@ class BielikModel(BaseModel):
         completion = self.client.chat.completions.create(
             model="speakleash/bielik-11b-v2.6-instruct",
             messages=messages,
-            temperature=0.2,
-            top_p=0.7,
             max_tokens=MAX_NEW_TOKENS,
         )
 
@@ -47,19 +45,4 @@ class BielikModel(BaseModel):
         Returns default rate limiting configuration for the Bielik model.
         Adjust these values based on NVIDIA API limits.
         """
-        return RunnerConfig(requests_per_minute=10, daily_limit=100)
-
-
-if __name__ == "__main__":
-    model = BielikModel(
-        model_name="speakleash/bielik-11b-v2.6-instruct", model_config=ModelConfig()
-    )
-
-    # Test prompt
-    prompt = "Zgodnie z Kodeksem cywilnym, rzecz można obciążyć prawem do jej używania i do pobierania jej pożytków (użytkowanie); użytkowanie jest: A) zbywalne, B) zbywalne, jeśli przedmiotem użytkowania jest nieruchomość, C) niezbywalne"
-
-    print(f"Prompt: {prompt}")
-
-    response = model.generate_response(prompt)
-
-    print(f"Response: {response}")
+        return RunnerConfig(requests_per_minute=30)

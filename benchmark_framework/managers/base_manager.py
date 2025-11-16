@@ -76,23 +76,37 @@ class BaseManager(ABC):
     def extract_legal_basis_from_response(response_text: str) -> str:
         """
         Extract legal_basis_content from model response in JSON format.
+        Handles markdown code blocks and incomplete/truncated JSON.
         """
         response_text = response_text.strip()
 
+        # Remove markdown code block markers if present
+        if response_text.startswith("```"):
+            lines = response_text.split("\n")
+            if lines[0].startswith("```"):
+                lines = lines[1:]
+            if lines and lines[-1].strip() == "```":
+                lines = lines[:-1]
+            response_text = "\n".join(lines).strip()
+
         try:
-            # Try to parse as JSON
             json_response = json.loads(response_text)
             return json_response.get("legal_basis_content", "")
         except json.JSONDecodeError:
-            # Try to find JSON object directly in text
-            json_match = re.search(
-                r'\{.*?"legal_basis_content".*?\}', response_text, re.DOTALL
+            content_match = re.search(
+                r'"legal_basis_content"\s*:\s*"([^"]*)"', response_text, re.DOTALL
             )
-            if json_match:
-                try:
-                    json_response = json.loads(json_match.group(0))
-                    return json_response.get("legal_basis_content", "")
-                except json.JSONDecodeError:
-                    pass
+            if content_match:
+                return content_match.group(1)
+            else:
+                json_match = re.search(
+                    r'\{.*?"legal_basis_content".*?\}', response_text, re.DOTALL
+                )
+                if json_match:
+                    try:
+                        json_response = json.loads(json_match.group(0))
+                        return json_response.get("legal_basis_content", "")
+                    except json.JSONDecodeError:
+                        pass
 
         return ""

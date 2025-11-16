@@ -1,16 +1,17 @@
 import json
+import re
 from pathlib import Path
 from dataclasses import asdict
 
 from benchmark_framework.metrics.weighted_bleu import WeightedBleuMetric
 from benchmark_framework.models.base_model import BaseModel
 from benchmark_framework.types.exam import Exam
-from benchmark_framework.utils import extract_answer_from_response
 from benchmark_framework.managers.base_manager import BaseManager
 from benchmark_framework.constants import DATA_PATH
 from benchmark_framework.metrics.base_metric import BaseMetric
 from benchmark_framework.metrics.exact_match import ExactMatchMetric
 from benchmark_framework.metrics.weighted_bleu import WeightedBleuMetric
+
 
 class ExamManager(BaseManager):
     """
@@ -30,7 +31,7 @@ class ExamManager(BaseManager):
         ]
 
     def get_result(self, exam: Exam, model_response: str) -> dict:
-        extracted_answer = extract_answer_from_response(model_response)
+        extracted_answer = self.extract_answer_from_response(model_response)
         extract_legal_basis = self.extract_legal_basis_from_response(model_response)
         is_correct = extracted_answer == exam.answer
 
@@ -57,3 +58,44 @@ class ExamManager(BaseManager):
 
         self.results.append(result)
         return result
+
+    @staticmethod
+    def extract_answer_from_response(response_text: str) -> str:
+        """
+        Extract answer from model response in JSON format.
+        Handles markdown code blocks and incomplete/truncated JSON.
+        """
+        response_text = response_text.strip()
+        answer = ""
+
+        # Remove markdown code block markers if present
+        if response_text.startswith("```"):
+            lines = response_text.split("\n")
+            if lines[0].startswith("```"):
+                lines = lines[1:]
+            if lines and lines[-1].strip() == "```":
+                lines = lines[:-1]
+            response_text = "\n".join(lines).strip()
+
+        try:
+            json_response = json.loads(response_text)
+            answer = json_response.get("answer", "").strip().upper()
+        except json.JSONDecodeError:
+            answer_match = re.search(
+                r'"answer"\s*:\s*"([ABC])"', response_text, re.IGNORECASE
+            )
+            if answer_match:
+                answer = answer_match.group(1).upper()
+            else:
+                json_match = re.search(r'\{.*?"answer".*?\}', response_text, re.DOTALL)
+                if json_match:
+                    try:
+                        json_response = json.loads(json_match.group(0))
+                        answer = json_response.get("answer", "").strip().upper()
+                    except json.JSONDecodeError:
+                        pass
+
+        if answer in ["A", "B", "C"]:
+            return answer
+
+        return ""

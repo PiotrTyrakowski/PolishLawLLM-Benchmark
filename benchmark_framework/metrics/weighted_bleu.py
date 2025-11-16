@@ -58,8 +58,8 @@ class WeightedBleuMetric(BaseMetric):
         return WeightedBleuResources(idf_lookup=idf_lookup)
 
     def _compute(self, prediction: str, reference: str) -> float:
-        cand_tokens = prediction.lower().split()
-        ref_tokens = reference.lower().split()
+        cand_tokens = self.get_normalized_words(prediction)
+        ref_tokens = self.get_normalized_words(reference)
         if not cand_tokens or not ref_tokens:
             return 0.0
 
@@ -73,8 +73,10 @@ class WeightedBleuMetric(BaseMetric):
         for n, importance in enumerate(self.ngram_importances, start=1):
             cand_counts = self._ngrams(cand_tokens, n)
             ref_counts = self._ngrams(ref_tokens, n)
+
+            # If there are no candidate n-grams, skip the calculation
             if not cand_counts:
-                return 0.0
+                continue
 
             # Weighted BLEU calculation (with IDF weights)
             token_weights = self._token_weights(ref_tokens)
@@ -84,6 +86,12 @@ class WeightedBleuMetric(BaseMetric):
                 weight = self._weight_ngram(ngram, token_weights)
                 numerator += min(count, ref_counts.get(ngram, 0)) * weight
                 denominator += count * weight
+
+            if denominator == 0.0:
+                print(
+                    f"Warning: Weighted BLEU Denominator is 0 for n={n} and prediction={prediction}"
+                )
+                continue
 
             precision = numerator / denominator
 
