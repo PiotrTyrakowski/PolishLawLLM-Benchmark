@@ -5,6 +5,8 @@ from statistics import fmean
 from typing import Iterable, Sequence
 from benchmark_framework.metrics.base_metric import BaseMetric
 
+EPSILON = 1e-1
+
 
 @dataclass
 class WeightedBleuResources:
@@ -70,6 +72,7 @@ class WeightedBleuMetric(BaseMetric):
         )
 
         log_precision_sum = 0.0
+        valid_ngrams_count = 0
         for n, importance in enumerate(self.ngram_importances, start=1):
             cand_counts = self._ngrams(cand_tokens, n)
             ref_counts = self._ngrams(ref_tokens, n)
@@ -96,7 +99,14 @@ class WeightedBleuMetric(BaseMetric):
             precision = numerator / denominator
 
             if precision > 0:
-                log_precision_sum += importance * math.log(precision)
+                valid_ngrams_count += 1
+            else:
+                precision = EPSILON
+            log_precision_sum += importance * math.log(precision)
+
+        # If no n-grams matched at all, return 0
+        if valid_ngrams_count == 0:
+            return 0.0
 
         return float(bp * math.exp(log_precision_sum))
 
