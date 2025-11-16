@@ -57,4 +57,4 @@ def test_extract_answers_regexp(text, question_number, correct_answer, legal_bas
     assert match is not None
     assert match[0].legal_basis == legal_basis  # Group 1 is legal_basis
     assert match[0].question_id == question_number  # Group 2 is question_number
-    assert match[0].correct_answer == correct_answer  # Group 3 is correct_answer
+    assert match[0].answer == correct_answer  # Group 3 is correct_answer

@@ -25,7 +25,7 @@ class AnswerExtractor(BaseExtractor):
             answers.append(
                 Answer(
                     question_id=question_number,
-                    correct_answer=correct_answer,
+                    answer=correct_answer,
                     legal_basis=legal_basis,
                 )
             )

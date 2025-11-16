@@ -28,8 +28,8 @@ class PDFAnswerParser(BaseParser[Answer]):
         """Validate answer completeness."""
         errors = []
 
-        if answer.correct_answer not in ["A", "B", "C"]:
-            errors.append(f"Invalid answer: {answer.correct_answer}")
+        if answer.answer not in ["A", "B", "C"]:
+            errors.append(f"Invalid answer: {answer.answer}")
 
         if not answer.legal_basis:
             errors.append("Missing legal basis")

@@ -12,7 +12,7 @@ class ExamTask:
 
     def to_dict(self, exam_type: str = None, year: int = None) -> Dict:
         result = self.question.to_dict()
-        result["correct_answer"] = self.answer.correct_answer
+        result["answer"] = self.answer.answer
         result["legal_basis"] = self.answer.legal_basis
         result["legal_basis_content"] = self.legal_basis_content
         if exam_type is not None:
