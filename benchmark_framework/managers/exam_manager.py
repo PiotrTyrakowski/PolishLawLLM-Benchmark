@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 from dataclasses import asdict
 
+from benchmark_framework.metrics.weighted_bleu import WeightedBleuMetric
 from benchmark_framework.models.base_model import BaseModel
 from benchmark_framework.types.exam import Exam
 from benchmark_framework.utils import extract_answer_from_response
@@ -9,7 +10,7 @@ from benchmark_framework.managers.base_manager import BaseManager
 from benchmark_framework.constants import DATA_PATH
 from benchmark_framework.metrics.base_metric import BaseMetric
 from benchmark_framework.metrics.exact_match import ExactMatchMetric
-
+from benchmark_framework.metrics.weighted_bleu import WeightedBleuMetric
 
 class ExamManager(BaseManager):
     """
@@ -25,6 +26,7 @@ class ExamManager(BaseManager):
     def get_metrics(self) -> list[BaseMetric]:
         return [
             ExactMatchMetric(),
+            WeightedBleuMetric(),
         ]
 
     def get_result(self, exam: Exam, model_response: str) -> dict:
