@@ -96,7 +96,8 @@ class LegalBaseTextExtractor(PDFTextExtractor):
             raise RuntimeError(f"Error while loading PDF: {e}")
 
         full_text = "\n".join(text_parts)
-        return self._filter_date_lines(full_text)
+        filtered_text = self._filter_date_lines(full_text)
+        return filtered_text
 
     @staticmethod
     def _filter_date_lines(text: str, indent_threshold: int = 40) -> str:

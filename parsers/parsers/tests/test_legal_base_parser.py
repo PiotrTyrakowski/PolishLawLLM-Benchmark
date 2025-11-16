@@ -5,7 +5,7 @@ from pathlib import Path
 from parsers.parsers.legal_base_parser import LegalBaseParser
 
 
-def get_pdf_path():
+def get_pdf_path(file: str):
     """Helper function to get the path to the 2025 exam PDF."""
     file_path = (
         Path(__file__).parent
@@ -15,7 +15,7 @@ def get_pdf_path():
         / "pdfs"
         / "2025"
         / "legal_base"
-        / "kk.pdf"
+        / file
     )
     return file_path.resolve()
 
@@ -23,7 +23,17 @@ def get_pdf_path():
 @pytest.fixture(scope="session")
 def parser_instance():
     """Create a single LegalBaseParser instance for all tests in the session."""
-    pdf_path = get_pdf_path()
+    pdf_path = get_pdf_path("kk.pdf")
+    if not os.path.exists(pdf_path):
+        pytest.skip(f"PDF path set in LEGAL_PDF_PATH does not exist: {pdf_path}")
+    parser = LegalBaseParser(pdf_path)
+    return parser
+
+
+@pytest.fixture(scope="session")
+def kks_parser_instance():
+    """Create a single LegalBaseParser instance for all tests in the session."""
+    pdf_path = get_pdf_path("kks.pdf")
     if not os.path.exists(pdf_path):
         pytest.skip(f"PDF path set in LEGAL_PDF_PATH does not exist: {pdf_path}")
     parser = LegalBaseParser(pdf_path)
@@ -82,11 +92,41 @@ def test_extract_article(parser_instance, article_num, expected_text):
             3,
             "Odpowiada za pomocnictwo, kto w zamiarze, aby inna osoba dokonała czynu zabronionego, swoim zachowaniem ułatwia jego popełnienie, w szczególności dostarczając narzędzie, środek przewozu, udzielając rady lub informacji; odpowiada za pomocnictwo także ten, kto wbrew prawnemu, szczególnemu obowiązkowi niedopuszczenia do popełnienia czynu zabronionego swoim zaniechaniem ułatwia innej osobie jego popełnienie.",
         ),
+        (
+            25,
+            3,
+            "Nie podlega karze, kto przekracza granice obrony koniecznej pod wpływem strachu lub wzburzenia usprawiedliwionych okolicznościami zamachu.",
+        ),
     ],
 )
 def test_extract_paragraph(parser_instance, article_num, paragraph_num, expected_text):
     """Test that paragraph extraction returns the expected text."""
     result = parser_instance.get_paragraph(article_num, paragraph_num)
+    assert (
+        result == expected_text
+    ), f"Art. {article_num} § {paragraph_num} does not match expected text"
+
+
+@pytest.mark.parametrize(
+    "article_num,paragraph_num,expected_text",
+    [
+        (
+            50,
+            1,
+            "Jeżeli jednocześnie orzeka się o ukaraniu za dwa albo więcej wykroczeń skarbowych, sąd wymierza łącznie karę grzywny w wysokości do górnej granicy ustawowego zagrożenia zwiększonego o połowę, co nie stoi na przeszkodzie orzeczeniu także innych środków za pozostające w zbiegu wykroczenia.",
+        ),
+        (
+            51,
+            3,
+            "Orzeczona kara lub środek karny wymieniony w art. 47 § 2 pkt 2 i 3 nie podlega wykonaniu, jeżeli od daty uprawomocnienia się orzeczenia upłynęły 3 lata.",
+        ),
+    ],
+)
+def test_extract_paragraph_kks(
+    kks_parser_instance, article_num, paragraph_num, expected_text
+):
+    """Test that paragraph extraction returns the expected text."""
+    result = kks_parser_instance.get_paragraph(article_num, paragraph_num)
     assert (
         result == expected_text
     ), f"Art. {article_num} § {paragraph_num} does not match expected text"

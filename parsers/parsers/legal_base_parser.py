@@ -28,10 +28,10 @@ class LegalBaseParser:
         article_text = self._get_raw_article(article_number)
 
         paragraph_pattern = (
-            rf"^(?: {{11}})?"
+            rf"^(?:\s{{11}}\s*)?"
             rf"§\s+{paragraph_number}\.\s+"
             rf"(.+?)"
-            rf"(?=^ {{11}}§\s+\d+[a-z]*\.|\Z)"
+            rf"(?=^\s{{11}}\s*§\s+\d+[a-z]*\.|\Z)"
         )
 
         match = re.search(paragraph_pattern, article_text, re.MULTILINE | re.DOTALL)
