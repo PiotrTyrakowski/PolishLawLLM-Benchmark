@@ -1,122 +1,96 @@
-import json
-import os
+import typer
 import re
 from pathlib import Path
+from typing import Dict, List
 
-import typer
-
-from parsers.combiner import create_unified_jsonl
-from parsers.pdf_parser import parse_questions
-from parsers.parse_answers import parse_answers
-from parsers.stats import generate_statistics
-from parsers.utils import save_as_jsonl
-from parsers.LegalBaseExtractor.initialize_extractors import initialize_extractors
+from parsers.parsers.pdf_question_parser import PDFQuestionParser
+from parsers.parsers.pdf_answer_parser import PDFAnswerParser
+from parsers.services.exam_service import ExamService
+from parsers.services.legal_basis_service import LegalBasisService
+from parsers.repositories.jsonl_repository import JSONLRepository
+from parsers.utils.exam_file_discovery import ExamFileDiscovery
 
 app = typer.Typer()
 
 
 @app.command()
 def parse(
-    pdfs_path: str = typer.Argument(..., help="Path to the pdfs directory"),
-    stats: bool = typer.Option(False, "--stats", help="Generate statistics"),
-    validate: bool = typer.Option(True, "--validate", help="Validate parsed data"),
+    pdfs_path: Path = typer.Argument(
+        ..., help="Path to the directory containing exam PDFs"
+    )
 ):
     """
-    Parse Polish law exam PDFs from the specified directory and create unified JSONL files.
+    Parse Polish law exam PDFs into structured JSONL format.
+
+    This command processes exam PDFs from the specified directory,
+    extracts legal basis content, and saves the results in JSONL format.
     """
-    pdf_dir = pdfs_path
-    if not os.path.exists(pdf_dir):
-        typer.echo(f"Error: '{pdf_dir}' directory not found")
+    if not pdfs_path.exists():
+        typer.echo(f"Error: Directory '{pdfs_path}' not found", err=True)
         raise typer.Exit(code=1)
 
-    all_files = [f for f in os.listdir(pdf_dir) if f.endswith(".pdf")]
+    # Initialize shared services
+    repository = JSONLRepository(Path("data/exams"))
 
-    exams = {}
+    # Discover exam files
+    exams = ExamFileDiscovery.discover_exams(pdfs_path)
 
-    for pdf_file in all_files:
-        year_match = re.search(r"\d{4}", pdf_file)
-        if not year_match:
-            typer.echo(f"Warning: Could not find a year in '{pdf_file}', skipping.")
-            continue
-        year = year_match.group(0)
+    if not exams:
+        typer.echo("No exam files found in directory")
+        raise typer.Exit(code=1)
 
-        exam_type = None
-        if "adwokack" in pdf_file or "radcow" in pdf_file:
-            exam_type = "adwokacki_radcowy"
-        elif "komornic" in pdf_file:
-            exam_type = "komorniczy"
-        elif "notarialn" in pdf_file:
-            exam_type = "notarialny"
-
-        if not exam_type:
+    # Process each exam
+    total_processed = 0
+    for year, exam_types in exams.items():
+        legal_base_dir = pdfs_path / year / "legal_base"
+        if not legal_base_dir.exists():
             typer.echo(
-                f"Warning: Could not determine exam type for '{pdf_file}', skipping."
+                f"Error: Legal base directory '{legal_base_dir}' not found", err=True
             )
-            continue
+            raise typer.Exit(code=1)
+        legal_basis_service = LegalBasisService(legal_base_dir)
 
-        if year not in exams:
-            exams[year] = {}
-        if exam_type not in exams[year]:
-            exams[year][exam_type] = {}
+        for exam_type, files in exam_types.items():
+            typer.echo(f"\n{'=' * 60}")
+            typer.echo(f"Processing: {exam_type} - {year}")
+            typer.echo(f"{'=' * 60}")
 
-        if pdf_file.startswith("Zestaw_pytań"):
-            exams[year][exam_type]["questions_pdf"] = pdf_file
-        elif pdf_file.startswith("Wykaz_prawidłowych_odpowiedzi"):
-            exams[year][exam_type]["answers_pdf"] = pdf_file
-
-    for year, types in exams.items():
-        extractors = initialize_extractors(str(pdf_dir + "/legal_base"))
-        for exam_type, files in types.items():
-            typer.echo(f"Processing exam: Year - {year}, Type - {exam_type}")
-
-            root_dir = Path(__file__).parent.parent
-            output_dir = root_dir / "data" / "exams" / exam_type
-            os.makedirs(output_dir, exist_ok=True)
-
-            parsed_questions = None
-            parsed_answers = None
-
-            if "questions_pdf" in files:
-                questions_pdf_path = os.path.join(pdf_dir, files["questions_pdf"])
-                parsed_questions = parse_questions(
-                    questions_pdf_path, validate=validate
-                )
-
-                if "invalid_questions" in parsed_questions:
-                    typer.warning(
-                        f"{len(parsed_questions['invalid_questions'])} invalid questions found"
-                    )
-            else:
-                typer.warning("Questions file not found for this exam.")
+            # Validate required files
+            if "questions" not in files:
+                typer.echo("  ⚠ Questions file not found, skipping")
                 continue
 
-            if "answers_pdf" in files:
-                answers_pdf_path = os.path.join(pdf_dir, files["answers_pdf"])
-                parsed_answers = parse_answers(answers_pdf_path, validate=validate)
-            else:
-                typer.warning("Answers file not found for this exam.")
-                parsed_answers = {"answers": []}
+            if "answers" not in files:
+                typer.echo("  ⚠ Answers file not found, skipping")
+                continue
 
-            unified_data = create_unified_jsonl(
-                parsed_questions["questions"],
-                parsed_answers["answers"],
-                exam_type,
-                year,
-                extractors,
-            )
+            try:
+                # Create parsers
+                question_parser = PDFQuestionParser(files["questions"])
+                answer_parser = PDFAnswerParser(files["answers"])
 
-            unified_path = output_dir / f"{year}.jsonl"
-            save_as_jsonl(unified_data, str(unified_path))
-            typer.echo(f"Saved unified format: {unified_path}")
+                exam_service = ExamService(
+                    question_parser=question_parser,
+                    answer_parser=answer_parser,
+                    legal_basis_service=legal_basis_service,
+                )
 
-            if stats:
-                stats_data = generate_statistics(parsed_questions)
-                stats_data["year"] = year
-                stats_data["exam_type"] = exam_type
-                stats_path = output_dir / f"stats_{year}.json"
-                with open(stats_path, "w", encoding="utf-8") as f:
-                    json.dump(stats_data, f, ensure_ascii=False, indent=2)
-                typer.echo(f"Statistics saved to {stats_path}")
+                exam = exam_service.process_exam(exam_type=exam_type, year=int(year))
+
+                # Save exam
+                repository.save(exam)
+
+                typer.echo(f"  ✓ Successfully processed {len(exam.tasks)} tasks")
+                total_processed += 1
+
+            except Exception as e:
+                typer.echo(f"  ✗ Error processing exam: {str(e)}", err=True)
+                continue
+
+    # Summary
+    typer.echo(f"\n{'=' * 60}")
+    typer.echo(f"Processing complete: {total_processed} exam(s) processed")
+    typer.echo(f"{'=' * 60}")
 
 
 if __name__ == "__main__":
