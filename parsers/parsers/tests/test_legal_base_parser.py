@@ -58,7 +58,6 @@ def test_extract_article(parser_instance, article_num, expected_text):
         result == expected_text
     ), f"Article {article_num} does not match expected text"
 
-
 @pytest.mark.parametrize(
     "article_num,paragraph_num,expected_text",
     [
@@ -77,6 +76,11 @@ def test_extract_article(parser_instance, article_num, expected_text):
             "2a",
             "Nieletni, który po ukończeniu 14 lat, a przed ukończeniem 15 lat, dopuszcza się czynu zabronionego określonego w art. 148 § 2 lub 3, może odpowiadać na zasadach określonych w tym kodeksie, jeżeli okoliczności sprawy oraz stopień rozwoju sprawcy, jego właściwości i warunki osobiste za tym przemawiają oraz zachodzi uzasadnione przypuszczenie, że stosowanie środków wychowawczych lub poprawczych nie jest w stanie zapewnić resocjalizacji nieletniego.",
         ),
+        (
+            18,
+            3,
+            "Odpowiada za pomocnictwo, kto w zamiarze, aby inna osoba dokonała czynu zabronionego, swoim zachowaniem ułatwia jego popełnienie, w szczególności dostarczając narzędzie, środek przewozu, udzielając rady lub informacji; odpowiada za pomocnictwo także ten, kto wbrew prawnemu, szczególnemu obowiązkowi niedopuszczenia do popełnienia czynu zabronionego swoim zaniechaniem ułatwia innej osobie jego popełnienie",
+        )
     ],
 )
 def test_extract_paragraph(parser_instance, article_num, paragraph_num, expected_text):
