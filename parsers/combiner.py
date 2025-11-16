@@ -1,14 +1,8 @@
 from typing import Dict, List
-from parsers.LegalBaseExtractor.LegalBaseExtractor import LegalBaseExtractor
-from parsers.LegalBaseExtractor.initialize_extractors import extract_legal_basis
 
 
 def create_unified_jsonl(
-    questions: List[Dict],
-    answers: List[Dict],
-    exam_type: str,
-    year: str,
-    extractors: dict[str, LegalBaseExtractor],
+    questions: List[Dict], answers: List[Dict], exam_type: str, year: str
 ) -> List[Dict]:
     """
     Create unified JSONL format combining questions and answers with metadata.
@@ -35,12 +29,6 @@ def create_unified_jsonl(
         if not correct_answer or not legal_basis:
             continue
 
-        try:
-            legal_basis_content = extract_legal_basis(legal_basis, extractors)
-        except Exception as e:
-            print(f"    Warning: {e} for question {q_num}")
-            continue
-
         unified_item = {
             "id": q_num,
             "year": int(year),
@@ -49,7 +37,6 @@ def create_unified_jsonl(
             "choices": [f"A) {q['A']}", f"B) {q['B']}", f"C) {q['C']}"],
             "answer": correct_answer,
             "legal_basis": legal_basis,
-            "legal_basis_content": legal_basis_content,
         }
 
         unified_data.append(unified_item)

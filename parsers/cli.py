@@ -10,24 +10,24 @@ from parsers.pdf_parser import parse_questions
 from parsers.parse_answers import parse_answers
 from parsers.stats import generate_statistics
 from parsers.utils import save_as_jsonl
-from parsers.LegalBaseExtractor.initialize_extractors import initialize_extractors
 
 app = typer.Typer()
 
 
 @app.command()
 def parse(
-    pdfs_path: str = typer.Argument(..., help="Path to the pdfs directory"),
     stats: bool = typer.Option(False, "--stats", help="Generate statistics"),
     validate: bool = typer.Option(True, "--validate", help="Validate parsed data"),
 ):
     """
-    Parse Polish law exam PDFs from the specified directory and create unified JSONL files.
+    Parse Polish law exam PDFs from the 'pdfs' directory and create unified JSONL files.
     """
-    pdf_dir = pdfs_path
+    pdf_dir = "pdfs"
     if not os.path.exists(pdf_dir):
-        typer.echo(f"Error: '{pdf_dir}' directory not found")
-        raise typer.Exit(code=1)
+        if not os.path.exists(f"../{pdf_dir}"):
+            typer.echo(f"Error: '{pdf_dir}' directory not found")
+            raise typer.Exit(code=1)
+        pdf_dir = f"../{pdf_dir}"
 
     all_files = [f for f in os.listdir(pdf_dir) if f.endswith(".pdf")]
 
@@ -65,7 +65,6 @@ def parse(
             exams[year][exam_type]["answers_pdf"] = pdf_file
 
     for year, types in exams.items():
-        extractors = initialize_extractors(str(pdf_dir + "/legal_base"))
         for exam_type, files in types.items():
             typer.echo(f"Processing exam: Year - {year}, Type - {exam_type}")
 
@@ -81,20 +80,26 @@ def parse(
                 parsed_questions = parse_questions(
                     questions_pdf_path, validate=validate
                 )
+                typer.echo(
+                    f"  - Successfully parsed {len(parsed_questions['questions'])} questions."
+                )
 
                 if "invalid_questions" in parsed_questions:
-                    typer.warning(
-                        f"{len(parsed_questions['invalid_questions'])} invalid questions found"
+                    typer.echo(
+                        f"    Warning: {len(parsed_questions['invalid_questions'])} invalid questions found"
                     )
             else:
-                typer.warning("Questions file not found for this exam.")
+                typer.echo("  - Warning: Questions file not found for this exam.")
                 continue
 
             if "answers_pdf" in files:
                 answers_pdf_path = os.path.join(pdf_dir, files["answers_pdf"])
                 parsed_answers = parse_answers(answers_pdf_path, validate=validate)
+                typer.echo(
+                    f"  - Successfully parsed {len(parsed_answers['answers'])} answers."
+                )
             else:
-                typer.warning("Answers file not found for this exam.")
+                typer.echo("  - Warning: Answers file not found for this exam.")
                 parsed_answers = {"answers": []}
 
             unified_data = create_unified_jsonl(
@@ -102,12 +107,11 @@ def parse(
                 parsed_answers["answers"],
                 exam_type,
                 year,
-                extractors,
             )
 
             unified_path = output_dir / f"{year}.jsonl"
             save_as_jsonl(unified_data, str(unified_path))
-            typer.echo(f"Saved unified format: {unified_path}")
+            typer.echo(f"  - Saved unified format: {unified_path}")
 
             if stats:
                 stats_data = generate_statistics(parsed_questions)
@@ -116,7 +120,7 @@ def parse(
                 stats_path = output_dir / f"stats_{year}.json"
                 with open(stats_path, "w", encoding="utf-8") as f:
                     json.dump(stats_data, f, ensure_ascii=False, indent=2)
-                typer.echo(f"Statistics saved to {stats_path}")
+                typer.echo(f"    Statistics saved to {stats_path}")
 
 
 if __name__ == "__main__":
