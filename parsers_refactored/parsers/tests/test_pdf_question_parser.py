@@ -42,7 +42,7 @@ def test_parse_question_numbers_are_sequential(parser_with_mock):
     """Test that question numbers are sequential from 1 to 150."""
     questions = parser_with_mock.parse()
 
-    question_numbers = [q.number for q in questions]
+    question_numbers = [q.id for q in questions]
     assert question_numbers == list(range(1, 151))
 
 
@@ -51,7 +51,7 @@ def test_parse_first_question_content(parser_with_mock):
     questions = parser_with_mock.parse()
 
     first_question = questions[0]
-    assert first_question.number == 1
+    assert first_question.id == 1
     assert (
         first_question.text
         == "Zgodnie z Kodeksem karnym, czyn zabroniony uważa się za popełniony w miejscu, w którym:"
@@ -69,7 +69,7 @@ def test_parse_last_question_content(parser_with_mock):
     questions = parser_with_mock.parse()
 
     first_question = questions[-1]
-    assert first_question.number == 150
+    assert first_question.id == 150
     assert (
         first_question.text
         == "Zgodnie z ustawą o Rzeczniku Praw Obywatelskich, jeżeli Rzecznik Praw Obywatelskich zrzekł się wykonywania obowiązków:"

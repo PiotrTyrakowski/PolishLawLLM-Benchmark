@@ -42,7 +42,7 @@ def test_parse_first_answer_content(parser):
     answers = parser.parse()
 
     first_answer = answers[0]
-    assert first_answer.question_number == 1
+    assert first_answer.question_id == 1
     assert first_answer.correct_answer == "A"
     assert first_answer.legal_basis == "art. 6 § 2 k.k."
 
@@ -52,7 +52,7 @@ def test_parse_last_answer_content(parser):
     answers = parser.parse()
 
     last_answer = answers[-1]
-    assert last_answer.question_number == 119
+    assert last_answer.question_id == 119
     assert last_answer.correct_answer == "A"
     assert last_answer.legal_basis == "art. 119 § 1 k.p.a."
 
@@ -61,9 +61,9 @@ def test_parse_answer_with_superindex(parser):
     """Test that the answer with superindex is correctly parsed."""
     answers = parser.parse()
 
-    answer = next((a for a in answers if a.question_number == 100), None)
+    answer = next((a for a in answers if a.question_id == 100), None)
     assert answer is not None
-    assert answer.question_number == 100
+    assert answer.question_id == 100
     assert answer.correct_answer == "C"
     assert answer.legal_basis == "art. 300 § 1 k.s.h."
 
@@ -72,8 +72,8 @@ def test_parse_at_the_bottom_of_the_page(parser):
     """Test that the answer at the bottom of the page is correctly parsed."""
     answers = parser.parse()
 
-    answer = next((a for a in answers if a.question_number == 45), None)
+    answer = next((a for a in answers if a.question_id == 45), None)
     assert answer is not None
-    assert answer.question_number == 45
+    assert answer.question_id == 45
     assert answer.correct_answer == "C"
     assert answer.legal_basis == "art. 645 § 1 k.c."
