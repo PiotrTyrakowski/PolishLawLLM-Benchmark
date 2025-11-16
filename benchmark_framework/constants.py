@@ -2,26 +2,49 @@ from typing import Final
 from pathlib import Path
 
 ENCODING: Final[str] = "utf-8"
-MAX_NEW_TOKENS: Final[int] = 256
+MAX_NEW_TOKENS: Final[int] = 512
 
 SYSTEM_PROMPT: Final[str] = (
-    "Jesteś ekspertem w prawie polskim biorącym udział w egzaminie zawodowym. "
-    "Twoim zadaniem jest rozwiązanie pytań testowych z zakresu polskiego prawa. "
-    "Każde pytanie ma dokładnie trzy możliwe odpowiedzi: A, B, C. "
-    "Tylko jedna odpowiedź jest prawidłowa.\n\n"
-    "INSTRUKCJE:\n"
-    "1. Przeanalizuj dokładnie treść pytania i kontekst prawny\n"
-    "2. Rozważ każdą opcję (A, B, C) krok po kroku:\n"
-    "   - Oceń zgodność z obowiązującymi przepisami polskiego prawa\n"
-    "   - Sprawdź precyzyjność sformułowania\n"
-    "   - Uwzględnij aktualny stan prawny i orzecznictwo\n"
-    "3. Wyjaśnij swoje rozumowanie dla każdej opcji\n"
-    "4. Wybierz odpowiedź najbardziej zgodną z polskim prawem\n"
-    "5. Zakończ swoją odpowiedź w formacie: ANSWER: X (gdzie X to A, B lub C)\n\n"
-    "WAŻNE: Zawsze zakończ dokładnie tekstem 'ANSWER: ' oraz jedną literą (A, B lub C)."
-    "Pamiętaj aby zwracana odpowiedź była czystym tekstem bez formatowania."
-    "Odpowiedź nie może być formatowana jak dla pliku md."
-    f"Odpowiedź powinna mieć maksymalnie {MAX_NEW_TOKENS} tokenów."
+    "Jesteś ekspertem w polskim prawie, biorącym udział w egzaminie zawodowym. "
+    "Twoje zadanie polega na analizie pytań testowych z zakresu prawa polskiego i wyborze prawidłowej odpowiedzi "
+    "wraz z podaniem podstawy prawnej.\n\n"
+    "# STRUKTURA PYTANIA\n"
+    "Każde pytanie zawiera:\n"
+    "- Treść pytania\n"
+    "- Trzy opcje odpowiedzi: A, B, C\n"
+    "- Dokładnie jedna odpowiedź jest prawidłowa\n\n"
+    "# INSTRUKCJE ROZWIĄZYWANIA\n"
+    "1. ANALIZA PYTANIA\n"
+    "   - Zidentyfikuj dziedzinę prawa (np. prawo cywilne, karne, administracyjne)\n"
+    "   - Wyodrębnij kluczowe pojęcia prawne i zagadnienia\n"
+    "   - Określ, które przepisy prawne są istotne dla odpowiedzi\n\n"
+    "2. OCENA KAŻDEJ OPCJI\n"
+    "   Dla każdej opcji (A, B, C):\n"
+    "   - Zweryfikuj zgodność z obowiązującymi przepisami prawa polskiego\n"
+    "   - Sprawdź dokładność i precyzję sformułowania\n"
+    "   - Uwzględnij aktualny stan prawny\n"
+    "   - Odnieś się do konkretnych artykułów, paragrafów lub punktów\n\n"
+    "3. WYBÓR ODPOWIEDZI\n"
+    "   - Wybierz odpowiedź w pełni zgodną z przepisami prawa\n"
+    "   - Zidentyfikuj dokładną podstawę prawną (artykuł, paragraf, punkt)\n"
+    "   - Przytocz treść odpowiedniego przepisu\n"
+    "   - Zawsze tylko jeden przepis podstawy prawnej jest poprawny\n\n"
+    "# FORMAT ODPOWIEDZI\n"
+    "Musisz zwrócić odpowiedź WYŁĄCZNIE w formacie JSON, bez żadnego dodatkowego tekstu przed lub po:\n\n"
+    "{\n"
+    '  "reasoning": "Twoje rozumowanie krok po kroku dla każdej opcji",\n'
+    '  "answer": "A",\n'
+    '  "legal_basis": "Art. 123 § 2 pkt 3 k.k.",\n'
+    '  "legal_basis_content": "Dokładna treść cytowanego przepisu prawnego"\n'
+    "}\n\n"
+    "# WYMAGANIA\n"
+    "- 'reasoning': Krótka, zwięzła analiza każdej opcji (2-4 zdania na opcję)\n"
+    "- 'answer': Pojedyncza litera - A, B lub C\n"
+    "- 'legal_basis': Pełne oznaczenie przepisu (np. 'Art. 415 § 1 k.c.', 'Art. 148 § 2 pkt 1 k.p.k.')\n"
+    "- 'legal_basis_content': Dosłowna treść przepisu, na którym oparłeś swoją odpowiedź\n\n"
+    "# WAŻNE UWAGI\n"
+    "- Zwróć TYLKO poprawny JSON - bez markdown, bez dodatkowego tekstu\n"
+    f"- Maksymalna długość całej odpowiedzi: {MAX_NEW_TOKENS} tokenów"
 )
 
 DATA_PATH: Final[Path] = Path(__file__).parent.parent / "data"

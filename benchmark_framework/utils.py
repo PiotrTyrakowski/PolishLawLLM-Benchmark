@@ -32,20 +32,25 @@ def initialize_tasks(dataset_name: str, tasks_dir_path: Path = DATA_PATH) -> lis
 
 def extract_answer_from_response(response_text: str) -> str:
     """
-    Extract answer from model response that ends with "ANSWER: X" format.
-    Returns:
-        Single letter answer (A, B, or C) or original text if parsing fails
+    Extract answer from model response in JSON format.
     """
     response_text = response_text.strip()
+    answer = ""
+    try:
+        # Try to parse as JSON
+        json_response = json.loads(response_text)
+        answer = json_response.get("answer", "").strip().upper()
+    except json.JSONDecodeError:
+        # Try to find JSON object directly in text
+        json_match = re.search(r'\{.*?"answer".*?\}', response_text, re.DOTALL)
+        if json_match:
+            try:
+                json_response = json.loads(json_match.group(0))
+                answer = json_response.get("answer", "").strip().upper()
+            except json.JSONDecodeError:
+                pass
 
-    match = re.search(r"ANSWER:\s*([ABC])", response_text, re.IGNORECASE)
-    if match:
-        return match.group(1).upper()
+    if answer in ["A", "B", "C"]:
+        return answer
 
-    # Fallback: look for single letter at the end
-    for letter in ["A", "B", "C"]:
-        if letter in response_text[-5:]:
-            return letter
-
-    # Return full response if parsing fails
-    return response_text
+    return ""
