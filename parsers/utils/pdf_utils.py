@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Optional, Callable
 import pdfplumber
+import re
 
 
 class PDFTextExtractor:
@@ -94,7 +95,27 @@ class LegalBaseTextExtractor(PDFTextExtractor):
         except Exception as e:
             raise RuntimeError(f"Error while loading PDF: {e}")
 
-        return "\n".join(text_parts)
+        full_text = "\n".join(text_parts)
+        return self._filter_date_lines(full_text)
+
+    @staticmethod
+    def _filter_date_lines(text: str, indent_threshold: int = 40) -> str:
+        """
+        Filter out lines with excessive indentation followed by dates.
+        """
+        lines = text.split("\n")
+        filtered_lines = []
+
+        # Pattern to match lines with lots of whitespace and a date (YYYY-MM-DD format)
+        date_pattern = re.compile(
+            rf"^\s{{{indent_threshold},}}\s*?\d{{4}}-\d{{2}}-\d{{2}}"
+        )
+
+        for line in lines:
+            if not date_pattern.match(line):
+                filtered_lines.append(line)
+
+        return "\n".join(filtered_lines)
 
     @staticmethod
     def _make_char_filter(
