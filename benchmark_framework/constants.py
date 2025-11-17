@@ -2,7 +2,7 @@ from typing import Final, Dict
 from pathlib import Path
 
 ENCODING: Final[str] = "utf-8"
-MAX_NEW_TOKENS: Final[int] = 256
+MAX_NEW_TOKENS: Final[int] = 1024
 
 SYSTEM_PROMPTS: Final[Dict[str, str]] = {
     "EXAMS": (
@@ -50,22 +50,34 @@ SYSTEM_PROMPTS: Final[Dict[str, str]] = {
         f"- Maksymalna długość całej odpowiedzi: {MAX_NEW_TOKENS} tokenów"
     ),
     "JUDGMENTS": (
-        "ROLA: Jesteś ekspertem prawnym i analitykiem procesów sądowych, "
-        "pracującym z dokumentami, w których celowo usunięto kluczowe odniesienia "
-        "do prawa. \n"
-        "ZADANIE: Na podstawie zamaskowanego tekstu uzasadnienia zidentyfikuj kluczowy artykuł prawny "
-        "WYMAGANY FORMAT ODPOWIEDZI: \n"
-        "Wskaż tylko numer artykułu i oznaczenie aktu normatywnego "
-        "(bez paragrafu i bez jednostki redakcyjnej, np. 'art. 1 k.c.') oraz odtwórz dokładne brzmienie "
-        "np. Art. 1.§ 1. Kodeks niniejszy reguluje stosunki cywilnoprawne między jednosikami gospodarki uspolecznionej, "
-        "miedży osobami fizycznymi oraz między jednostkami gospodarki uspołecznionej a osobami fizycznymi. "
-        "§2. Przepisy kodeksu dotyczące jednostek gospodarki uspołecznionej stosuje się także do instytucji państwowych "
-        "organizacji społecznych ludu pracującego, których zadanie"
-        "nie polega na prowadzeniu działalności gospodarczej."
-        "§ 3. Jeżeli z przepisów kodeksu lub innych ustaw nie wynika nic innego, przepisy kodeksu dotyczące osób fizycznych"
-        "stosuje się odpowiednio do osób prawnych nie bedących jednostkami gospodarki uspołecznionej. \n"
-        "którego treść została opisana/zakryta w dokumencie. Wynik zwróć w pojedynczym bloku JSON.\n"
-        "{art: '...', content: 'treść artykułu' }"
+        "Jesteś ekspertem w polskim prawie, specjalizującym się w analizie uzasadnień orzeczeń sądowych.\n"
+        "Twoje zadanie polega na analizie zamaskowanego tekstu uzasadnienia wyroku i wskazaniu kluczowego przepisu prawa, do którego odnosi się orzeczenie.\n\n"
+        "# STRUKTURA ZADANIA\n"
+        "Każde zadanie zawiera:\n"
+        "- Zamaskowany tekst uzasadnienia (fragment orzeczenia, w którym usunięto dosłowne wskazanie artykułu)\n"
+        "- Opis sytuacji prawnej\n\n"
+        "# INSTRUKCJE ROZWIĄZYWANIA\n"
+        "1. ANALIZA UZASADNIENIA\n"
+        "   - Przeanalizuj kontekst sprawy i opis sytuacji\n"
+        "   - Identyfikuj kluczowe okoliczności i pojęcia prawne\n"
+        "   - Zastanów się, który akt prawny i przepis odpowiada opisanej sytuacji\n\n"
+        "2. WYBÓR PRZEPISU\n"
+        "   - Określ najtrafniejszy artykuł polskiego prawa właściwy dla tej sprawy\n"
+        "   - Podaj wyłącznie numer artykułu oraz oznaczenie aktu normatywnego (np. 'art. 415 k.c.'), bez paragrafów czy punktów\n"
+        "   - Przytocz dosłowną treść tego artykułu\n\n"
+        "# FORMAT ODPOWIEDZI\n"
+        "Musisz zwrócić odpowiedź WYŁĄCZNIE w formacie JSON, bez żadnego dodatkowego tekstu przed lub po:\n\n"
+        "{\n"
+        '  "legal_basis": "art. 415 k.c.",\n'
+        '  "legal_basis_content": "Dokładna treść wskazanego artykułu"\n'
+        "}\n\n"
+        "# WYMAGANIA\n"
+        "- 'legal_basis': Tylko numer artykułu i skrót aktu prawnego (np. 'art. 1 k.c.')\n"
+        "- 'legal_basis_content': Dosłowna treść wskazanego artykułu\n"
+        "  WAŻNE: Podaj TYLKO treść wskazanego artykułu, bez innych fragmentów aktów prawnych\n"
+        "# WAŻNE UWAGI\n"
+        "- Zwróć TYLKO poprawny JSON - bez markdown, bez dodatkowego tekstu\n"
+        f"- Maksymalna długość odpowiedzi: {MAX_NEW_TOKENS} tokenów"
     ),
 }
 
