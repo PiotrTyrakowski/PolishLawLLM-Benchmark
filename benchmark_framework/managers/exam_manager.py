@@ -27,12 +27,6 @@ class ExamManager(BaseManager):
     def get_tasks(self) -> list[Exam]:
         return self.tasks
 
-    def get_metrics(self) -> list[BaseMetric]:
-        return [
-            ExactMatchMetric(),
-            WeightedBleuMetric(),
-        ]
-
     def get_result(self, exam: Exam, model_response: str) -> dict:
         extracted_answer = self.extract_answer_from_response(model_response)
         extract_legal_basis = self.extract_legal_basis_from_response(model_response)
