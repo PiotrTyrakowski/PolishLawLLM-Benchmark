@@ -3,7 +3,7 @@ import json
 import torch
 from transformers import pipeline, BitsAndBytesConfig
 from benchmark_framework.models.base_model import BaseModel
-from benchmark_framework.constants import SYSTEM_PROMPT, MAX_NEW_TOKENS
+from benchmark_framework.constants import MAX_NEW_TOKENS
 from benchmark_framework.configs.model_config import ModelConfig
 
 
@@ -33,9 +33,9 @@ class LocalModel(BaseModel):
             quantization_config=quantization_config,
         )
 
-    def generate_response(self, prompt: str) -> str:
+    def generate_response(self, system_prompt: str, prompt: str) -> str:
         messages = [
-            {"role": "system", "content": SYSTEM_PROMPT.strip()},
+            {"role": "system", "content": system_prompt.strip()},
             {"role": "user", "content": prompt.strip()},
         ]
         outputs = self.pipe(
@@ -52,11 +52,11 @@ class LocalModel(BaseModel):
         assert isinstance(response, str), "generated_text should be of type str"
         return response
 
-    def generate_batch_response(self, prompts: list[str], batch_size: int) -> list[str]:
+    def generate_batch_response(self, system_prompt: str, prompts: list[str], batch_size: int) -> list[str]:
         chat_batch = []
         for prompt in prompts:
             messages = [
-                {"role": "system", "content": SYSTEM_PROMPT.strip()},
+                {"role": "system", "content": system_prompt.strip()},
                 {"role": "user", "content": prompt.strip()},
             ]
             chat_batch.append(messages)

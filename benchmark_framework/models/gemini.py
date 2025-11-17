@@ -3,7 +3,6 @@ from google.genai import types
 
 from benchmark_framework.configs.runner_config import RunnerConfig
 from benchmark_framework.models.base_model import BaseModel
-from benchmark_framework.constants import SYSTEM_PROMPT
 from benchmark_framework.configs.model_config import ModelConfig
 
 
