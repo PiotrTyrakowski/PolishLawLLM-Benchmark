@@ -45,7 +45,9 @@ class ExamManager(BaseManager):
             metric.name: metric(
                 extracted_legal_basis_content,
                 exam.legal_basis_content,
-                extracted_legal_basis.code,
+                legal_basis_extractor.format_code_abbreviation(
+                    extracted_legal_basis.code
+                ),
             )
             for metric in self.get_metrics()
         }
