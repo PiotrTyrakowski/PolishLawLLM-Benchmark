@@ -113,56 +113,6 @@ class JudgmentManager(BaseManager):
 
         return ""
 
-    @staticmethod
-    def _extract_content_from_response(response_text: str) -> str:
-        """
-        Extract content (legal basis content) from model response in JSON format.
-        Handles markdown code blocks and incomplete/truncated JSON.
-        """
-        response_text = response_text.strip()
-
-        # Remove markdown code block markers if present
-        if response_text.startswith("```"):
-            lines = response_text.split("\n")
-            if lines[0].startswith("```"):
-                lines = lines[1:]
-            if lines and lines[-1].strip() == "```":
-                lines = lines[:-1]
-            response_text = "\n".join(lines).strip()
-
-        try:
-            json_response = json.loads(response_text)
-            # Try different possible keys
-            content = (
-                json_response.get("content", "")
-                or json_response.get("legal_basis_content", "")
-            )
-            return content.strip() if content else ""
-        except json.JSONDecodeError:
-            # Try regex patterns for content
-            content_patterns = [
-                r'"content"\s*:\s*"([^"]+)"',
-                r'"legal_basis_content"\s*:\s*"([^"]+)"',
-                r"content\s*[:=]\s*['\"]([^'\"]+)['\"]",
-            ]
-            for pattern in content_patterns:
-                match = re.search(pattern, response_text, re.DOTALL | re.IGNORECASE)
-                if match:
-                    return match.group(1).strip()
-
-            # Try to find JSON object with content field
-            json_match = re.search(
-                r'\{.*?"content".*?\}', response_text, re.DOTALL | re.IGNORECASE
-            )
-            if json_match:
-                try:
-                    json_response = json.loads(json_match.group(0))
-                    content = json_response.get("content", "")
-                    return content.strip() if content else ""
-                except json.JSONDecodeError:
-                    pass
-
-        return ""
 
     def get_summary(self) -> dict:
         total = len(self.results)

@@ -45,12 +45,46 @@ class BaseManager(ABC):
         self.base_dir = RESULTS_PATH / manager_type
         self.base_dir.mkdir(parents=True, exist_ok=True)
 
-    @abstractmethod
-    def _extract_answer_from_response(self, response_text: str) -> str:
+    @staticmethod
+    def extract_answer_from_response(response_text: str) -> str:
         """
-        Extract answer from model response.
+        Extract answer from model response in JSON format.
+        Handles markdown code blocks and incomplete/truncated JSON.
         """
-        pass
+        response_text = response_text.strip()
+        answer = ""
+
+        # Remove markdown code block markers if present
+        if response_text.startswith("```"):
+            lines = response_text.split("\n")
+            if lines[0].startswith("```"):
+                lines = lines[1:]
+            if lines and lines[-1].strip() == "```":
+                lines = lines[:-1]
+            response_text = "\n".join(lines).strip()
+
+        try:
+            json_response = json.loads(response_text)
+            answer = json_response.get("answer", "").strip().upper()
+        except json.JSONDecodeError:
+            answer_match = re.search(
+                r'"answer"\s*:\s*"([ABC])"', response_text, re.IGNORECASE
+            )
+            if answer_match:
+                answer = answer_match.group(1).upper()
+            else:
+                json_match = re.search(r'\{.*?"answer".*?\}', response_text, re.DOTALL)
+                if json_match:
+                    try:
+                        json_response = json.loads(json_match.group(0))
+                        answer = json_response.get("answer", "").strip().upper()
+                    except json.JSONDecodeError:
+                        pass
+
+        if answer in ["A", "B", "C"]:
+            return answer
+
+        return ""
 
     def get_metrics(self) -> list[BaseMetric]:
         return [
