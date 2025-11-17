@@ -17,9 +17,9 @@ class JudgmentManager(BaseManager):
     """
 
     def __init__(
-        self, model: BaseModel, metrics: List[BaseMetric], tasks_path: Path = DATA_PATH
+        self, model: BaseModel, tasks_path: Path = DATA_PATH
     ):
-        super().__init__(model, "judgments", metrics, tasks_path)
+        super().__init__(model, "judgments", tasks_path)
 
     def get_tasks(self) -> list[Judgment]:
         return self.tasks
@@ -163,3 +163,14 @@ class JudgmentManager(BaseManager):
                     pass
 
         return ""
+
+    def get_summary(self) -> dict:
+        total = len(self.results)
+        correct = sum(1 for result in self.results if result.get("is_legal_basis_correct", False))
+
+        return {
+            "model_name": self.model.model_name,
+            "total_tasks": total,
+            "correct_answers": correct,
+            "accuracy": correct / total if total > 0 else 0.0,
+        }

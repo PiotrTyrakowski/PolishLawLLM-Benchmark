@@ -8,8 +8,8 @@ from benchmark_framework.types.task import Task
 from benchmark_framework.metrics.base_metric import BaseMetric
 from benchmark_framework.utils import initialize_tasks
 from benchmark_framework.models.base_model import BaseModel
-from benchmark_framework.metrics.base_metric import BaseMetric
-from typing import List
+from benchmark_framework.metrics.exact_match import ExactMatchMetric
+from benchmark_framework.metrics.weighted_bleu import WeightedBleuMetric
 from benchmark_framework.constants import (
     ENCODING,
     RESULTS_PATH,
@@ -31,12 +31,10 @@ class BaseManager(ABC):
         self,
         model: BaseModel,
         manager_type: str,
-        metrics: List[BaseMetric],
         tasks_path: Path = DATA_PATH,
     ):
         super().__init__()
         self.model = model
-        self.metrics = metrics
         self.tasks = initialize_tasks(manager_type.lower(), tasks_path)
         self.results = []
         self.system_prompt = SYSTEM_PROMPTS[manager_type.upper()]
@@ -81,16 +79,13 @@ class BaseManager(ABC):
             for result in self.results:
                 f.write(json.dumps(result, ensure_ascii=False) + "\n")
 
+    @abstractmethod
     def get_summary(self) -> dict:
-        total = len(self.results)
-        correct = sum(1 for result in self.results if result["is_correct"])
-
-        return {
-            "model_name": self.model.model_name,
-            "total_tasks": total,
-            "correct_answers": correct,
-            "accuracy": correct / total if total > 0 else 0.0,
-        }
+        """
+        Generate a summary of benchmark results.
+        Must be implemented by each manager subclass.
+        """
+        pass
 
     @staticmethod
     def extract_legal_basis_from_response(response_text: str) -> str:

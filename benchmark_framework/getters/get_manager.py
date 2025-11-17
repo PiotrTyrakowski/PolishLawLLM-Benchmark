@@ -15,7 +15,6 @@ MANAGER_REGISTRY = {"exams": ExamManager, "judgments": JudgmentManager}
 def get_manager(
     dataset_name: str,
     model: BaseModel,
-    metrics: List[BaseMetric],
     tasks_path: Path = DATA_PATH,
 ) -> BaseManager:
     """
@@ -24,5 +23,5 @@ def get_manager(
     manager_class = MANAGER_REGISTRY.get(dataset_name)
     if not manager_class:
         raise ValueError(f"Dataset name '{dataset_name}' is not recognized.")
-    manager_instance = manager_class(model, metrics, tasks_path)
+    manager_instance = manager_class(model, tasks_path)
     return manager_instance

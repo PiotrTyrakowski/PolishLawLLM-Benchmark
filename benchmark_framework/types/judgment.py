@@ -13,9 +13,8 @@ class Judgment(Task):
     and the expected article reference and content that should be identified.
     """
 
-    def __init__(self, id, judgment_link, masked_justification_text, legal_basis, legal_basis_content):
+    def __init__(self, judgment_link, masked_justification_text, legal_basis, legal_basis_content):
         super().__init__()
-        self.id = id
         self.judgment_link = judgment_link
         self.masked_justification_text = masked_justification_text
         self.legal_basis = legal_basis
@@ -23,10 +22,11 @@ class Judgment(Task):
 
     @classmethod
     def from_dict(cls, data: dict):
+        # Handle both masked_judgment_text and masked_justification_text field names
+        masked_text = data.get("masked_justification_text") or data.get("masked_judgment_text")
         return cls(
-            data["id"],
             data["judgment_link"],
-            data["masked_justification_text"],
+            masked_text,
             data["legal_basis"],
             data["legal_basis_content"],
         )
@@ -43,14 +43,6 @@ def load_judgments(jsonl_path: Path) -> list["Judgment"]:
     with open(jsonl_path, encoding=ENCODING) as f:
         for line in f:
             obj = json.loads(line)
-            judgments.append(
-                Judgment(
-                    obj["id"],
-                    obj["judgment_link"],
-                    obj["masked_justification_text"],
-                    obj["legal_basis"],
-                    obj["legal_basis_content"],
-                )
-            )
+            judgments.append(Judgment.from_dict(obj))
     return judgments
 

@@ -103,11 +103,6 @@ TASK_PROMPT: Final[str] = (
     "- Nie dodawaj żadnych dodatkowych zdań, opisów, analiz ani wytłumaczeń.\n"
 )
 
-
-Żadnych dodatkowych zdań, opisów, analiz, wytłumaczeń.
-
-Chcesz, żebym jeszcze bardziej zoptymalizował go pod modele (np. OpenAI / Anthropic / Mistral) lub dodał wersję angielską?"
-
 DATA_PATH: Final[Path] = Path(__file__).parent.parent / "data"
 RESULTS_PATH: Final[Path] = Path(__file__).parent.parent / "results"
 ROOT_PATH: Final[Path] = Path(__file__).parent.parent
