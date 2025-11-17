@@ -1,18 +1,33 @@
 import os
 import pytest
+from pathlib import Path
 
-from parsers.LegalBaseExtractor.LegalBaseExtractor import LegalBaseExtractor
+from parsers.parsers.legal_base_parser import LegalBaseParser
+
+
+def get_pdf_path():
+    """Helper function to get the path to the 2025 exam PDF."""
+    file_path = (
+        Path(__file__).parent
+        / ".."
+        / ".."
+        / ".."
+        / "pdfs"
+        / "2025"
+        / "legal_base"
+        / "kk.pdf"
+    )
+    return file_path.resolve()
 
 
 @pytest.fixture(scope="session")
-def extractor_instance():
-    """Create a single LegalBaseExtractor instance for all tests in the session."""
-    pdf_path = "data/kk.pdf"
+def parser_instance():
+    """Create a single LegalBaseParser instance for all tests in the session."""
+    pdf_path = get_pdf_path()
     if not os.path.exists(pdf_path):
         pytest.skip(f"PDF path set in LEGAL_PDF_PATH does not exist: {pdf_path}")
-
-    extractor = LegalBaseExtractor(pdf_path)
-    return extractor
+    parser = LegalBaseParser(pdf_path)
+    return parser
 
 
 @pytest.mark.parametrize(
@@ -36,9 +51,65 @@ def extractor_instance():
         ),
     ],
 )
-def test_extract_article(extractor_instance, article_num, expected_text):
+def test_extract_article(parser_instance, article_num, expected_text):
     """Test that article extraction returns the expected text."""
-    result = extractor_instance.get_article(article_num)
+    result = parser_instance.get_article(article_num)
     assert (
         result == expected_text
     ), f"Article {article_num} does not match expected text"
+
+
+@pytest.mark.parametrize(
+    "article_num,paragraph_num,expected_text",
+    [
+        (
+            1,
+            1,
+            "Odpowiedzialności karnej podlega ten tylko, kto popełnia czyn zabroniony pod groźbą kary przez ustawę obowiązującą w czasie jego popełnienia.",
+        ),
+        (
+            1,
+            2,
+            "Nie stanowi przestępstwa czyn zabroniony, którego społeczna szkodliwość jest znikoma.",
+        ),
+        (
+            10,
+            "2a",
+            "Nieletni, który po ukończeniu 14 lat, a przed ukończeniem 15 lat, dopuszcza się czynu zabronionego określonego w art. 148 § 2 lub 3, może odpowiadać na zasadach określonych w tym kodeksie, jeżeli okoliczności sprawy oraz stopień rozwoju sprawcy, jego właściwości i warunki osobiste za tym przemawiają oraz zachodzi uzasadnione przypuszczenie, że stosowanie środków wychowawczych lub poprawczych nie jest w stanie zapewnić resocjalizacji nieletniego.",
+        ),
+    ],
+)
+def test_extract_paragraph(parser_instance, article_num, paragraph_num, expected_text):
+    """Test that paragraph extraction returns the expected text."""
+    result = parser_instance.get_paragraph(article_num, paragraph_num)
+    assert (
+        result == expected_text
+    ), f"Art. {article_num} § {paragraph_num} does not match expected text"
+
+
+@pytest.mark.parametrize(
+    "article_num,paragraph_num,point_num,expected_text",
+    [
+        (39, None, 1, "pozbawienie praw publicznych;"),
+        (
+            40,
+            2,
+            1,
+            "na karę pozbawienia wolności na czas nie krótszy od lat 3 za przestępstwo popełnione w wyniku motywacji zasługującej na szczególne potępienie;",
+        ),
+        (
+            40,
+            2,
+            2,
+            "za przestępstwa określone w art. 228 § 1 i 3–6, art. 229 § 1 i 3–5, art. 230 § 1, art. 230a § 1, art. 250a § 1 i 2, art. 271 § 3, art. 296a § 1, 2 i 4, art. 305 § 1–4 oraz art. 306b.",
+        ),
+    ],
+)
+def test_extract_point(
+    parser_instance, article_num, paragraph_num, point_num, expected_text
+):
+    """Test that point extraction returns the expected text."""
+    result = parser_instance.get_point(article_num, point_num, paragraph_num)
+    assert (
+        result == expected_text
+    ), f"Art. {article_num} § {paragraph_num} does not match expected text"

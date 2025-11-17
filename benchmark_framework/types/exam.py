@@ -40,8 +40,8 @@ class Exam(Task):
         """
         prompt = f"Pytanie: {self.question}\n\n"
         prompt += "Odpowiedzi:\n"
-        for choice in self.choices:
-            prompt += f"{choice}\n"
+        for key, val in self.choices.items():
+            prompt += f"{key}) {val}\n"
         return prompt
 
 
