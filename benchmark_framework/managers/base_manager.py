@@ -54,12 +54,11 @@ class BaseManager(ABC):
         """
         pass
 
-    @abstractmethod
     def get_metrics(self) -> list[BaseMetric]:
-        """
-        Returns a list of metrics to be used for evaluating the model.
-        """
-        pass
+        return [
+            ExactMatchMetric(),
+            WeightedBleuMetric(), # normal bleu
+        ]
 
     def get_result(self, task: Task, model_response: str) -> dict:
         """
