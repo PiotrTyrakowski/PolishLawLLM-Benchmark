@@ -64,14 +64,18 @@ def upload_exam_data_to_firestore(
 
                 # Commit the batch
                 batch.commit()
-                typer.echo(f"  Uploaded batch {i//batch_size + 1}: {len(batch_data)} documents")
+                typer.echo(
+                    f"  Uploaded batch {i//batch_size + 1}: {len(batch_data)} documents"
+                )
 
             typer.echo(
                 f"Successfully uploaded {uploaded_count} documents to collection: data/exams/{exam_type}_{year}"
             )
             total_uploaded += uploaded_count
 
-        typer.echo(f"\nTotal uploaded: {total_uploaded} documents across all exam types")
+        typer.echo(
+            f"\nTotal uploaded: {total_uploaded} documents across all exam types"
+        )
 
     except Exception as e:
         typer.echo(f"Error: {str(e)}")

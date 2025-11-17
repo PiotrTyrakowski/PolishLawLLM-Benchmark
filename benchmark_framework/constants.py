@@ -1,8 +1,8 @@
-from typing import Final
+from typing import Final, Dict
 from pathlib import Path
 
 ENCODING: Final[str] = "utf-8"
-MAX_NEW_TOKENS: Final[int] = 1024
+MAX_NEW_TOKENS: Final[int] = 256
 
 SYSTEM_PROMPT: Final[str] = (
     "Jesteś ekspertem w polskim prawie, biorącym udział w egzaminie zawodowym. "
