@@ -2,16 +2,15 @@ import json
 import re
 from pathlib import Path
 from dataclasses import asdict
+from typing import List
 
 from benchmark_framework.models.base_model import BaseModel
 from benchmark_framework.types.judgment import Judgment
 from benchmark_framework.managers.base_manager import BaseManager
 from benchmark_framework.constants import DATA_PATH
 from benchmark_framework.metrics.base_metric import BaseMetric
-from typing import List
 
 
-# TODO: implement with metrics
 class JudgmentManager(BaseManager):
     """
     Manager for handling legal judgment benchmark evaluations.
@@ -22,62 +21,145 @@ class JudgmentManager(BaseManager):
     ):
         super().__init__(model, "judgments", metrics, tasks_path)
 
+    def get_tasks(self) -> list[Judgment]:
+        return self.tasks
+
     def get_result(self, judgment: Judgment, model_response: str) -> dict:
-        extracted_answer = self._extract_judgment_answer(model_response)
-        is_correct = (
-            extracted_answer.get("art", "").strip().lower()
-            == judgment.expected_article.strip().lower()
-            and extracted_answer.get("content", "").strip()
-            == judgment.expected_content.strip()
+        extracted_legal_basis = self._extract_legal_basis_from_response(model_response)
+        extracted_legal_basis_content = self._extract_content_from_response(model_response)
+        
+        # Check if both legal basis and content match
+        is_legal_basis_correct = (
+            extracted_legal_basis.strip().lower() == judgment.legal_basis.strip().lower()
         )
 
+        metrics_results = {
+            metric.name: metric(extracted_legal_basis_content, judgment.legal_basis_content)
+            for metric in self.get_metrics()
+        }
+
         result = {
-            "id": judgment.id,
-            "masked_text": judgment.masked_text,
-            "expected_article": judgment.expected_article,
-            "expected_content": judgment.expected_content,
+            "judgment_link": judgment.judgment_link,
+            # "masked_justification_text": judgment.masked_justification_text, TODO: talk what to do with this because its very logn to jsut store it in jsonl
+            "legal_basis": judgment.legal_basis,
+            "legal_basis_content": judgment.legal_basis_content,
             "model_name": self.model.model_name,
             "model_config": json.dumps(asdict(self.model.model_config)),
             "model_response": model_response,
-            "extracted_answer": extracted_answer,
-            "is_correct": is_correct,
+            "extracted_legal_basis": extracted_legal_basis,
+            "extracted_legal_basis_content": extracted_legal_basis_content,
+            "is_legal_basis_correct": is_legal_basis_correct,
+            "metrics": metrics_results,
         }
 
         self.results.append(result)
         return result
 
-    def _extract_judgment_answer(self, response_text: str) -> dict:
+    def _extract_answer_from_response(self, response_text: str) -> str:
         """
-        Extract answer from model response in JSON format: {art: '...', content: '...'}
-        Returns:
-            Dictionary with 'art' and 'content' keys, or empty dict if parsing fails
+        Extract answer from model response.
+        For judgments, this extracts the legal basis (art reference).
+        """
+        return self._extract_legal_basis_from_response(response_text)
+
+    @staticmethod
+    def _extract_legal_basis_from_response(response_text: str) -> str:
+        """
+        Extract legal basis (art reference) from model response in JSON format.
+        Handles markdown code blocks and incomplete/truncated JSON.
         """
         response_text = response_text.strip()
 
-        # Try to find JSON block in the response
-        # Look for {art: ...} or {"art": ...} pattern
+        # Remove markdown code block markers if present
+        if response_text.startswith("```"):
+            lines = response_text.split("\n")
+            if lines[0].startswith("```"):
+                lines = lines[1:]
+            if lines and lines[-1].strip() == "```":
+                lines = lines[:-1]
+            response_text = "\n".join(lines).strip()
 
-        # Try to find JSON object
-        json_match = re.search(
-            r'\{[^{}]*["\']?art["\']?\s*[:=]\s*["\']?([^"\'}]+)["\']?[^{}]*["\']?content["\']?\s*[:=]\s*["\']?([^"\'}]+)["\']?[^{}]*\}',
-            response_text,
-            re.IGNORECASE | re.DOTALL,
-        )
-        if json_match:
-            return {
-                "art": json_match.group(1).strip(),
-                "content": json_match.group(2).strip(),
-            }
-
-        # Try to parse as JSON directly
         try:
-            # Remove markdown code blocks if present
-            cleaned = re.sub(r"```json\s*", "", response_text)
-            cleaned = re.sub(r"```\s*", "", cleaned)
-            parsed = json.loads(cleaned)
-            if isinstance(parsed, dict) and "art" in parsed and "content" in parsed:
-                return parsed
-        except:
-            pass
+            json_response = json.loads(response_text)
+            # Try different possible keys
+            art = (
+                json_response.get("art", "")
+                or json_response.get("legal_basis", "")
+                or json_response.get("article", "")
+            )
+            return art.strip() if art else ""
+        except json.JSONDecodeError:
+            # Try regex patterns for art reference
+            art_patterns = [
+                r'"art"\s*:\s*"([^"]+)"',
+                r'"legal_basis"\s*:\s*"([^"]+)"',
+                r'"article"\s*:\s*"([^"]+)"',
+                r"art\s*[:=]\s*['\"]([^'\"]+)['\"]",
+            ]
+            for pattern in art_patterns:
+                match = re.search(pattern, response_text, re.IGNORECASE)
+                if match:
+                    return match.group(1).strip()
 
-        return {}
+            # Try to find JSON object with art field
+            json_match = re.search(r'\{.*?"art".*?\}', response_text, re.DOTALL | re.IGNORECASE)
+            if json_match:
+                try:
+                    json_response = json.loads(json_match.group(0))
+                    art = json_response.get("art", "")
+                    return art.strip() if art else ""
+                except json.JSONDecodeError:
+                    pass
+
+        return ""
+
+    @staticmethod
+    def _extract_content_from_response(response_text: str) -> str:
+        """
+        Extract content (legal basis content) from model response in JSON format.
+        Handles markdown code blocks and incomplete/truncated JSON.
+        """
+        response_text = response_text.strip()
+
+        # Remove markdown code block markers if present
+        if response_text.startswith("```"):
+            lines = response_text.split("\n")
+            if lines[0].startswith("```"):
+                lines = lines[1:]
+            if lines and lines[-1].strip() == "```":
+                lines = lines[:-1]
+            response_text = "\n".join(lines).strip()
+
+        try:
+            json_response = json.loads(response_text)
+            # Try different possible keys
+            content = (
+                json_response.get("content", "")
+                or json_response.get("legal_basis_content", "")
+            )
+            return content.strip() if content else ""
+        except json.JSONDecodeError:
+            # Try regex patterns for content
+            content_patterns = [
+                r'"content"\s*:\s*"([^"]+)"',
+                r'"legal_basis_content"\s*:\s*"([^"]+)"',
+                r"content\s*[:=]\s*['\"]([^'\"]+)['\"]",
+            ]
+            for pattern in content_patterns:
+                match = re.search(pattern, response_text, re.DOTALL | re.IGNORECASE)
+                if match:
+                    return match.group(1).strip()
+
+            # Try to find JSON object with content field
+            json_match = re.search(
+                r'\{.*?"content".*?\}', response_text, re.DOTALL | re.IGNORECASE
+            )
+            if json_match:
+                try:
+                    json_response = json.loads(json_match.group(0))
+                    content = json_response.get("content", "")
+                    return content.strip() if content else ""
+                except json.JSONDecodeError:
+                    pass
+
+        return ""
