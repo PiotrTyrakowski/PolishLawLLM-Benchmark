@@ -1,7 +1,5 @@
 import json
 
-import torch
-from transformers import pipeline, BitsAndBytesConfig
 from benchmark_framework.models.base_model import BaseModel
 from benchmark_framework.constants import MAX_NEW_TOKENS
 from benchmark_framework.configs.model_config import ModelConfig
@@ -16,6 +14,10 @@ class LocalModel(BaseModel):
         self, model_name: str, model_config: ModelConfig, quantize: str = None, **kwargs
     ):
         super().__init__(model_name, model_config, **kwargs)
+
+        # Lazy imports - only import when LocalModel is actually used
+        import torch
+        from transformers import pipeline, BitsAndBytesConfig
 
         quantization_config = None
         if quantize == "4bit":
