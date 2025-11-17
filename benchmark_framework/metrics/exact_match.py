@@ -1,3 +1,4 @@
+from typing import Optional
 from benchmark_framework.metrics.base_metric import BaseMetric
 
 
@@ -7,7 +8,9 @@ class ExactMatchMetric(BaseMetric):
     def __init__(self) -> None:
         super().__init__("exact_match")
 
-    def _compute(self, prediction: str, reference: str) -> float:
+    def _compute(
+        self, prediction: str, reference: str, code_abbr: Optional[str] = None
+    ) -> float:
         """
         Returns 1.0 if normalized prediction matches normalized reference, else 0.0
         """
