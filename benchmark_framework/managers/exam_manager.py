@@ -28,7 +28,7 @@ class ExamManager(BaseManager):
 
     def get_result(self, exam: Exam, model_response: str) -> dict:
         extracted_answer = self.extract_answer_from_response(model_response)
-        extracted_legal_basis_content = self.extract_legal_basis_from_response(model_response)
+        extracted_legal_basis_content = self.extract_legal_basis_content_from_response(model_response)
         is_correct = extracted_answer == exam.answer
 
         metrics_results = {

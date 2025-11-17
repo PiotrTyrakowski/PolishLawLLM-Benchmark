@@ -26,7 +26,7 @@ class JudgmentManager(BaseManager):
 
     def get_result(self, judgment: Judgment, model_response: str) -> dict:
         extracted_legal_basis = self._extract_legal_basis_from_response(model_response)
-        extracted_legal_basis_content = self._extract_content_from_response(model_response)
+        extracted_legal_basis_content = self.extract_legal_basis_content_from_response(model_response)
         
         # Check if both legal basis and content match
         is_legal_basis_correct = (
@@ -112,7 +112,6 @@ class JudgmentManager(BaseManager):
                     pass
 
         return ""
-
 
     def get_summary(self) -> dict:
         total = len(self.results)
