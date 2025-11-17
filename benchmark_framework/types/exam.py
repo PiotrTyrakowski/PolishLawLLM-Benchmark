@@ -12,7 +12,17 @@ class Exam(Task):
     the question text, answer choices, correct answer, and legal basis.
     """
 
-    def __init__(self, id, year, exam_type, question, choices, answer, legal_basis):
+    def __init__(
+        self,
+        id,
+        year,
+        exam_type,
+        question,
+        choices,
+        answer,
+        legal_basis,
+        legal_basis_content,
+    ):
         super().__init__()
         self.id = id
         self.year = year
@@ -21,6 +31,7 @@ class Exam(Task):
         self.choices = choices
         self.answer = answer
         self.legal_basis = legal_basis
+        self.legal_basis_content = legal_basis_content
 
     @classmethod
     def from_dict(cls, data: dict):
@@ -32,6 +43,7 @@ class Exam(Task):
             data["choices"],
             data["answer"],
             data["legal_basis"],
+            data["legal_basis_content"],
         )
 
     def get_prompt(self) -> str:
@@ -59,6 +71,7 @@ def load_exams(jsonl_path: Path) -> list[Exam]:
                     obj["choices"],
                     obj["answer"],
                     obj["legal_basis"],
+                    obj["legal_basis_content"],
                 )
             )
     return exams

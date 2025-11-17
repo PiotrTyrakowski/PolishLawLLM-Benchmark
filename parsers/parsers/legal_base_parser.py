@@ -28,10 +28,10 @@ class LegalBaseParser:
         article_text = self._get_raw_article(article_number)
 
         paragraph_pattern = (
-            rf"(?:^ {{11}}|Art\.\s+{article_number}\.\s+)"
+            rf"^(?:\s{{11}}\s*)?"
             rf"§\s+{paragraph_number}\.\s+"
             rf"(.+?)"
-            rf"(?=^ {{11}}§\s+\d+[a-z]*\.|\Z)"
+            rf"(?=^\s{{11}}\s*§\s+\d+[a-z]*\.|\Z)"
         )
 
         match = re.search(paragraph_pattern, article_text, re.MULTILINE | re.DOTALL)
@@ -69,10 +69,10 @@ class LegalBaseParser:
         """Extract raw article text from content."""
         article_pattern = (
             rf"Art\.\s+{article_number}[a-z]?\.\s+"
-            rf".*?"
-            rf"(?=(?:Art\.\s+\d+[a-z]?\.|Rozdział\s+[IVXLCDM]+|$))"
+            rf"(.*?)"
+            rf"(?=(?:Art\.\s+\d+[a-z]?\s*\.|Rozdział\s+[IVXLCDM]+|TYTUŁ\s+[IVXLCDM]+|DZIAŁ\s+[IVXLCDM]+|$))"
         )
         match = re.search(article_pattern, self.content, re.DOTALL)
         if not match:
             raise ValueError(f"Article {article_number} not found")
-        return match.group(0)
+        return match.group(1)

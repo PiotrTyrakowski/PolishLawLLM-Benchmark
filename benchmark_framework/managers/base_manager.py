@@ -1,9 +1,11 @@
 import json
 import os
-from abc import ABC
+from abc import ABC, abstractmethod
+import re
 from pathlib import Path
 
 from benchmark_framework.types.task import Task
+from benchmark_framework.metrics.base_metric import BaseMetric
 from benchmark_framework.utils import initialize_tasks
 from benchmark_framework.models.base_model import BaseModel
 from benchmark_framework.constants import ENCODING, RESULTS_PATH, DATA_PATH
@@ -30,6 +32,13 @@ class BaseManager(ABC):
 
     def get_tasks(self) -> list[Task]:
         return self.tasks
+
+    @abstractmethod
+    def get_metrics(self) -> list[BaseMetric]:
+        """
+        Returns a list of metrics to be used for evaluating the model.
+        """
+        pass
 
     def get_result(self, task: Task, model_response: str) -> dict:
         """
@@ -62,3 +71,42 @@ class BaseManager(ABC):
             "correct_answers": correct,
             "accuracy": correct / total if total > 0 else 0.0,
         }
+
+    @staticmethod
+    def extract_legal_basis_from_response(response_text: str) -> str:
+        """
+        Extract legal_basis_content from model response in JSON format.
+        Handles markdown code blocks and incomplete/truncated JSON.
+        """
+        response_text = response_text.strip()
+
+        # Remove markdown code block markers if present
+        if response_text.startswith("```"):
+            lines = response_text.split("\n")
+            if lines[0].startswith("```"):
+                lines = lines[1:]
+            if lines and lines[-1].strip() == "```":
+                lines = lines[:-1]
+            response_text = "\n".join(lines).strip()
+
+        try:
+            json_response = json.loads(response_text)
+            return json_response.get("legal_basis_content", "")
+        except json.JSONDecodeError:
+            content_match = re.search(
+                r'"legal_basis_content"\s*:\s*"([^"]*)"', response_text, re.DOTALL
+            )
+            if content_match:
+                return content_match.group(1)
+            else:
+                json_match = re.search(
+                    r'\{.*?"legal_basis_content".*?\}', response_text, re.DOTALL
+                )
+                if json_match:
+                    try:
+                        json_response = json.loads(json_match.group(0))
+                        return json_response.get("legal_basis_content", "")
+                    except json.JSONDecodeError:
+                        pass
+
+        return ""
