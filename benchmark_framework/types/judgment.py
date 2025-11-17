@@ -24,7 +24,7 @@ class Judgment(Task):
     def from_dict(cls, data: dict):
         return cls(
             data["id"],
-            data["link"]
+            data["judgment_link"]
             data["masked_justification_text"],
             data["legal_basis"],
             data["legal_basis_content"],
