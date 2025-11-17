@@ -145,9 +145,13 @@ def upload_model_results_to_firestore(
                     .document("exams")
                 )
                 stats_ref.set(all_stats)
-                typer.echo(f"Uploaded stats document to results/{model_name}/stats/exams")
+                typer.echo(
+                    f"Uploaded stats document to results/{model_name}/stats/exams"
+                )
 
-        typer.echo(f"\nTotal uploaded: {total_uploaded} documents across all model results")
+        typer.echo(
+            f"\nTotal uploaded: {total_uploaded} documents across all model results"
+        )
 
     except Exception as e:
         typer.echo(f"Error: {str(e)}")

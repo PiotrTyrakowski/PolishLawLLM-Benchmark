@@ -20,22 +20,22 @@ class GeminiModel(BaseModel):
         super().__init__(model_name, model_config, **kwargs)
         self.client = genai.Client()
 
-    def generate_response(self, prompt: str):
+    def generate_response(self, system_prompt: str, prompt: str):
         resp = self.client.models.generate_content(
             model=self.model_name,
-            config=self.create_generate_config(),
+            config=self.create_generate_config(system_prompt),
             contents=prompt,
         )
         return resp.text
 
-    def create_generate_config(self):
+    def create_generate_config(self, system_prompt: str):
         if self.model_config.google_search:
             grounding_tool = types.Tool(google_search=types.GoogleSearch())
             config = types.GenerateContentConfig(
-                system_instruction=SYSTEM_PROMPT, tools=[grounding_tool]
+                system_instruction=system_prompt, tools=[grounding_tool]
             )
         else:
-            config = types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT)
+            config = types.GenerateContentConfig(system_instruction=system_prompt)
         return config
 
     def get_default_runner_config(self):
