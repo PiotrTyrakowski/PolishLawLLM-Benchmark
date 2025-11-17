@@ -114,23 +114,37 @@ class WeightedBleuMetric(BaseMetric):
     def _token_weights(
         self, tokens: Sequence[str], code_abbr: Optional[str] = None
     ) -> dict[str, float]:
-        if self.idf_lookup is None:
+        if self.idf_lookup is None or code_abbr is None:
             return {token.lower(): 1.0 for token in tokens}
 
-        dict = {}
-        lookup = self.idf_lookup.get(code_abbr)
-        for token in tokens:
-            lookup_value = lookup.get(token.lower())
-            if lookup_value is None:
+        weights = {}
+        idf_dict = self.idf_lookup.get(code_abbr)
+        for token in set(tokens):
+            assert len(token) > 0
+            tf = tokens.count(token) / len(tokens)
+            idf = idf_dict.get(token)
+            if idf is None:
                 raise ValueError(f"Token '{token}' not found in {code_abbr} IDF lookup")
-            dict[token.lower()] = lookup_value
+            weights[token.lower()] = tf * idf
 
-        return dict
+        return weights
 
-    @staticmethod
-    def _weight_ngram(ngram: tuple[str, ...], token_weights: dict[str, float]) -> float:
-        weights = [token_weights.get(token.lower(), 1.0) for token in ngram]
-        return float(fmean(weights)) if weights else 1.0
+    def _weight_ngram(
+        self, ngram: tuple[str, ...], token_weights: dict[str, float]
+    ) -> float:
+        if not self.idf_lookup:
+            return 1.0
+
+        max_weight = max(token_weights.values())
+        assert max_weight > 0.0
+        weight = 0.0
+
+        # if the token is not in the reference text, the tf part is 0
+        for token in ngram:
+            weight += token_weights.get(token.lower(), 0.0) / max_weight
+
+        assert len(ngram) > 0
+        return weight / len(ngram)
 
     @staticmethod
     def _ngrams(tokens: Sequence[str], n: int) -> Counter[tuple[str, ...]]:

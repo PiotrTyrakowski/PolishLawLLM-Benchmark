@@ -18,7 +18,7 @@ console = Console()
 
 def process_pdf(pdf_path: Path, output_dir: Path) -> bool:
     try:
-        output_path = output_dir / f"{pdf_path.stem}_articles.json"
+        output_path = output_dir / f"{pdf_path.stem}.json"
         parser = LegalBaseParser(pdf_path)
         parser.save_all_articles(output_path=output_path)
         return True
