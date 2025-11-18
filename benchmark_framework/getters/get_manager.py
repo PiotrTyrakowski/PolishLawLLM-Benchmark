@@ -1,16 +1,21 @@
 from pathlib import Path
 from benchmark_framework.models.base_model import BaseModel
 from benchmark_framework.managers.exam_manager import ExamManager
+from benchmark_framework.managers.judgment_manager import JudgmentManager
 from benchmark_framework.managers.base_manager import BaseManager
-from benchmark_framework.constants import DATA_PATH
+from benchmark_framework.metrics.base_metric import BaseMetric
 
-MANAGER_REGISTRY = {
-    "exams": ExamManager,
-}
+from benchmark_framework.constants import DATA_PATH
+from typing import List
+
+
+MANAGER_REGISTRY = {"exams": ExamManager, "judgments": JudgmentManager}
 
 
 def get_manager(
-    dataset_name: str, model: BaseModel, tasks_path: Path = DATA_PATH
+    dataset_name: str,
+    model: BaseModel,
+    tasks_path: Path = DATA_PATH,
 ) -> BaseManager:
     """
     Factory function to get a manager instance by dataset name.

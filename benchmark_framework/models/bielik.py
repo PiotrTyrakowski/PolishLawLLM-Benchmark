@@ -2,7 +2,7 @@ import os
 from openai import OpenAI
 from benchmark_framework.configs.runner_config import RunnerConfig
 from benchmark_framework.models.base_model import BaseModel
-from benchmark_framework.constants import SYSTEM_PROMPT, MAX_NEW_TOKENS
+from benchmark_framework.constants import MAX_NEW_TOKENS
 from benchmark_framework.configs.model_config import ModelConfig
 
 
@@ -23,12 +23,12 @@ class BielikModel(BaseModel):
             base_url="https://integrate.api.nvidia.com/v1", api_key=api_key
         )
 
-    def generate_response(self, prompt: str) -> str:
+    def generate_response(self, system_prompt: str, prompt: str) -> str:
         """
         Generate a response from the Bielik model.
         """
         messages = [
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": prompt},
         ]
 
