@@ -1,5 +1,5 @@
 import os
-from typing import Generator, Optional, Union
+from typing import Optional
 from openai import OpenAI
 
 from benchmark_framework.configs.runner_config import RunnerConfig
@@ -8,18 +8,13 @@ from benchmark_framework.constants import SYSTEM_PROMPT, MAX_NEW_TOKENS
 from benchmark_framework.configs.model_config import ModelConfig
 
 
-class LlamaModel(BaseModel):
+class NvidiaModel(BaseModel):
     """
-    Llama (meta/llama-3.3-70b-instruct) language model implementation via NVIDIA API.
+    Model implementation via NVIDIA API.
     """
-
-    MODEL_NAME = "meta/llama-3.3-70b-instruct"
 
     def __init__(
-        self,
-        model_name: str = MODEL_NAME,
-        model_config: Optional[ModelConfig] = None,
-        **kwargs
+        self, model_name: str, model_config: Optional[ModelConfig] = None, **kwargs
     ):
         super().__init__(model_name, model_config, **kwargs)
         api_key = os.getenv("NVIDIA_API_KEY")
@@ -39,16 +34,16 @@ class LlamaModel(BaseModel):
         ]
 
         completion = self.client.chat.completions.create(
-            model="meta/llama-3.3-70b-instruct",
+            model=self.model_name,
             messages=messages,
             max_tokens=MAX_NEW_TOKENS,
+            extra_body=self.model_config.extra_body,
             stream=False,
         )
         return completion.choices[0].message.content
 
     def get_default_runner_config(self):
         """
-        Returns default rate limiting configuration for the Llama model.
         Adjust these values based on NVIDIA API limits.
         """
         return RunnerConfig(requests_per_minute=30)
