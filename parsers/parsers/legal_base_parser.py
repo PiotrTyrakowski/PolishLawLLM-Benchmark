@@ -1,6 +1,7 @@
-from pathlib import Path
-from typing import Optional
 import re
+import json
+from pathlib import Path
+from typing import Optional, Dict
 from parsers.utils.pdf_utils import LegalBaseTextExtractor
 from parsers.utils.text_utils import TextFormatter
 
@@ -64,6 +65,48 @@ class LegalBaseParser:
             )
 
         return self.formatter.format_extracted_text(match.group(1))
+
+    def save_all_articles(self, output_path: Optional[Path] = None) -> Dict[str, str]:
+        """
+        Extract all articles from the document and save them to a JSON file.
+        Returns:
+            Dict[str, str]: Dictionary mapping article numbers to their formatted text.
+                           Keys are article numbers (e.g., '1', '10', '37a').
+                           Values are the formatted article content.
+        """
+        articles = {}
+
+        article_pattern = (
+            r"Art\.\s+(\d+[a-z]?)\.\s+"  # Capture article number
+            r"(.*?)"  # Capture article content (non-greedy)
+            r"(?="  # Lookahead for:
+            r"(?:Art\.\s+\d+[a-z]?\s*\.)|"  # Next article OR
+            r"(?:Rozdział\s+[IVXLCDM]+)|"  # Chapter heading OR
+            r"(?:Rozdział\s+\d+)|"
+            r"(?:TYTUŁ\s+[IVXLCDM]+)|"  # Title heading OR
+            r"(?:DZIAŁ\s+[IVXLCDM]+)|"  # Section heading OR
+            r"$"  # End of document
+            r")"
+        )
+
+        matches = re.finditer(article_pattern, self.content, re.DOTALL)
+
+        for match in matches:
+            article_num = match.group(1)
+            article_text = match.group(2)
+            formatted_text = self.formatter.format_extracted_text(article_text)
+            if formatted_text.strip():
+                articles[article_num] = formatted_text
+
+        if output_path is None:
+            output_path = self.pdf_path.parent / f"{self.pdf_path.stem}_articles.json"
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(output_path, "w", encoding="utf-8") as f:
+            json.dump(articles, f, ensure_ascii=False, indent=2)
+
+        print(f"Saved {len(articles)} articles to {output_path}")
+
+        return articles
 
     def _get_raw_article(self, article_number: str) -> str:
         """Extract raw article text from content."""

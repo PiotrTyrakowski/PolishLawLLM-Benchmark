@@ -22,6 +22,7 @@ changes.txt
 results/exams/
 data
 data.zip
+corpuses
 
 # package
 *.egg-info/

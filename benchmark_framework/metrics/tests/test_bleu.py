@@ -169,8 +169,6 @@ def test_bleu_bigram_matching():
     prediction_reordered = "cat the sat"
     score_reordered = metric(prediction=prediction_reordered, reference=reference)
 
-    print(score_perfect, score_reordered)
-
     # Perfect order should score higher than reordered
     assert (
         score_perfect > score_reordered
