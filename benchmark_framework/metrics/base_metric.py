@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Iterable, Sequence
+from typing import Iterable, Sequence, Optional
 from collections import Counter
 import string
 
@@ -12,12 +12,16 @@ class BaseMetric(ABC):
     def __init__(self, name: str):
         self.name = name
 
-    def __call__(self, prediction: str, reference: str) -> float:
+    def __call__(
+        self, prediction: str, reference: str, code_abbr: Optional[str] = None
+    ) -> float:
         """Compute a single metric score clipped to the [0.0, 1.0] interval."""
 
         normalized_prediction = prediction.strip()
         normalized_reference = reference.strip()
-        score = float(self._compute(normalized_prediction, normalized_reference))
+        score = float(
+            self._compute(normalized_prediction, normalized_reference, code_abbr)
+        )
         assert 0 <= score <= 1
         return score
 
@@ -41,5 +45,7 @@ class BaseMetric(ABC):
         return cleaned_text.strip().lower().split()
 
     @abstractmethod
-    def _compute(self, prediction: str, reference: str) -> float:
+    def _compute(
+        self, prediction: str, reference: str, code_abbr: Optional[str] = None
+    ) -> float:
         """Return the raw metric value before clipping to [0.0, 1.0]."""

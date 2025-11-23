@@ -12,3 +12,4 @@ class ModelConfig:
     quantize: Optional[str] = None
     batch_size: Optional[int] = None
     chunk_size: int = 64
+    extra_body = None
