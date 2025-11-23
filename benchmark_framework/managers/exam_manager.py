@@ -1,7 +1,9 @@
 import json
 import re
+import re
 from pathlib import Path
 from dataclasses import asdict
+from typing import List
 
 from benchmark_framework.metrics.weighted_bleu import WeightedBleuMetric
 from benchmark_framework.models.base_model import BaseModel
@@ -24,12 +26,6 @@ class ExamManager(BaseManager):
 
     def get_tasks(self) -> list[Exam]:
         return self.tasks
-
-    def get_metrics(self) -> list[BaseMetric]:
-        return [
-            ExactMatchMetric(),
-            WeightedBleuMetric(),
-        ]
 
     def get_result(self, exam: Exam, model_response: str) -> dict:
         extracted_answer = self.extract_answer_from_response(model_response)
@@ -63,6 +59,7 @@ class ExamManager(BaseManager):
             "model_config": json.dumps(asdict(self.model.model_config)),
             "model_response": model_response,
             "extracted_answer": extracted_answer,
+            "extracted_legal_basis_content": extracted_legal_basis_content,
             "is_correct": is_correct,
             "legal_basis_content": exam.legal_basis_content,
             "metrics": metrics_results,

@@ -8,9 +8,17 @@ from benchmark_framework.types.task import Task
 from benchmark_framework.metrics.base_metric import BaseMetric
 from benchmark_framework.utils import initialize_tasks
 from benchmark_framework.models.base_model import BaseModel
-from benchmark_framework.constants import ENCODING, RESULTS_PATH, DATA_PATH
+from benchmark_framework.metrics.exact_match import ExactMatchMetric
+from benchmark_framework.metrics.weighted_bleu import WeightedBleuMetric
+from benchmark_framework.constants import (
+    ENCODING,
+    RESULTS_PATH,
+    DATA_PATH,
+    SYSTEM_PROMPTS,
+)
 
 
+# TODO: implement with metrics
 class BaseManager(ABC):
     """
     Abstract base class for benchmark managers.
@@ -20,25 +28,28 @@ class BaseManager(ABC):
     """
 
     def __init__(
-        self, model: BaseModel, dataset_name: str, tasks_path: Path = DATA_PATH
+        self,
+        model: BaseModel,
+        manager_type: str,
+        tasks_path: Path = DATA_PATH,
     ):
         super().__init__()
         self.model = model
-        self.tasks = initialize_tasks(dataset_name, tasks_path)
+        self.tasks = initialize_tasks(manager_type.lower(), tasks_path)
         self.results = []
+        self.system_prompt = SYSTEM_PROMPTS[manager_type.upper()]
 
-        self.base_dir = RESULTS_PATH / dataset_name
+        assert self.system_prompt is not None
+        assert self.tasks is not None
+
+        self.base_dir = RESULTS_PATH / manager_type
         self.base_dir.mkdir(parents=True, exist_ok=True)
 
-    def get_tasks(self) -> list[Task]:
-        return self.tasks
-
-    @abstractmethod
     def get_metrics(self) -> list[BaseMetric]:
-        """
-        Returns a list of metrics to be used for evaluating the model.
-        """
-        pass
+        return [
+            ExactMatchMetric(),
+            WeightedBleuMetric(),  # normal bleu
+        ]
 
     def get_result(self, task: Task, model_response: str) -> dict:
         """
@@ -61,19 +72,8 @@ class BaseManager(ABC):
             for result in self.results:
                 f.write(json.dumps(result, ensure_ascii=False) + "\n")
 
-    def get_summary(self) -> dict:
-        total = len(self.results)
-        correct = sum(1 for result in self.results if result["is_correct"])
-
-        return {
-            "model_name": self.model.model_name,
-            "total_tasks": total,
-            "correct_answers": correct,
-            "accuracy": correct / total if total > 0 else 0.0,
-        }
-
     @staticmethod
-    def extract_legal_basis_from_response(response_text: str) -> str:
+    def extract_legal_basis_content_from_response(response_text: str) -> str:
         """
         Extract legal_basis_content from model response in JSON format.
         Handles markdown code blocks and incomplete/truncated JSON.
