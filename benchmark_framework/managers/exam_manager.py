@@ -13,6 +13,7 @@ from benchmark_framework.constants import DATA_PATH
 from benchmark_framework.metrics.base_metric import BaseMetric
 from benchmark_framework.metrics.exact_match import ExactMatchMetric
 from benchmark_framework.metrics.weighted_bleu import WeightedBleuMetric
+from parsers.extractors.legal_basis_extractor import LegalBasisExtractor
 
 
 class ExamManager(BaseManager):
@@ -28,13 +29,22 @@ class ExamManager(BaseManager):
 
     def get_result(self, exam: Exam, model_response: str) -> dict:
         extracted_answer = self.extract_answer_from_response(model_response)
-        extracted_legal_basis_content = self.extract_legal_basis_content_from_response(
+        extracted_legal_basis_content = self.extract_legal_basis_from_response(
             model_response
         )
+        legal_basis_extractor = LegalBasisExtractor()
+        extracted_legal_basis = legal_basis_extractor.parse(exam.legal_basis)
+
         is_correct = extracted_answer == exam.answer
 
         metrics_results = {
-            metric.name: metric(extracted_legal_basis_content, exam.legal_basis_content)
+            metric.name: metric(
+                extracted_legal_basis_content,
+                exam.legal_basis_content,
+                legal_basis_extractor.format_code_abbreviation(
+                    extracted_legal_basis.code
+                ),
+            )
             for metric in self.get_metrics()
         }
 

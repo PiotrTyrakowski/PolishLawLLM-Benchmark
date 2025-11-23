@@ -29,6 +29,7 @@ results/judgments/*
 data/exams/*
 data/judgments/*
 data.zip
+corpuses
 
 # helpers
 metryki_pomoc
