@@ -28,7 +28,9 @@ class ExamManager(BaseManager):
 
     def get_result(self, exam: Exam, model_response: str) -> dict:
         extracted_answer = self.extract_answer_from_response(model_response)
-        extracted_legal_basis_content = self.extract_legal_basis_content_from_response(model_response)
+        extracted_legal_basis_content = self.extract_legal_basis_content_from_response(
+            model_response
+        )
         is_correct = extracted_answer == exam.answer
 
         metrics_results = {
@@ -96,14 +98,3 @@ class ExamManager(BaseManager):
             return answer
 
         return ""
-
-    def get_summary(self) -> dict:
-        total = len(self.results)
-        correct = sum(1 for result in self.results if result["is_correct"])
-
-        return {
-            "model_name": self.model.model_name,
-            "total_tasks": total,
-            "correct_answers": correct,
-            "accuracy": correct / total if total > 0 else 0.0,
-        }

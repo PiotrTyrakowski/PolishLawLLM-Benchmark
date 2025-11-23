@@ -45,17 +45,10 @@ class BaseManager(ABC):
         self.base_dir = RESULTS_PATH / manager_type
         self.base_dir.mkdir(parents=True, exist_ok=True)
 
-    @abstractmethod
-    def _extract_answer_from_response(self, response_text: str) -> str:
-        """
-        Extract answer from model response.
-        """
-        pass
-
     def get_metrics(self) -> list[BaseMetric]:
         return [
             ExactMatchMetric(),
-            WeightedBleuMetric(), # normal bleu
+            WeightedBleuMetric(),  # normal bleu
         ]
 
     def get_result(self, task: Task, model_response: str) -> dict:
@@ -78,14 +71,6 @@ class BaseManager(ABC):
         with open(full_path, "w", encoding=ENCODING) as f:
             for result in self.results:
                 f.write(json.dumps(result, ensure_ascii=False) + "\n")
-
-    @abstractmethod
-    def get_summary(self) -> dict:
-        """
-        Generate a summary of benchmark results.
-        Must be implemented by each manager subclass.
-        """
-        pass
 
     @staticmethod
     def extract_legal_basis_content_from_response(response_text: str) -> str:

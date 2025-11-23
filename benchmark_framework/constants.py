@@ -81,26 +81,6 @@ SYSTEM_PROMPTS: Final[Dict[str, str]] = {
     ),
 }
 
-TASK_PROMPT: Final[str] = (
-    "ROLA: Jesteś ekspertem od tworzenia egzaminów dla modeli językowych.\n\n"
-    "ZADANIE:\n"
-    "1. Po otrzymaniu orzeczenia sądowego wybierz jeden z podanych w nim artykułów prawa (np. „art. 1 k.c.”).\n"
-    "2. W całym tekście orzeczenia zakryj WSZYSTKIE wystąpienia tego artykułu ciągiem znaków ART_MASK.\n"
-    "3. Jeżeli w orzeczeniu znajduje się opis treści tego artykułu (np. „przepis ten stanowi, że…”, „zgodnie z tym artykułem…”, „na podstawie tej regulacji…”) — zamaskuj go ciągiem TREŚĆ_MASK.\n\n"
-    "# FORMAT ODPOWIEDZI\n"
-    "Na końcu zwróć tylko odpowiedź w formacie JSON, bez żadnych dodatkowych komentarzy, objaśnień ani tekstu poza JSON.\n"
-    "WYNIK MUSI ZOSTAĆ ZWRÓCONY W JEDNEJ LINII (bez znaków nowej linii, bez łamania linii), aby można było łatwo wkleić go do pliku .jsonl.\n"
-    "JSON musi mieć dokładnie dwa klucze:\n"
-    '- "masked_judgment_text": pełny tekst orzeczenia po zamaskowaniu (bez skracania, bez „dalsza część bez zmian”).\n'
-    '- "legal_basis": wybrany artykuł prawa w formacie: art. XXX k.c\n'
-    "  (czyli: art. + spacja + numer + spacja + skrót ustawy, bez żadnych dodatkowych słów, nawiasów, paragrafów, liter, opisów)\n\n"
-    "# PRZYKŁAD ODPOWIEDZI\n"
-    '{"masked_judgment_text": "...", "legal_basis": "art. XYZ k.c"}\n\n'
-    "# WYMAGANIA\n"
-    "- Niczego nie pomijaj. Zawsze zwróć cały zamaskowany dokument w JSON.\n"
-    "- Nie dodawaj żadnych dodatkowych zdań, opisów, analiz ani wytłumaczeń.\n"
-)
-
 DATA_PATH: Final[Path] = Path(__file__).parent.parent / "data"
 RESULTS_PATH: Final[Path] = Path(__file__).parent.parent / "results"
 ROOT_PATH: Final[Path] = Path(__file__).parent.parent

@@ -16,9 +16,7 @@ class JudgmentManager(BaseManager):
     Manager for handling legal judgment benchmark evaluations.
     """
 
-    def __init__(
-        self, model: BaseModel, tasks_path: Path = DATA_PATH
-    ):
+    def __init__(self, model: BaseModel, tasks_path: Path = DATA_PATH):
         super().__init__(model, "judgments", tasks_path)
 
     def get_tasks(self) -> list[Judgment]:
@@ -26,15 +24,14 @@ class JudgmentManager(BaseManager):
 
     def get_result(self, judgment: Judgment, model_response: str) -> dict:
         extracted_legal_basis = self._extract_legal_basis_from_response(model_response)
-        extracted_legal_basis_content = self.extract_legal_basis_content_from_response(model_response)
-        
-        # Check if both legal basis and content match
-        is_legal_basis_correct = (
-            extracted_legal_basis.strip().lower() == judgment.legal_basis.strip().lower()
+        extracted_legal_basis_content = self.extract_legal_basis_content_from_response(
+            model_response
         )
 
         metrics_results = {
-            metric.name: metric(extracted_legal_basis_content, judgment.legal_basis_content)
+            metric.name: metric(
+                extracted_legal_basis_content, judgment.legal_basis_content
+            )
             for metric in self.get_metrics()
         }
 
@@ -48,19 +45,11 @@ class JudgmentManager(BaseManager):
             "model_response": model_response,
             "extracted_legal_basis": extracted_legal_basis,
             "extracted_legal_basis_content": extracted_legal_basis_content,
-            "is_legal_basis_correct": is_legal_basis_correct,
             "metrics": metrics_results,
         }
 
         self.results.append(result)
         return result
-
-    def _extract_answer_from_response(self, response_text: str) -> str:
-        """
-        Extract answer from model response.
-        For judgments, this extracts the legal basis (art reference).
-        """
-        return self._extract_legal_basis_from_response(response_text)
 
     @staticmethod
     def _extract_legal_basis_from_response(response_text: str) -> str:
@@ -102,7 +91,9 @@ class JudgmentManager(BaseManager):
                     return match.group(1).strip()
 
             # Try to find JSON object with art field
-            json_match = re.search(r'\{.*?"art".*?\}', response_text, re.DOTALL | re.IGNORECASE)
+            json_match = re.search(
+                r'\{.*?"art".*?\}', response_text, re.DOTALL | re.IGNORECASE
+            )
             if json_match:
                 try:
                     json_response = json.loads(json_match.group(0))
@@ -112,14 +103,3 @@ class JudgmentManager(BaseManager):
                     pass
 
         return ""
-
-    def get_summary(self) -> dict:
-        total = len(self.results)
-        correct = sum(1 for result in self.results if result.get("is_legal_basis_correct", False))
-
-        return {
-            "model_name": self.model.model_name,
-            "total_tasks": total,
-            "correct_answers": correct,
-            "accuracy": correct / total if total > 0 else 0.0,
-        }

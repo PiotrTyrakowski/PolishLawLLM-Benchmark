@@ -40,9 +40,7 @@ class BenchmarkRunner:
                     and total_processed >= runner_config.daily_limit
                 ):
                     break
-
-        accuracy = self.manager.get_summary()["accuracy"]
-        return accuracy
+        return
 
     def _run_batch(self):
         tasks = self.manager.get_tasks()
@@ -65,9 +63,7 @@ class BenchmarkRunner:
                     result = self.manager.get_result(tasks[idx], model_response)
                     self.manager.append_to_file(self.output_file, result)
                     pbar_outer.update(1)
-
-        accuracy = self.manager.get_summary()["accuracy"]
-        return accuracy
+        return
 
     def run(self):
         if self.model.model_config.batch_size is None:

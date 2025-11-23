@@ -10,7 +10,6 @@ app = typer.Typer()
 def calculate_metrics(file_path: Path):
     """
     Reads a JSON line file using FileOperations, calculates accuracy, and averages specific metrics.
-    Works for judgment results (uses is_legal_basis_correct field).
     """
     if not file_path.exists():
         typer.secho(f"Error: File '{file_path}' not found.", fg=typer.colors.RED)
@@ -46,8 +45,7 @@ def calculate_metrics(file_path: Path):
     sum_weighted_bleu_correct = 0.0
 
     for data in dataset:
-        # For judgments, use is_legal_basis_correct instead of is_correct
-        is_correct = data.get("is_legal_basis_correct", False)
+        is_correct = data.get("is_correct", False)
         if is_correct:
             correct_count += 1
 
@@ -85,8 +83,8 @@ def calculate_metrics(file_path: Path):
         f"\n--- Results for: {file_path.name} ---", fg=typer.colors.GREEN, bold=True
     )
 
-    print(f"Total judgments processed: {total_count}")
-    print(f"Correct legal basis matches: {correct_count}")
+    print(f"Total items processed: {total_count}")
+    print(f"Correct items: {correct_count}")
     print("-" * 40)
 
     typer.secho(f"Accuracy: {accuracy:.4f} ({accuracy:.2%})", fg=typer.colors.CYAN)
@@ -95,7 +93,7 @@ def calculate_metrics(file_path: Path):
     print(f"Avg Weighted BLEU (All): {avg_weighted_bleu:.4f}")
     print("-" * 40)
 
-    typer.secho("Metrics for Correct Legal Basis Only:", bold=True)
+    typer.secho("Metrics for Correct Answers Only:", bold=True)
     print(f"Avg BLEU (Correct): {avg_bleu_on_correct:.4f}")
     print(f"Avg Weighted BLEU (Correct): {avg_weighted_on_correct:.4f}")
     print("")
