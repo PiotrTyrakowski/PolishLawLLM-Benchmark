@@ -6,14 +6,15 @@ from benchmark_framework.models.gemini import GeminiModel
 from benchmark_framework.models.local_model import LocalModel
 from benchmark_framework.configs.model_config import ModelConfig
 from benchmark_framework.models.nvidia_model import NvidiaModel
+from benchmark_framework.models.nvidia_nim_model import NvidiaNimModel
 
 MODEL_REGISTRY = {
     "gemini": GeminiModel,
     "speakleash": LocalModel,
-    "CYFRAGOVPL": LocalModel,
     "bielik": BielikModel,
     "deepseek": NvidiaModel,
     "meta": NvidiaModel,
+    "CYFRAGOVPL": NvidiaNimModel,
 }
 
 
