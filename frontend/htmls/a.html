@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PolishLawLLMBenchmark - Edycja Narodowa</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        navy: {
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        },
+                        polishRed: '#dc143c',
+                        gold: '#fbbf24',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .table-container::-webkit-scrollbar {
+            height: 8px;
+        }
+        .table-container::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 4px;
+        }
+        .gradient-text {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-gray-800 antialiased relative">
+
+    <div class="fixed inset-0 z-0 pointer-events-none opacity-5 flex items-center justify-center overflow-hidden">
+        <img src="Herb_Polski.svg.png" 
+             alt="Orzeł Biały Tło" class="w-[800px] grayscale">
+    </div>
+
+    <nav class="sticky top-0 z-50 bg-white/90 border-b border-gray-200 shadow-sm backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center gap-3">
+                        <img src="Herb_Polski.svg.png" 
+                             alt="Orzeł Biały" class="h-10 w-auto drop-shadow-md">
+                        <div class="h-8 w-[1px] bg-gray-300 mx-1"></div>
+                        <span class="font-serif font-bold text-2xl tracking-tight text-navy-900">
+                            PolishLaw<span class="text-polishRed">LLM</span>
+                        </span>
+                    </div>
+                    
+                    <div class="hidden md:ml-10 md:flex md:space-x-8">
+                        <a href="#" class="border-b-2 border-polishRed text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-semibold">
+                            Ranking
+                        </a>
+                        <a href="#patrons" class="border-b-2 border-transparent text-gray-500 hover:text-polishRed hover:border-gray-300 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">
+                            Komitet Honorowy
+                        </a>
+                        <a href="#metodologia" class="border-b-2 border-transparent text-gray-500 hover:text-polishRed hover:border-gray-300 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">
+                            Metodologia
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <span class="px-3 py-1 text-xs font-bold text-polishRed bg-red-50 border border-red-100 rounded-full shadow-sm">
+                        Edycja Narodowa v2.0
+                    </span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="relative bg-white border-b border-gray-200 pb-16 pt-12 overflow-hidden z-10">
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-navy-900 via-white to-polishRed"></div>
+        <div class="max-w-5xl mx-auto px-4 text-center">
+            <h1 class="font-serif text-5xl md:text-6xl font-extrabold text-navy-900 tracking-tight mb-6 leading-tight">
+                Suwerenny Ranking <br/>
+                <span class="bg-gradient-to-r from-polishRed to-red-600 gradient-text">Modeli Językowych</span>
+            </h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto mb-8 font-light leading-relaxed">
+                Sprawdzamy jak sztuczna inteligencja radzi sobie z Kodeksem Cywilnym, Karnym i Konstytucją RP. 
+                <span class="font-semibold text-navy-900">Bez taryfy ulgowej.</span>
+            </p>
+            <div class="flex justify-center gap-4">
+                <a href="#exams" class="px-8 py-3 bg-navy-900 text-white rounded-lg hover:bg-navy-800 font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
+                    Zobacz Wyniki
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-20 relative z-10">
+
+        <section id="patrons" class="scroll-mt-24">
+            <div class="text-center mb-10">
+                <h2 class="font-serif text-3xl font-bold text-navy-900 mb-2">Loża Patronów i Ekspertów</h2>
+                <div class="h-1 w-24 bg-polishRed mx-auto rounded-full"></div>
+                <p class="mt-4 text-gray-500">Nadzór merytoryczny i siłowy nad przebiegiem benchmarku.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 transform hover:scale-[1.02] transition-transform duration-300 group">
+                    <div class="h-32 bg-yellow-100 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-t from-yellow-200/50 to-transparent"></div>
+                    </div>
+                    <div class="flex justify-center -mt-16 relative">
+                        <img class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover bg-white" 
+                             src="i-zesmakiem-papiez-polak-jan-pawel-ii.webp" 
+                             alt="Jan Paweł II">
+                        <div class="absolute bottom-0 right-1/3 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full border border-white shadow-sm">
+                            SANTO SUBITO
+                        </div>
+                    </div>
+                    <div class="p-6 text-center">
+                        <h3 class="font-serif text-xl font-bold text-gray-900">Św. Jan Paweł II</h3>
+                        <p class="text-xs font-bold text-yellow-600 uppercase tracking-widest mt-1">Patron Etyczny AI</p>
+                        <p class="text-gray-600 mt-4 text-sm italic">
+                            "Nie lękajcie się... sztucznej inteligencji, pod warunkiem, że cytuje przepisy zgodnie z prawdą i sumieniem."
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 transform hover:scale-[1.02] transition-transform duration-300 group">
+                    <div class="h-32 bg-red-100 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-t from-red-200/50 to-transparent"></div>
+                    </div>
+                    <div class="flex justify-center -mt-16 relative">
+                        <img class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover object-top bg-white" 
+                             src="MDU1MC5qYiU0UztwGgpvMHcLbypcU2FmIBN3YRpEe3QtAnx2GgIraTRVICpbGD4wJ1AuKVRfOjQ2VSNtRR1iNyFePyJSFH9rM1QsN0ADKCAKXj8qUhgjJTkee3sDRSglNwV_IQxGdXMKA316BUF4cWUfJzNSUzA.webp" 
+                             alt="Mariusz Pudzianowski">
+                         <div class="absolute bottom-0 right-1/3 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full border border-white shadow-sm">
+                            POLSKA GUROM
+                        </div>
+                    </div>
+                    <div class="p-6 text-center">
+                        <h3 class="font-serif text-xl font-bold text-gray-900">Mariusz Pudzianowski</h3>
+                        <p class="text-xs font-bold text-red-600 uppercase tracking-widest mt-1">Dyrektor ds. Mocy Obliczeniowej</p>
+                        <p class="text-gray-600 mt-4 text-sm italic">
+                            "To by nic nie dało, żeby model miał 100 miliardów parametrów, jak nie ma pary w procesorze. Tanio skóry nie sprzedamy!"
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="exams" class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+            <div class="px-6 py-5 border-b border-gray-200 bg-gray-50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-serif font-bold text-navy-900 flex items-center gap-2">
+                        🏛️ Egzaminy Zawodowe
+                    </h2>
+                    <p class="text-xs text-gray-500 mt-1">Ranking skuteczności modeli na polskich egzaminach państwowych.</p>
+                </div>
+                <div class="flex gap-2">
+                     <select class="bg-white border border-gray-300 text-gray-700 text-xs font-semibold py-2 px-3 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-polishRed focus:border-transparent">
+                        <option>Wszystkie Lata (Avg)</option>
+                        <option>2024</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-container overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-16">Rank</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Model</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-bold text-navy-900 uppercase tracking-wider bg-red-50/50 border-l border-r border-gray-200">
+                                🏆 Średnia
+                            </th>
+                            <th scope="col" class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">⚖️ Adw/Rad</th>
+                            <th scope="col" class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">🔨 Komornik</th>
+                            <th scope="col" class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">📜 Notariusz</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <span class="flex items-center justify-center w-8 h-8 rounded-full bg-yellow-100 text-yellow-700 font-bold text-sm">1</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-bold text-gray-900">GPT-4o</span>
+                                    <span class="text-[10px] text-gray-500 uppercase">OpenAI</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-base font-extrabold text-polishRed bg-red-50/30 border-l border-r border-gray-100">89.2%</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-center text-sm text-gray-700">90.5%</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-center text-sm text-gray-700">88.0%</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-center text-sm text-gray-700">89.1%</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition-colors">
+                             <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <span class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 text-gray-600 font-bold text-sm">2</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-bold text-gray-900">Claude 3.5 Sonnet</span>
+                                    <span class="text-[10px] text-gray-500 uppercase">Anthropic</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-base font-bold text-gray-900 bg-red-50/30 border-l border-r border-gray-100">87.5%</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-center text-sm text-gray-700">88.0%</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-center text-sm text-gray-700">87.0%</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-center text-sm text-gray-700">87.5%</td>
+                        </tr>
+
+                        <tr class="bg-red-50 hover:bg-red-100 transition-colors border-l-4 border-l-polishRed">
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <span class="flex items-center justify-center w-8 h-8 rounded-full bg-white text-polishRed font-bold text-sm border border-red-200">PL</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-bold text-gray-900">Bielik-11B-v2</span>
+                                        <span class="text-[10px] text-polishRed font-bold uppercase tracking-wider">Polski Model 🦅</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-base font-bold text-gray-900 bg-white/60 border-l border-r border-red-200">74.5%</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-center text-sm text-gray-700">75.0%</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-center text-sm text-gray-700">73.0%</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-center text-sm text-gray-700">75.5%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="judgments" class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+             <div class="px-6 py-5 border-b border-gray-200 bg-gray-50">
+                <h2 class="text-xl font-serif font-bold text-navy-900 flex items-center gap-2">
+                    ⚖️ Znajomość Orzeczeń
+                </h2>
+            </div>
+            <div class="table-container overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Model</th>
+                            <th class="px-6 py-3 text-center text-xs font-bold text-navy-900 uppercase bg-gray-100">Exact Match</th>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">BLEU Score</th>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Kontekst</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                         <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">GPT-4-Turbo</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-bold text-gray-900 bg-gray-50">62.4%</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-center text-sm text-gray-600">0.78</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-center text-sm text-gray-400">128k</td>
+                        </tr>
+                         <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">Claude 3 Opus</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-bold text-gray-900 bg-gray-50">60.1%</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-center text-sm text-gray-600">0.75</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-center text-sm text-gray-400">200k</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-navy-900 text-gray-400 py-12 mt-12 relative overflow-hidden">
+        <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-white via-polishRed to-white"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
+            <div class="flex justify-center items-center gap-4 mb-6 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Coat_of_arms_of_Poland_official.png/64px-Coat_of_arms_of_Poland_official.png" class="h-12 w-auto">
+            </div>
+            <p class="mb-4 text-gray-300 font-serif">"Iura non in singulas personas, sed generaliter constituuntur"</p>
+            <p class="text-sm text-gray-500">&copy; 2025 PolishLawLLMBenchmark. Wszelkie prawa zastrzeżone.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
