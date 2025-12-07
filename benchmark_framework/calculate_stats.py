@@ -34,6 +34,7 @@ def calculate_metrics(file_path: Path):
         raise typer.Exit()
 
     correct_count = 0
+    empty_legal_basis_count = 0
 
     # Accumulators for all items
     sum_exact_match = 0.0
@@ -48,6 +49,11 @@ def calculate_metrics(file_path: Path):
         is_correct = data.get("is_correct", False)
         if is_correct:
             correct_count += 1
+
+        # Check if extracted_legal_basis_content is empty
+        legal_basis_content = data.get("extracted_legal_basis_content", "")
+        if not legal_basis_content or legal_basis_content.strip() == "":
+            empty_legal_basis_count += 1
 
         metrics = data.get("metrics", {})
         exact_match = metrics.get("exact_match", 0.0)
@@ -85,6 +91,7 @@ def calculate_metrics(file_path: Path):
 
     print(f"Total items processed: {total_count}")
     print(f"Correct items: {correct_count}")
+    print(f"No legal basis returned by the model: {empty_legal_basis_count}")
     print("-" * 40)
 
     typer.secho(f"Accuracy: {accuracy:.4f} ({accuracy:.2%})", fg=typer.colors.CYAN)
