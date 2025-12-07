@@ -33,7 +33,9 @@ class PDFTextExtractor:
                 if page_text:
                     text_parts.append(page_text)
 
-        return "\n".join(text_parts)
+        result = "\n".join(text_parts)
+        result = self._filter_exam_headers(result)
+        return result
 
     @staticmethod
     def _make_char_filter(min_size: float = 9.0) -> Callable:
@@ -45,6 +47,15 @@ class PDFTextExtractor:
             return True
 
         return char_filter
+
+    @staticmethod
+    def _filter_exam_headers(text: str) -> str:
+        """Filter out any lines containing the exam header text."""
+        lines = text.split("\n")
+        filtered_lines = [
+            line for line in lines if "EGZAMIN WSTĘPNY DLA KANDYDATÓW" not in line
+        ]
+        return "\n".join(filtered_lines)
 
 
 class LegalBaseTextExtractor(PDFTextExtractor):
