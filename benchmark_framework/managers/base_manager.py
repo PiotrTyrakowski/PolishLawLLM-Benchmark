@@ -14,7 +14,6 @@ from benchmark_framework.constants import (
     ENCODING,
     RESULTS_PATH,
     DATA_PATH,
-    SYSTEM_PROMPTS,
 )
 
 
@@ -37,9 +36,7 @@ class BaseManager(ABC):
         self.model = model
         self.tasks = initialize_tasks(manager_type.lower(), tasks_path)
         self.results = []
-        self.system_prompt = SYSTEM_PROMPTS[manager_type.upper()]
 
-        assert self.system_prompt is not None
         assert self.tasks is not None
 
         self.base_dir = RESULTS_PATH / manager_type
@@ -71,6 +68,9 @@ class BaseManager(ABC):
         with open(full_path, "w", encoding=ENCODING) as f:
             for result in self.results:
                 f.write(json.dumps(result, ensure_ascii=False) + "\n")
+
+    def get_system_prompt(self, year: int) -> str:
+        return ""
 
     @staticmethod
     def extract_legal_basis_content_from_response(response_text: str) -> str:

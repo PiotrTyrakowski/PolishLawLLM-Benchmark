@@ -15,3 +15,7 @@ class Task(ABC):
         Returns a formatted prompt string for the task.
         """
         pass
+
+    @abstractmethod
+    def get_year(self) -> int:
+        pass

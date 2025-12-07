@@ -56,6 +56,9 @@ class Exam(Task):
             prompt += f"{key}) {val}\n"
         return prompt
 
+    def get_year(self) -> int:
+        return self.year
+
 
 def load_exams(jsonl_path: Path) -> list[Exam]:
     exams = []
