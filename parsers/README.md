@@ -36,13 +36,13 @@ pip install -r requirements.txt
 ### Basic Command
 
 ```bash
-python -m parsers.cli parse <path-to-pdfs-directory>
+python -m parsers.cli <path-to-pdfs-directory>
 ```
 
 ### Example
 
 ```bash
-python -m parsers.cli parse pdfs/
+python -m parsers.cli pdfs/
 ```
 
 ## Input Directory Structure

@@ -42,6 +42,10 @@ class Judgment(Task):
         """
         return self.masked_justification_text
 
+    def get_year(self) -> int:
+        # TODO: implement year extraction if needed
+        return 2025
+
 
 def load_judgments(jsonl_path: Path) -> list["Judgment"]:
     judgments = []
