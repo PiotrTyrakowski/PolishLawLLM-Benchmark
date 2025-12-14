@@ -20,20 +20,12 @@ def run(
         help="Enable Google Search tool for the model (only applicable for gemini).",
     ),
 ):
-    """
-    Run the benchmark on a given model and questions dataset.
-    """
     model_config = ModelConfig(google_search=google_search)
     model = get_llm_model(model_name, model_config)
     manager = get_manager(dataset_name, model)
     runner = BenchmarkRunner(manager)
-
-    typer.echo(
-        f"Running benchmark for {model_name} on {len(manager.get_tasks())} tasks..."
-    )
-    accuracy = runner.run()
-
-    typer.echo(f"Accuracy: {accuracy:.2%}")
+    typer.echo(f"Running benchmark for {model_name} on {len(manager.tasks)} tasks...")
+    runner.run()
 
 
 if __name__ == "__main__":

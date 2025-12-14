@@ -1,7 +1,26 @@
 import json
 from pathlib import Path
+from typing import TypedDict
+
 from benchmark_framework.types.task import Task
 from benchmark_framework.constants import ENCODING
+
+
+class ExamResult(TypedDict):
+    year: int
+    exam_type: str
+    question: str
+    choices: dict[str, str]
+    correct_answer: str
+    legal_basis: str
+    legal_basis_content: str
+
+    model_name: str
+    model_response: str
+    model_config: str
+    model_answer: str
+    model_legal_basis: str
+    model_legal_basis_content: str
 
 
 class Exam(Task):

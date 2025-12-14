@@ -1,19 +1,12 @@
 import json
-import re
-import re
 from pathlib import Path
 from dataclasses import asdict
-from typing import List
 
-from benchmark_framework.metrics.weighted_bleu import WeightedBleuMetric
 from benchmark_framework.models.base_model import BaseModel
-from benchmark_framework.types.exam import Exam
+from benchmark_framework.types.exam import Exam, ExamResult
 from benchmark_framework.managers.base_manager import BaseManager
 from benchmark_framework.constants import DATA_PATH, MAX_NEW_TOKENS
-from benchmark_framework.metrics.base_metric import BaseMetric
-from benchmark_framework.metrics.exact_match import ExactMatchMetric
-from benchmark_framework.metrics.weighted_bleu import WeightedBleuMetric
-from parsers.extractors.legal_basis_extractor import LegalBasisExtractor
+from benchmark_framework.utils.response_parser import extract_json_field
 
 
 class ExamManager(BaseManager):
@@ -27,42 +20,27 @@ class ExamManager(BaseManager):
     def get_tasks(self) -> list[Exam]:
         return self.tasks
 
-    def get_result(self, exam: Exam, model_response: str) -> dict:
-        extracted_answer = self.extract_answer_from_response(model_response)
-        extracted_legal_basis_content = self.extract_legal_basis_content_from_response(
-            model_response
+    def get_result(self, exam: Exam, model_response: str) -> ExamResult:
+        model_answer = extract_json_field(model_response, "answer").upper()
+        model_legal_basis = extract_json_field(model_response, "legal_basis")
+        model_legal_basis_content = extract_json_field(
+            model_response, "legal_basis_content"
         )
-        legal_basis_extractor = LegalBasisExtractor()
-        extracted_legal_basis = legal_basis_extractor.parse(exam.legal_basis)
 
-        is_correct = extracted_answer == exam.answer
-
-        metrics_results = {
-            metric.name: metric(
-                extracted_legal_basis_content,
-                exam.legal_basis_content,
-                legal_basis_extractor.format_code_abbreviation(
-                    extracted_legal_basis.code
-                ),
-            )
-            for metric in self.get_metrics()
-        }
-
-        result = {
+        result: ExamResult = {
             "year": exam.year,
             "exam_type": exam.exam_type,
             "question": exam.question,
             "choices": exam.choices,
-            "answer": exam.answer,
+            "correct_answer": exam.answer,
             "legal_basis": exam.legal_basis,
-            "model_name": self.model.model_name,
-            "model_config": json.dumps(asdict(self.model.model_config)),
-            "model_response": model_response,
-            "extracted_answer": extracted_answer,
-            "extracted_legal_basis_content": extracted_legal_basis_content,
-            "is_correct": is_correct,
             "legal_basis_content": exam.legal_basis_content,
-            "metrics": metrics_results,
+            "model_name": self.model.model_name,
+            "model_response": model_response,
+            "model_config": json.dumps(asdict(self.model.model_config)),
+            "model_answer": model_answer,
+            "model_legal_basis": model_legal_basis,
+            "model_legal_basis_content": model_legal_basis_content,
         }
 
         self.results.append(result)
@@ -114,44 +92,3 @@ class ExamManager(BaseManager):
             f"- Maksymalna długość całej odpowiedzi: {MAX_NEW_TOKENS} tokenów\n"
             f"- Zwróć poprawne dane na dzień 20 września {year} roku."
         )
-
-    @staticmethod
-    def extract_answer_from_response(response_text: str) -> str:
-        """
-        Extract answer from model response in JSON format.
-        Handles markdown code blocks and incomplete/truncated JSON.
-        """
-        response_text = response_text.strip()
-        answer = ""
-
-        # Remove markdown code block markers if present
-        if response_text.startswith("```"):
-            lines = response_text.split("\n")
-            if lines[0].startswith("```"):
-                lines = lines[1:]
-            if lines and lines[-1].strip() == "```":
-                lines = lines[:-1]
-            response_text = "\n".join(lines).strip()
-
-        try:
-            json_response = json.loads(response_text)
-            answer = json_response.get("answer", "").strip().upper()
-        except json.JSONDecodeError:
-            answer_match = re.search(
-                r'"answer"\s*:\s*"([ABC])"', response_text, re.IGNORECASE
-            )
-            if answer_match:
-                answer = answer_match.group(1).upper()
-            else:
-                json_match = re.search(r'\{.*?"answer".*?\}', response_text, re.DOTALL)
-                if json_match:
-                    try:
-                        json_response = json.loads(json_match.group(0))
-                        answer = json_response.get("answer", "").strip().upper()
-                    except json.JSONDecodeError:
-                        pass
-
-        if answer in ["A", "B", "C"]:
-            return answer
-
-        return ""

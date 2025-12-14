@@ -14,7 +14,7 @@ class BenchmarkRunner:
         self.model = manager.model
         self.output_file = f"{self.model.model_name}.jsonl"
 
-    def _run_iterative(self):
+    def _run_iterative(self) -> None:
         runner_config = self.model.get_default_runner_config()
 
         total_processed = 0
@@ -39,8 +39,10 @@ class BenchmarkRunner:
                     runner_config.daily_limit is not None
                     and total_processed >= runner_config.daily_limit
                 ):
+                    print(
+                        f"\n[WARNING] Daily limit reached: {total_processed}/{len(tasks)} tasks processed."
+                    )
                     break
-        return
 
-    def run(self):
+    def run(self) -> None:
         return self._run_iterative()
