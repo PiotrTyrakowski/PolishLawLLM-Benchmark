@@ -2,7 +2,7 @@ import re
 import json
 from pathlib import Path
 from typing import Optional, Dict
-from parsers.utils.pdf_utils import LegalBaseTextExtractor
+from parsers.extractors.pdf_text_extractor import LegalBaseTextExtractor
 from parsers.utils.text_utils import TextFormatter
 
 

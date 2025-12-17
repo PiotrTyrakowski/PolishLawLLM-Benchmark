@@ -3,7 +3,7 @@ from pathlib import Path
 from parsers.parsers.base import BaseParser
 from parsers.domain.answer import Answer
 from parsers.extractors.answer_extractor import AnswerExtractor
-from parsers.utils.pdf_utils import PDFTextExtractor
+from parsers.extractors.pdf_table_extractor import PdfTableExtractor
 
 
 class PDFAnswerParser(BaseParser[Answer]):
@@ -13,15 +13,24 @@ class PDFAnswerParser(BaseParser[Answer]):
         self,
         file_path: Path,
         extractor: AnswerExtractor = None,
-        pdf_reader: PDFTextExtractor = None,
+        pdf_reader: PdfTableExtractor = None,
     ):
         super().__init__(file_path)
         self.extractor = extractor or AnswerExtractor()
-        self.pdf_reader = pdf_reader or PDFTextExtractor()
+        self.pdf_reader = pdf_reader or PdfTableExtractor()
 
     def parse(self) -> List[Answer]:
         """Extract answers from PDF."""
         text = self.pdf_reader.extract_text(self.file_path, start_page=1)
+
+        # Save to debug directory in project root
+        project_root = Path(__file__).resolve().parents[2]
+        debug_path = project_root / "debug" / f"{self.file_path.name}.txt"
+        debug_path.parent.mkdir(parents=True, exist_ok=True)
+
+        with open(debug_path, "w", encoding="utf-8") as f:
+            f.write(text)
+
         return self.extractor.extract(text)
 
     def validate(self, answer: Answer) -> Tuple[bool, List[str]]:

@@ -4,7 +4,7 @@ import pdfplumber
 import re
 
 
-class PDFTextExtractor:
+class PdfTextExtractor:
     """Extract text from PDF files with filtering capabilities."""
 
     def extract_text(
@@ -58,7 +58,7 @@ class PDFTextExtractor:
         return "\n".join(filtered_lines)
 
 
-class LegalBaseTextExtractor(PDFTextExtractor):
+class LegalBaseTextExtractor(PdfTextExtractor):
     """Extract text from legal code documents."""
 
     def extract_text(

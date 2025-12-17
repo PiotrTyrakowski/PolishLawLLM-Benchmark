@@ -3,7 +3,7 @@ from pathlib import Path
 from parsers.parsers.base import BaseParser
 from parsers.domain.question import Question
 from parsers.extractors.question_extractor import QuestionExtractor
-from parsers.utils.pdf_utils import PDFTextExtractor
+from parsers.extractors.pdf_text_extractor import PdfTextExtractor
 
 
 class PDFQuestionParser(BaseParser[Question]):
@@ -13,11 +13,11 @@ class PDFQuestionParser(BaseParser[Question]):
         self,
         file_path: Path,
         extractor: QuestionExtractor = None,
-        pdf_reader: PDFTextExtractor = None,
+        pdf_reader: PdfTextExtractor = None,
     ):
         super().__init__(file_path)
         self.extractor = extractor or QuestionExtractor()
-        self.pdf_reader = pdf_reader or PDFTextExtractor()
+        self.pdf_reader = pdf_reader or PdfTextExtractor()
 
     def parse(self) -> List[Question]:
         text = self.pdf_reader.extract_text(self.file_path, start_page=2)
