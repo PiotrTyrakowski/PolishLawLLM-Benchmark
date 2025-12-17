@@ -39,11 +39,10 @@ class RegexPatterns:
             rf"(?:\s+{cls.point_pattern()})?"
             rf"\s+{cls.CODE_ABBREVIATION})"
         )
-        separator = r"\s*\n\s*"
         question_number = r"(\d+)\."
         answer_letter = r"([A-C])"
 
-        pattern = rf"{legal_basis}{separator}{question_number}\s+{answer_letter}"
+        pattern = rf"{question_number}\s+{answer_letter}\s+{legal_basis}\s*$"
         return re.compile(pattern, re.IGNORECASE | re.MULTILINE)
 
     @classmethod

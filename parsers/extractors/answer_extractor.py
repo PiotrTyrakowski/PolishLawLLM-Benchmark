@@ -15,12 +15,12 @@ class AnswerExtractor(BaseExtractor):
 
         for match in matches:
             try:
-                question_number = int(match.group(2))
+                question_number = int(match.group(1))
             except ValueError:
                 continue
 
-            legal_basis = re.sub(r"\s+", " ", match.group(1).strip())
-            correct_answer = match.group(3).strip()
+            correct_answer = match.group(2).strip()
+            legal_basis = re.sub(r"\s+", " ", match.group(3).strip())
 
             answers.append(
                 Answer(
