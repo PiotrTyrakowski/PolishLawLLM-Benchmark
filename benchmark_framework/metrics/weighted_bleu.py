@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from statistics import fmean
 from typing import Iterable, Sequence, Optional
 from benchmark_framework.metrics.base_metric import BaseMetric
+from parsers.utils.text_utils import TextFormatter
 
 EPSILON = 1e-1
 
@@ -48,7 +49,7 @@ class WeightedBleuMetric(BaseMetric):
                 data = json.load(f)
             for article_number, article_text in data.items():
                 tokens = {
-                    token.lower() for token in self.get_normalized_words(article_text)
+                    token.lower() for token in self.get_normalized_words(TextFormatter.format_extracted_text(article_text))
                 }
                 document_frequency.update(tokens)
             total_docs = len(data)
