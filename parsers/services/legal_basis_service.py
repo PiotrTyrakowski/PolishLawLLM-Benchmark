@@ -1,27 +1,31 @@
+import re
+import json
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 from parsers.domain.question import Question
 from parsers.domain.answer import Answer
 from parsers.domain.exam import ExamTask
-from parsers.parsers.legal_base_parser import LegalBaseParser
 from parsers.extractors.legal_basis_extractor import LegalBasisExtractor
+from parsers.parsers.legal_base_parser import LegalBaseParser
+from parsers.utils.text_utils import TextFormatter
 
 
 class LegalBasisService:
-    """Manage legal basis extraction and enrichment."""
+    """Manage legal basis extraction using pre-generated corpus files."""
 
-    def __init__(self, legal_base_dir: Path):
-        self.legal_base_dir = legal_base_dir
-        self.parsers: Dict[str, LegalBaseParser] = {}
+    def __init__(self, corpus_year_dir: Path):
+        self.corpus_year_dir = corpus_year_dir
+        self.corpuses: Dict[str, Dict[str, str]] = {}
         self.basis_extractor = LegalBasisExtractor()
-        self._initialize_parsers()
+        self.formatter = TextFormatter()
+        self._load_corpuses()
 
-    def _initialize_parsers(self) -> None:
-        """Initialize legal code parsers."""
-        pdf_files = list(self.legal_base_dir.glob("*.pdf"))
-        for pdf_file in pdf_files:
-            code_name = pdf_file.stem.lower()
-            self.parsers[code_name] = LegalBaseParser(pdf_file)
+    def _load_corpuses(self) -> None:
+        json_files = list(self.corpus_year_dir.glob("*.json"))
+        for json_file in json_files:
+            code_name = json_file.stem.lower()
+            with open(json_file, "r", encoding="utf-8") as f:
+                self.corpuses[code_name] = json.load(f)
 
     def enrich_with_legal_content(
         self, questions: List[Question], answers: List[Answer]
@@ -43,7 +47,9 @@ class LegalBasisService:
                     )
                 )
             except Exception as e:
-                print(f"  Warning: {e} for question {question.id}")
+                print(
+                    f"  Warning: {e} for question {question.id} and {answer.legal_basis}"
+                )
                 continue
 
         return enriched_questions
@@ -61,17 +67,19 @@ class LegalBasisService:
             raise ValueError(f"Invalid legal basis: {legal_basis}")
 
         formatted_code = self.basis_extractor.format_code_abbreviation(code_abbr)
-        parser = self.parsers.get(formatted_code)
+        corpus = self.corpuses.get(formatted_code)
 
-        if not parser:
-            raise ValueError(f"Parser not found for code: {formatted_code}")
+        if not corpus:
+            raise ValueError(f"Corpus not found for code: {formatted_code}")
+
+        article_text = corpus.get(article_num)
+        if not article_text:
+            raise ValueError(f"Article {article_num} not found in {formatted_code}")
 
         # Extract based on components present
-        if paragraph_num and point_num:
-            return parser.get_point(article_num, point_num, paragraph_num)
+        if point_num:
+            return LegalBaseParser.get_point(article_text, point_num, paragraph_num)
         elif paragraph_num:
-            return parser.get_paragraph(article_num, paragraph_num)
-        elif point_num:
-            return parser.get_point(article_num, point_num)
+            return LegalBaseParser.get_paragraph(article_text, paragraph_num)
         else:
-            return parser.get_article(article_num)
+            return TextFormatter.format_extracted_text(article_text)

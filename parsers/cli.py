@@ -17,16 +17,24 @@ app = typer.Typer()
 def parse(
     pdfs_path: Path = typer.Argument(
         ..., help="Path to the directory containing exam PDFs"
-    )
+    ),
+    corpuses_path: Path = typer.Argument(
+        ..., help="Path to the corpuses directory containing year subdirectories"
+    ),
 ):
     """
     Parse Polish law exam PDFs into structured JSONL format.
 
     This command processes exam PDFs from the specified directory,
-    extracts legal basis content, and saves the results in JSONL format.
+    extracts legal basis content from pre-generated corpus files,
+    and saves the results in JSONL format.
     """
     if not pdfs_path.exists():
         typer.echo(f"Error: Directory '{pdfs_path}' not found", err=True)
+        raise typer.Exit(code=1)
+
+    if not corpuses_path.exists():
+        typer.echo(f"Error: Corpuses directory '{corpuses_path}' not found", err=True)
         raise typer.Exit(code=1)
 
     # Initialize shared services
@@ -42,13 +50,15 @@ def parse(
     # Process each exam
     total_processed = 0
     for year, exam_types in exams.items():
-        legal_base_dir = pdfs_path / year / "legal_base"
-        if not legal_base_dir.exists():
+        # Check if corpus exists for this year
+        corpus_year_dir = corpuses_path / year
+        if not corpus_year_dir.exists():
             typer.echo(
-                f"Error: Legal base directory '{legal_base_dir}' not found", err=True
+                f"\n⚠ Warning: Corpus directory for year {year} not found at '{corpus_year_dir}', skipping all exams for this year"
             )
-            raise typer.Exit(code=1)
-        legal_basis_service = LegalBasisService(legal_base_dir)
+            continue
+
+        legal_basis_service = LegalBasisService(corpus_year_dir)
 
         for exam_type, files in exam_types.items():
             typer.echo(f"\n{'=' * 60}")
