@@ -27,7 +27,7 @@ results/judgments/*
 
 # data
 data/exams/*
-data/judgments/*
+# data/judgments/*
 data.zip
 corpuses
 
