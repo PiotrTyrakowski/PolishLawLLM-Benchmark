@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PolishLawLLMBenchmark</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .table-container::-webkit-scrollbar {
+            height: 8px;
+        }
+        .table-container::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 4px;
+        }
+        /* Delikatne linie oddzielające grupy kolumn */
+        .group-border-l {
+            border-left: 2px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased">
+
+    <nav class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm backdrop-blur-md bg-opacity-95">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-navy-900 rounded-lg flex items-center justify-center text-white font-bold">§</div>
+                    <span class="font-bold text-xl tracking-tight text-navy-900">PolishLawLLMBenchmark</span>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-xs text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded border border-gray-200">v 1.0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="bg-white border-b border-gray-200 py-12">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-navy-900 tracking-tight mb-4">
+                Ranking Modeli Językowych w Polskim Prawie
+            </h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                Analiza zdolności LLM do rozwiązywania egzaminów zawodowych oraz interpretacji orzecznictwa sądowego.
+            </p>
+        </div>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
+
+        <section id="exams">
+            <div class="mb-6">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-navy-900 flex items-center gap-2">
+                            🏛️ Egzaminy Zawodowe
+                        </h2>
+                        <p class="text-sm text-gray-500 mt-1">
+                            Testy wyboru (A/B/C) oraz weryfikacja cytowanej podstawy prawnej.
+                        </p>
+                        <div class="mt-2 text-xs text-gray-500 flex items-center gap-1">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>Oficjalny próg zdawalności egzaminu wstępnego wynosi ok. 66% (100/150 pkt).</span>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 bg-gray-100 p-1.5 rounded-lg border border-gray-200">
+                        <select class="bg-white border-gray-300 text-gray-700 text-sm rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 py-1.5 px-3">
+                            <option>Średnia (Wszystkie lata)</option>
+                            <option>Rok 2024</option>
+                            <option>Rok 2023</option>
+                        </select>
+                        <select class="bg-white border-gray-300 text-gray-700 text-sm rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 py-1.5 px-3">
+                            <option>Średnia (Wszystkie typy)</option>
+                            <option>Radcowski / Adwokacki</option>
+                            <option>Komorniczy</option>
+                            <option>Notarialny</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
+                <div class="table-container overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr class="bg-gray-50 text-xs font-bold text-gray-500 uppercase tracking-wider text-center">
+                                <th scope="col" class="px-6 py-3 text-left w-16 bg-gray-50" rowspan="2">#</th>
+                                <th scope="col" class="px-6 py-3 text-left bg-gray-50" rowspan="2">Model</th>
+                                
+                                <th colspan="2" class="px-4 py-2 border-b border-gray-200 group-border-l">Decyzja i Wiedza</th>
+                                <th colspan="3" class="px-4 py-2 border-b border-gray-200 group-border-l">Jakość Treści Uzasadnienia</th>
+                            </tr>
+                            
+                            <tr class="bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
+                                <th scope="col" class="px-4 py-2 group-border-l hover:text-navy-900 cursor-pointer" title="Procent poprawnych odpowiedzi A/B/C">
+                                    Skuteczność (ABC)
+                                </th>
+                                <th scope="col" class="px-4 py-2 hover:text-navy-900 cursor-pointer" title="Czy model wskazał poprawny artykuł (np. Art 4.1)">
+                                    Trafność Przepisu
+                                </th>
+                                
+                                <th scope="col" class="px-4 py-2 group-border-l hover:text-navy-900 cursor-pointer" title="Exact Match">
+                                    Exact Match
+                                </th>
+                                <th scope="col" class="px-4 py-2 hover:text-navy-900 cursor-pointer" title="BLEU Score">
+                                    BLEU
+                                </th>
+                                <th scope="col" class="px-4 py-2 hover:text-navy-900 cursor-pointer" title="Weighted BLEU">
+                                    W-BLEU
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200 text-sm">
+                            
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 text-gray-400 font-medium">1</td>
+                                <td class="px-6 py-4 font-semibold text-gray-900">GPT-4o</td>
+                                
+                                <td class="px-4 py-4 text-center group-border-l font-medium text-gray-900">89.2%</td>
+                                <td class="px-4 py-4 text-center text-gray-600">82.0%</td>
+                                
+                                <td class="px-4 py-4 text-center group-border-l text-gray-600">65.4%</td>
+                                <td class="px-4 py-4 text-center text-gray-600">0.82</td>
+                                <td class="px-4 py-4 text-center text-gray-600">0.85</td>
+                            </tr>
+
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 text-gray-400 font-medium">2</td>
+                                <td class="px-6 py-4 font-semibold text-gray-900">Claude 3.5 Sonnet</td>
+                                
+                                <td class="px-4 py-4 text-center group-border-l font-medium text-gray-900">87.5%</td>
+                                <td class="px-4 py-4 text-center text-gray-600">79.5%</td>
+                                
+                                <td class="px-4 py-4 text-center group-border-l text-gray-600">63.1%</td>
+                                <td class="px-4 py-4 text-center text-gray-600">0.79</td>
+                                <td class="px-4 py-4 text-center text-gray-600">0.83</td>
+                            </tr>
+
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 text-gray-400 font-medium">3</td>
+                                <td class="px-6 py-4 font-semibold text-gray-900">Llama-3-70B</td>
+                                
+                                <td class="px-4 py-4 text-center group-border-l font-medium text-gray-900">81.0%</td>
+                                <td class="px-4 py-4 text-center text-gray-600">65.0%</td>
+                                
+                                <td class="px-4 py-4 text-center group-border-l text-gray-600">45.2%</td>
+                                <td class="px-4 py-4 text-center text-gray-600">0.68</td>
+                                <td class="px-4 py-4 text-center text-gray-600">0.71</td>
+                            </tr>
+                            
+                            <tr>
+                                <td colspan="7" class="px-6 py-2 bg-gray-50 text-center border-t border-b border-gray-200">
+                                    <span class="text-xs text-gray-400 tracking-widest uppercase">...</span>
+                                </td>
+                            </tr>
+
+                            <tr class="bg-red-50/20 hover:bg-red-50/40 transition-colors">
+                                <td class="px-6 py-4 text-gray-400 font-medium">24</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center">
+                                        <span class="font-semibold text-gray-900">Bielik-11B-v2</span>
+                                        <span class="ml-2" title="Polski Model">🇵🇱</span>
+                                    </div>
+                                </td>
+                                
+                                <td class="px-4 py-4 text-center group-border-l font-medium text-gray-900">74.5%</td>
+                                <td class="px-4 py-4 text-center text-gray-600">68.0%</td>
+                                
+                                <td class="px-4 py-4 text-center group-border-l text-gray-600">41.0%</td>
+                                <td class="px-4 py-4 text-center text-gray-600">0.55</td>
+                                <td class="px-4 py-4 text-center text-gray-600">0.62</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="judgments">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-navy-900 flex items-center gap-2">
+                    ⚖️ Interpretacja Orzecznictwa
+                </h2>
+                <p class="text-sm text-gray-500 mt-1">
+                    Generatywna identyfikacja zamaskowanych artykułów w treści orzeczeń.
+                </p>
+            </div>
+
+            <div class="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
+                <div class="table-container overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr class="bg-gray-50 text-xs font-bold text-gray-500 uppercase tracking-wider text-center">
+                                <th scope="col" class="px-6 py-3 text-left w-16 bg-gray-50" rowspan="2">#</th>
+                                <th scope="col" class="px-6 py-3 text-left bg-gray-50" rowspan="2">Model</th>
+                                <th scope="col" class="px-4 py-2 border-b border-gray-200 group-border-l" rowspan="2">Identyfikacja (Retrieval)</th>
+                                <th colspan="3" class="px-4 py-2 border-b border-gray-200 group-border-l">Jakość Generacji Tekstu</th>
+                            </tr>
+
+                            <tr class="bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
+                                <th scope="col" class="px-4 py-2 group-border-l hover:text-navy-900 cursor-pointer">Exact Match</th>
+                                <th scope="col" class="px-4 py-2 hover:text-navy-900 cursor-pointer">BLEU</th>
+                                <th scope="col" class="px-4 py-2 hover:text-navy-900 cursor-pointer">W-BLEU</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200 text-sm">
+                            
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 text-gray-400 font-medium">1</td>
+                                <td class="px-6 py-4 font-semibold text-gray-900">GPT-4-Turbo</td>
+                                
+                                <td class="px-4 py-4 text-center group-border-l font-medium text-gray-900">92.4%</td>
+                                
+                                <td class="px-4 py-4 text-center group-border-l text-gray-600">62.4%</td>
+                                <td class="px-4 py-4 text-center text-gray-600">0.76</td>
+                                <td class="px-4 py-4 text-center text-gray-600">0.78</td>
+                            </tr>
+                            
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 text-gray-400 font-medium">2</td>
+                                <td class="px-6 py-4 font-semibold text-gray-900">Claude 3 Opus</td>
+                                
+                                <td class="px-4 py-4 text-center group-border-l font-medium text-gray-900">90.1%</td>
+                                
+                                <td class="px-4 py-4 text-center group-border-l text-gray-600">60.1%</td>
+                                <td class="px-4 py-4 text-center text-gray-600">0.72</td>
+                                <td class="px-4 py-4 text-center text-gray-600">0.75</td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="6" class="px-6 py-2 bg-gray-50 text-center border-t border-b border-gray-200">
+                                    <span class="text-xs text-gray-400 tracking-widest uppercase">...</span>
+                                </td>
+                            </tr>
+
+                            <tr class="bg-red-50/20 hover:bg-red-50/40 transition-colors">
+                                <td class="px-6 py-4 text-gray-400 font-medium">15</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center">
+                                        <span class="font-semibold text-gray-900">Bielik-11B-v2</span>
+                                        <span class="ml-2">🇵🇱</span>
+                                    </div>
+                                </td>
+                                
+                                <td class="px-4 py-4 text-center group-border-l font-medium text-gray-900">78.5%</td>
+                                
+                                <td class="px-4 py-4 text-center group-border-l text-gray-600">45.0%</td>
+                                <td class="px-4 py-4 text-center text-gray-600">0.51</td>
+                                <td class="px-4 py-4 text-center text-gray-600">0.55</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-navy-900 text-gray-400 py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-sm">&copy; 2025 PolishLawLLMBenchmark. Wszelkie prawa zastrzeżone.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

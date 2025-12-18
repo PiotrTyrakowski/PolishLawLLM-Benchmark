@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PolishLawLLMBenchmark - Ranking AI w Prawie</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        slate: {
+                            850: '#151e2e',
+                        },
+                        indigo: {
+                            950: '#1e1b4b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #f8fafc;
+            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        
+        .table-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        .table-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .table-container::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 4px;
+        }
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background-color: #94a3b8;
+        }
+
+        /* Subtelne oddzielenie sekcji tabeli */
+        .section-divider {
+            border-left: 1px solid #e2e8f0;
+            background-color: #f8fafc; /* Lekkie tło dla grupy kolumn */
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-indigo-100 selection:text-indigo-900">
+
+    <nav class="sticky top-0 z-50 bg-white/90 border-b border-slate-200 shadow-sm backdrop-blur-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-gradient-to-br from-indigo-900 to-slate-800 rounded-lg flex items-center justify-center text-white shadow-md">
+                        <i class="ph ph-gavel text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-lg tracking-tight text-slate-900 block leading-tight">PolishLaw<span class="text-indigo-600">LLM</span></span>
+                        <span class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Benchmark Prawniczy</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="#" class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">Metodologia</a>
+                    <span class="px-2.5 py-1 text-xs font-mono font-medium text-indigo-700 bg-indigo-50 border border-indigo-100 rounded-md">v1.0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="bg-white border-b border-slate-200 pt-16 pb-12 shadow-sm relative overflow-hidden">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full overflow-hidden pointer-events-none opacity-40">
+            <div class="absolute top-0 left-1/4 w-96 h-96 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
+            <div class="absolute top-0 right-1/4 w-96 h-96 bg-indigo-100 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
+        </div>
+
+        <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-4 leading-tight">
+                Ranking Modeli AI <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-600">w Polskim Prawie</span>
+            </h1>
+            <p class="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+                Kompleksowa analiza zdolności LLM do rozwiązywania egzaminów zawodowych (radcowski, adwokacki) oraz interpretacji skomplikowanego orzecznictwa sądowego.
+            </p>
+        </div>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-20">
+
+        <section id="exams" class="scroll-mt-24">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                        <span class="bg-indigo-100 text-indigo-700 p-1.5 rounded-md"><i class="ph ph-exam"></i></span>
+                        Egzaminy Zawodowe
+                    </h2>
+                    <p class="text-sm text-slate-500 mt-2 max-w-xl">
+                        Testy wyboru (A/B/C) z egzaminów wstępnych na aplikacje. Oficjalny próg zdawalności wynosi <strong>66%</strong>.
+                    </p>
+                </div>
+
+                <div class="flex flex-wrap gap-2 bg-white p-1.5 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="relative group">
+                        <select class="appearance-none bg-slate-50 border border-slate-200 hover:border-indigo-300 text-slate-700 text-sm font-medium rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-3 pr-8 py-2 transition-all cursor-pointer">
+                            <option>Średnia (Wszystkie lata)</option>
+                            <option>Rok 2024</option>
+                            <option>Rok 2023</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+                            <i class="ph ph-caret-down font-bold"></i>
+                        </div>
+                    </div>
+                    <div class="relative group">
+                        <select class="appearance-none bg-slate-50 border border-slate-200 hover:border-indigo-300 text-slate-700 text-sm font-medium rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-3 pr-8 py-2 transition-all cursor-pointer">
+                            <option>Wszystkie typy</option>
+                            <option>Radcowski / Adwokacki</option>
+                            <option>Komorniczy</option>
+                            <option>Notarialny</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+                            <i class="ph ph-caret-down font-bold"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white shadow-xl shadow-slate-200/50 rounded-2xl border border-slate-200 overflow-hidden">
+                <div class="table-container overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <thead>
+                            <tr class="bg-slate-50/80">
+                                <th scope="col" class="px-6 py-4 text-left w-16 text-xs font-bold text-slate-400 uppercase tracking-wider">#</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Model</th>
+                                
+                                <th colspan="2" class="px-4 py-2 border-b-2 border-indigo-100 section-divider text-center text-xs font-bold text-indigo-900 uppercase tracking-wider bg-indigo-50/30">
+                                    Decyzja i Wiedza
+                                </th>
+                                <th colspan="3" class="px-4 py-2 border-b-2 border-slate-200 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                    Jakość Uzasadnienia
+                                </th>
+                            </tr>
+                            
+                            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">
+                                <th class="px-6 py-0"></th> <th class="px-6 py-0"></th>
+                                
+                                <th scope="col" class="px-4 py-3 section-divider hover:text-indigo-700 cursor-pointer transition-colors group">
+                                    <div class="flex items-center justify-center gap-1">
+                                        Skuteczność (ABC)
+                                        <i class="ph ph-arrow-down text-indigo-500"></i>
+                                    </div>
+                                </th>
+                                <th scope="col" class="px-4 py-3 section-divider hover:text-indigo-700 cursor-pointer transition-colors">
+                                    Trafność Przepisu
+                                </th>
+                                
+                                <th scope="col" class="px-4 py-3 hover:text-slate-800 cursor-pointer transition-colors">Exact Match</th>
+                                <th scope="col" class="px-4 py-3 hover:text-slate-800 cursor-pointer transition-colors">BLEU</th>
+                                <th scope="col" class="px-4 py-3 hover:text-slate-800 cursor-pointer transition-colors">W-BLEU</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-slate-100 text-sm">
+                            
+                            <tr class="hover:bg-slate-50 transition-colors group">
+                                <td class="px-6 py-5 text-slate-400 font-mono text-xs">01</td>
+                                <td class="px-6 py-5">
+                                    <div class="flex items-center">
+                                        <div class="h-8 w-8 rounded-full bg-slate-900 text-white flex items-center justify-center mr-3 text-xs font-bold shadow-sm">OA</div>
+                                        <span class="font-bold text-slate-900 text-base">GPT-4o</span>
+                                        <span class="ml-2 px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-bold border border-green-200">SOTA</span>
+                                    </div>
+                                </td>
+                                
+                                <td class="px-4 py-5 text-center section-divider">
+                                    <div class="font-bold text-slate-900 text-base">89.2%</div>
+                                    <div class="w-full bg-slate-200 rounded-full h-1.5 mt-2 overflow-hidden">
+                                        <div class="bg-indigo-600 h-1.5 rounded-full" style="width: 89.2%"></div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-5 text-center section-divider">
+                                    <div class="text-slate-600 font-medium">82.0%</div>
+                                    <div class="w-full bg-slate-100 rounded-full h-1 mt-2 overflow-hidden opacity-50 group-hover:opacity-100 transition-opacity">
+                                        <div class="bg-slate-400 h-1 rounded-full" style="width: 82%"></div>
+                                    </div>
+                                </td>
+                                
+                                <td class="px-4 py-5 text-center text-slate-600">65.4%</td>
+                                <td class="px-4 py-5 text-center text-slate-600 font-mono">0.82</td>
+                                <td class="px-4 py-5 text-center text-slate-600 font-mono">0.85</td>
+                            </tr>
+
+                            <tr class="hover:bg-slate-50 transition-colors group">
+                                <td class="px-6 py-5 text-slate-400 font-mono text-xs">02</td>
+                                <td class="px-6 py-5">
+                                    <div class="flex items-center">
+                                        <div class="h-8 w-8 rounded-full bg-orange-600 text-white flex items-center justify-center mr-3 text-xs font-bold shadow-sm">CL</div>
+                                        <span class="font-bold text-slate-900 text-base">Claude 3.5 Sonnet</span>
+                                    </div>
+                                </td>
+                                
+                                <td class="px-4 py-5 text-center section-divider">
+                                    <div class="font-bold text-slate-900 text-base">87.5%</div>
+                                    <div class="w-full bg-slate-200 rounded-full h-1.5 mt-2 overflow-hidden">
+                                        <div class="bg-indigo-500 h-1.5 rounded-full" style="width: 87.5%"></div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-5 text-center section-divider">
+                                    <div class="text-slate-600 font-medium">79.5%</div>
+                                    <div class="w-full bg-slate-100 rounded-full h-1 mt-2 overflow-hidden opacity-50 group-hover:opacity-100 transition-opacity">
+                                        <div class="bg-slate-400 h-1 rounded-full" style="width: 79.5%"></div>
+                                    </div>
+                                </td>
+                                
+                                <td class="px-4 py-5 text-center text-slate-600">63.1%</td>
+                                <td class="px-4 py-5 text-center text-slate-600 font-mono">0.79</td>
+                                <td class="px-4 py-5 text-center text-slate-600 font-mono">0.83</td>
+                            </tr>
+
+                            <tr class="hover:bg-slate-50 transition-colors group">
+                                <td class="px-6 py-5 text-slate-400 font-mono text-xs">03</td>
+                                <td class="px-6 py-5">
+                                    <div class="flex items-center">
+                                        <div class="h-8 w-8 rounded-full bg-blue-600 text-white flex items-center justify-center mr-3 text-xs font-bold shadow-sm">LL</div>
+                                        <span class="font-semibold text-slate-900">Llama-3-70B</span>
+                                    </div>
+                                </td>
+                                
+                                <td class="px-4 py-5 text-center section-divider">
+                                    <div class="font-semibold text-slate-900">81.0%</div>
+                                    <div class="w-full bg-slate-200 rounded-full h-1.5 mt-2 overflow-hidden">
+                                        <div class="bg-blue-400 h-1.5 rounded-full" style="width: 81.0%"></div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-5 text-center section-divider">
+                                    <div class="text-slate-600">65.0%</div>
+                                </td>
+                                
+                                <td class="px-4 py-5 text-center text-slate-600">45.2%</td>
+                                <td class="px-4 py-5 text-center text-slate-600 font-mono">0.68</td>
+                                <td class="px-4 py-5 text-center text-slate-600 font-mono">0.71</td>
+                            </tr>
+                            
+                            <tr>
+                                <td colspan="7" class="px-6 py-3 bg-slate-50/50 text-center border-y border-slate-100">
+                                    <span class="text-xs text-slate-400 tracking-[0.2em] uppercase font-medium flex justify-center items-center gap-2">
+                                        <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                                        <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                                        <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr class="bg-amber-50/40 hover:bg-amber-50 transition-colors border-l-4 border-l-amber-400">
+                                <td class="px-6 py-5 text-amber-600/60 font-mono text-xs font-bold pl-5">24</td>
+                                <td class="px-6 py-5">
+                                    <div class="flex items-center">
+                                        <div class="h-8 w-8 rounded-full bg-white border border-amber-200 text-amber-600 flex items-center justify-center mr-3 text-lg shadow-sm">🦅</div>
+                                        <div>
+                                            <span class="font-bold text-slate-900">Bielik-11B-v2</span>
+                                            <div class="flex items-center gap-1 mt-0.5">
+                                                <span class="text-[10px] uppercase font-bold text-amber-700 bg-amber-100 px-1.5 rounded border border-amber-200">PL Model</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                
+                                <td class="px-4 py-5 text-center section-divider bg-amber-50/20">
+                                    <div class="font-bold text-slate-900">74.5%</div>
+                                    <div class="w-full bg-slate-200 rounded-full h-1.5 mt-2 overflow-hidden">
+                                        <div class="bg-amber-500 h-1.5 rounded-full" style="width: 74.5%"></div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-5 text-center section-divider bg-amber-50/20">
+                                    <div class="text-slate-700 font-medium">68.0%</div>
+                                </td>
+                                
+                                <td class="px-4 py-5 text-center text-slate-600">41.0%</td>
+                                <td class="px-4 py-5 text-center text-slate-600 font-mono">0.55</td>
+                                <td class="px-4 py-5 text-center text-slate-600 font-mono">0.62</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-between items-center text-xs text-slate-500">
+                    <span>* Dane zaktualizowane: 12.2024</span>
+                    <a href="#" class="text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-1">Pełny ranking <i class="ph ph-arrow-right"></i></a>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="judgments">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                    <span class="bg-indigo-100 text-indigo-700 p-1.5 rounded-md"><i class="ph ph-scales"></i></span>
+                    Interpretacja Orzecznictwa
+                </h2>
+                <p class="text-sm text-slate-500 mt-2">
+                    Zdolność do identyfikacji zamaskowanych przepisów w treści uzasadnień sądowych (Retrieval + Generation).
+                </p>
+            </div>
+
+            <div class="bg-white shadow-xl shadow-slate-200/50 rounded-2xl border border-slate-200 overflow-hidden">
+                <div class="table-container overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <thead>
+                            <tr class="bg-slate-50/80">
+                                <th scope="col" class="px-6 py-4 text-left w-16 text-xs font-bold text-slate-400 uppercase tracking-wider">#</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Model</th>
+                                <th scope="col" class="px-4 py-2 border-b-2 border-indigo-100 section-divider text-center text-xs font-bold text-indigo-900 uppercase tracking-wider bg-indigo-50/30">
+                                    Identyfikacja (RAG)
+                                </th>
+                                <th colspan="3" class="px-4 py-2 border-b-2 border-slate-200 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                    Jakość Generacji
+                                </th>
+                            </tr>
+
+                            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">
+                                <th class="px-6 py-0"></th>
+                                <th class="px-6 py-0"></th>
+                                <th scope="col" class="px-4 py-3 section-divider hover:text-indigo-700 cursor-pointer">Skuteczność</th>
+                                <th scope="col" class="px-4 py-3 hover:text-slate-800 cursor-pointer">Exact Match</th>
+                                <th scope="col" class="px-4 py-3 hover:text-slate-800 cursor-pointer">BLEU</th>
+                                <th scope="col" class="px-4 py-3 hover:text-slate-800 cursor-pointer">W-BLEU</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-slate-100 text-sm">
+                            
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-5 text-slate-400 font-mono text-xs">01</td>
+                                <td class="px-6 py-5">
+                                    <div class="flex items-center">
+                                        <div class="h-8 w-8 rounded-full bg-emerald-600 text-white flex items-center justify-center mr-3 text-xs font-bold shadow-sm">4T</div>
+                                        <span class="font-bold text-slate-900">GPT-4-Turbo</span>
+                                    </div>
+                                </td>
+                                
+                                <td class="px-4 py-5 text-center section-divider">
+                                    <div class="font-bold text-slate-900">92.4%</div>
+                                    <div class="w-full bg-slate-200 rounded-full h-1.5 mt-2 overflow-hidden">
+                                        <div class="bg-indigo-600 h-1.5 rounded-full" style="width: 92.4%"></div>
+                                    </div>
+                                </td>
+                                
+                                <td class="px-4 py-5 text-center text-slate-600 section-divider">62.4%</td>
+                                <td class="px-4 py-5 text-center text-slate-600 font-mono">0.76</td>
+                                <td class="px-4 py-5 text-center text-slate-600 font-mono">0.78</td>
+                            </tr>
+                            
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-5 text-slate-400 font-mono text-xs">02</td>
+                                <td class="px-6 py-5">
+                                    <div class="flex items-center">
+                                        <div class="h-8 w-8 rounded-full bg-purple-600 text-white flex items-center justify-center mr-3 text-xs font-bold shadow-sm">OP</div>
+                                        <span class="font-bold text-slate-900">Claude 3 Opus</span>
+                                    </div>
+                                </td>
+                                
+                                <td class="px-4 py-5 text-center section-divider">
+                                    <div class="font-bold text-slate-900">90.1%</div>
+                                    <div class="w-full bg-slate-200 rounded-full h-1.5 mt-2 overflow-hidden">
+                                        <div class="bg-indigo-500 h-1.5 rounded-full" style="width: 90.1%"></div>
+                                    </div>
+                                </td>
+                                
+                                <td class="px-4 py-5 text-center text-slate-600 section-divider">60.1%</td>
+                                <td class="px-4 py-5 text-center text-slate-600 font-mono">0.72</td>
+                                <td class="px-4 py-5 text-center text-slate-600 font-mono">0.75</td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="6" class="px-6 py-3 bg-slate-50/50 text-center border-y border-slate-100">
+                                     <span class="text-xs text-slate-400 tracking-[0.2em] uppercase font-medium flex justify-center items-center gap-2">
+                                        <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                                        <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                                        <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr class="bg-amber-50/40 hover:bg-amber-50 transition-colors border-l-4 border-l-amber-400">
+                                <td class="px-6 py-5 text-amber-600/60 font-mono text-xs font-bold pl-5">15</td>
+                                <td class="px-6 py-5">
+                                    <div class="flex items-center">
+                                        <div class="h-8 w-8 rounded-full bg-white border border-amber-200 text-amber-600 flex items-center justify-center mr-3 text-lg shadow-sm">🦅</div>
+                                        <div>
+                                            <span class="font-bold text-slate-900">Bielik-11B-v2</span>
+                                            <div class="flex items-center gap-1 mt-0.5">
+                                                <span class="text-[10px] uppercase font-bold text-amber-700 bg-amber-100 px-1.5 rounded border border-amber-200">PL Model</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                
+                                <td class="px-4 py-5 text-center section-divider bg-amber-50/20">
+                                    <div class="font-bold text-slate-900">78.5%</div>
+                                    <div class="w-full bg-slate-200 rounded-full h-1.5 mt-2 overflow-hidden">
+                                        <div class="bg-amber-500 h-1.5 rounded-full" style="width: 78.5%"></div>
+                                    </div>
+                                </td>
+                                
+                                <td class="px-4 py-5 text-center text-slate-600 section-divider bg-amber-50/20">45.0%</td>
+                                <td class="px-4 py-5 text-center text-slate-600 font-mono">0.51</td>
+                                <td class="px-4 py-5 text-center text-slate-600 font-mono">0.55</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-12 mt-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+            <div>
+                <div class="flex items-center gap-2 text-white font-bold text-lg mb-4">
+                    <i class="ph ph-gavel"></i> PolishLawLLM
+                </div>
+                <p class="text-slate-500">
+                    Otwarty benchmark dla polskich modeli językowych w kontekście prawniczym.
+                </p>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-4">Zasoby</h4>
+                <ul class="space-y-2">
+                    <li><a href="#" class="hover:text-white transition-colors">HuggingFace Dataset</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">GitHub Repository</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Metodologia Oceny</a></li>
+                </ul>
+            </div>
+            <div class="text-right flex flex-col justify-end">
+                <p>&copy; 2025 PolishLawLLMBenchmark.</p>
+                <p class="text-slate-600 mt-1">Stworzone z precyzją.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
