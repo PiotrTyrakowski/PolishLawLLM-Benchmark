@@ -12,14 +12,14 @@ class JSONLRepository(ExamRepository):
         self.file_ops = FileOperations()
 
     def save(self, exam: Exam) -> None:
-        output_dir = self.base_dir / exam.exam_type
-        output_file = output_dir / f"{exam.year}.jsonl"
+        output_dir = self.base_dir / str(exam.year)
+        output_file = output_dir / f"{exam.exam_type}.jsonl"
 
         data = exam.to_jsonl_data()
         self.file_ops.save_jsonl(data, output_file)
 
     def load(self, exam_type: str, year: int) -> Exam:
-        file_path = self.base_dir / exam_type / f"{year}.jsonl"
+        file_path = self.base_dir / str(year) / f"{exam_type}.jsonl"
         data = self.file_ops.load_jsonl(file_path)
 
         tasks = [ExamTask.from_dict(task_data) for task_data in data]

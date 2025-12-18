@@ -57,9 +57,9 @@ class ExamFileDiscovery:
                     exams[year][exam_type] = {}
 
                 # Classify file type
-                if pdf_file.name.startswith("Zestaw_pytań"):
+                if pdf_file.name.lower().startswith("zestaw"):
                     exams[year][exam_type]["questions"] = pdf_file
-                elif pdf_file.name.startswith("Wykaz_prawidłowych_odpowiedzi"):
+                elif pdf_file.name.lower().startswith("wykaz"):
                     exams[year][exam_type]["answers"] = pdf_file
 
         return exams

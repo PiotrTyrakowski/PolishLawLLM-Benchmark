@@ -22,15 +22,6 @@ class PDFAnswerParser(BaseParser[Answer]):
     def parse(self) -> List[Answer]:
         """Extract answers from PDF."""
         text = self.pdf_reader.extract_text(self.file_path, start_page=1)
-
-        # Save to debug directory in project root
-        project_root = Path(__file__).resolve().parents[2]
-        debug_path = project_root / "debug" / f"{self.file_path.name}.txt"
-        debug_path.parent.mkdir(parents=True, exist_ok=True)
-
-        with open(debug_path, "w", encoding="utf-8") as f:
-            f.write(text)
-
         return self.extractor.extract(text)
 
     def validate(self, answer: Answer) -> Tuple[bool, List[str]]:
