@@ -6,8 +6,9 @@ class Task(ABC):
     Abstract base class for benchmark tasks.
     """
 
-    def __init__(self):
+    def __init__(self, id: int):
         super().__init__()
+        self.id = id
 
     @abstractmethod
     def get_prompt(self) -> str:

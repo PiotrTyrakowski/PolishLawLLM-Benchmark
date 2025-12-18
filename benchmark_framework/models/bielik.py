@@ -45,4 +45,4 @@ class BielikModel(BaseModel):
         Returns default rate limiting configuration for the Bielik model.
         Adjust these values based on NVIDIA API limits.
         """
-        return RunnerConfig(requests_per_minute=30)
+        return RunnerConfig(requests_per_minute=35)

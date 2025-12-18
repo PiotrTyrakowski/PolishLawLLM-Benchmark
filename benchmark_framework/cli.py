@@ -1,4 +1,5 @@
 import typer
+from typing import Optional
 
 from benchmark_framework.configs.model_config import ModelConfig
 from benchmark_framework.runner import BenchmarkRunner
@@ -19,12 +20,22 @@ def run(
         "--google-search",
         help="Enable Google Search tool for the model (only applicable for gemini).",
     ),
+    year: Optional[int] = typer.Option(
+        None,
+        "--year",
+        "-y",
+        help="Specific year of tests to run (e.g. 2012). If not provided, runs all available.",
+    ),
 ):
     model_config = ModelConfig(google_search=google_search)
     model = get_llm_model(model_name, model_config)
-    manager = get_manager(dataset_name, model)
+    manager = get_manager(dataset_name, model, year=year)
+
     runner = BenchmarkRunner(manager)
     typer.echo(f"Running benchmark for {model_name} on {len(manager.tasks)} tasks...")
+    if year:
+        typer.echo(f"Filtering for year: {year}")
+
     runner.run()
 
 

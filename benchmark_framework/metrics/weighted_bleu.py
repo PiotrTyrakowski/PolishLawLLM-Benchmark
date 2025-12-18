@@ -49,7 +49,10 @@ class WeightedBleuMetric(BaseMetric):
                 data = json.load(f)
             for article_number, article_text in data.items():
                 tokens = {
-                    token.lower() for token in self.get_normalized_words(TextFormatter.format_extracted_text(article_text))
+                    token.lower()
+                    for token in self.get_normalized_words(
+                        TextFormatter.format_extracted_text(article_text)
+                    )
                 }
                 document_frequency.update(tokens)
             total_docs = len(data)

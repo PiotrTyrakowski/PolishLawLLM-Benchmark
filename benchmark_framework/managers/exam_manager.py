@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from typing import Optional
 from dataclasses import asdict
 
 from benchmark_framework.models.base_model import BaseModel
@@ -14,11 +15,15 @@ class ExamManager(BaseManager):
     Manager for handling legal exam benchmark evaluations.
     """
 
-    def __init__(self, model: BaseModel, tasks_path: Path = DATA_PATH):
-        super().__init__(model, "exams", tasks_path)
+    def __init__(
+        self, model: BaseModel, tasks_path: Path = DATA_PATH, year: Optional[int] = None
+    ):
+        super().__init__(model, "exams", tasks_path, year)
 
-    def get_tasks(self) -> list[Exam]:
-        return self.tasks
+    def get_output_path(self, task: Exam) -> Path:
+        year_str = str(task.year)
+        filename = f"{task.exam_type}.jsonl"
+        return self.base_dir / self.model.model_name / year_str / filename
 
     def get_result(self, exam: Exam, model_response: str) -> ExamResult:
         model_answer = extract_json_field(model_response, "answer").upper()
@@ -28,6 +33,7 @@ class ExamManager(BaseManager):
         )
 
         result: ExamResult = {
+            "id": exam.id,
             "year": exam.year,
             "exam_type": exam.exam_type,
             "question": exam.question,
@@ -42,8 +48,6 @@ class ExamManager(BaseManager):
             "model_legal_basis": model_legal_basis,
             "model_legal_basis_content": model_legal_basis_content,
         }
-
-        self.results.append(result)
         return result
 
     def get_system_prompt(self, year: int) -> str:
@@ -75,13 +79,11 @@ class ExamManager(BaseManager):
             "# FORMAT ODPOWIEDZI\n"
             "Musisz zwrócić odpowiedź WYŁĄCZNIE w formacie JSON, bez żadnego dodatkowego tekstu przed lub po:\n\n"
             "{\n"
-            '  "reasoning": "Krotko opisany proces myślenia i analizy każdej opcji",\n'
             '  "answer": "A",\n'
             '  "legal_basis": "Art. 123 § 2 pkt 3 k.k.",\n'
             '  "legal_basis_content": "Dokładna treść cytowanego przepisu prawnego"\n'
             "}\n\n"
             "# WYMAGANIA\n"
-            "- 'reasoning': Krótka, zwięzła analiza każdej opcji max 50 znaków na opcję\n"
             "- 'answer': Pojedyncza litera - A, B lub C\n"
             "- 'legal_basis': Pełne oznaczenie przepisu (np. 'Art. 415 § 1 k.c.', 'Art. 148 § 2 pkt 1 k.p.k.')\n"
             "- 'legal_basis_content': Dosłowna treść przepisu, na którym oparłeś swoją odpowiedź\n"

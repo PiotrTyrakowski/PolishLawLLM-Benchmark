@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from typing import Optional
 from dataclasses import asdict
 
 from benchmark_framework.models.base_model import BaseModel
@@ -14,11 +15,14 @@ class JudgmentManager(BaseManager):
     Manager for handling legal judgment benchmark evaluations.
     """
 
-    def __init__(self, model: BaseModel, tasks_path: Path = DATA_PATH):
-        super().__init__(model, "judgments", tasks_path)
+    def __init__(
+        self, model: BaseModel, tasks_path: Path = DATA_PATH, year: Optional[int] = None
+    ):
+        super().__init__(model, "judgments", tasks_path, year)
 
-    def get_tasks(self) -> list[Judgment]:
-        return self.tasks
+    def get_output_path(self, task: Judgment) -> Path:
+        filename = f"{self.model.model_name}.jsonl"
+        return self.base_dir / filename
 
     def get_result(self, judgment: Judgment, model_response: str) -> JudgmentResult:
         model_legal_basis = extract_json_field(model_response, "legal_basis")
@@ -27,6 +31,7 @@ class JudgmentManager(BaseManager):
         )
 
         result: JudgmentResult = {
+            "id": judgment.id,
             "judgment_link": judgment.judgment_link,
             "legal_basis": judgment.legal_basis,
             "legal_basis_content": judgment.legal_basis_content,
@@ -36,8 +41,6 @@ class JudgmentManager(BaseManager):
             "model_legal_basis": model_legal_basis,
             "model_legal_basis_content": model_legal_basis_content,
         }
-
-        self.results.append(result)
         return result
 
     def get_system_prompt(self, year: int) -> str:

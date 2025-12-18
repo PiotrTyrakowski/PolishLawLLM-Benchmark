@@ -7,6 +7,7 @@ from benchmark_framework.constants import ENCODING
 
 
 class JudgmentResult(TypedDict):
+    id: int
     judgment_link: str
     legal_basis: str
     legal_basis_content: str
@@ -16,6 +17,7 @@ class JudgmentResult(TypedDict):
     model_response: str
     model_legal_basis: str
     model_legal_basis_content: str
+
 
 # TODO: align with future implementaion of judgments with metrics
 class Judgment(Task):
@@ -27,9 +29,14 @@ class Judgment(Task):
     """
 
     def __init__(
-        self, judgment_link, masked_justification_text, legal_basis, legal_basis_content
+        self,
+        id,
+        judgment_link,
+        masked_justification_text,
+        legal_basis,
+        legal_basis_content,
     ):
-        super().__init__()
+        super().__init__(id=id)
         self.judgment_link = judgment_link
         self.masked_justification_text = masked_justification_text
         self.legal_basis = legal_basis
@@ -42,6 +49,7 @@ class Judgment(Task):
             "masked_judgment_text"
         )
         return cls(
+            data["id"],
             data["judgment_link"],
             masked_text,
             data["legal_basis"],

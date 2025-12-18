@@ -1,12 +1,13 @@
 import json
 from pathlib import Path
-from typing import TypedDict
+from typing import TypedDict, Union
 
 from benchmark_framework.types.task import Task
 from benchmark_framework.constants import ENCODING
 
 
 class ExamResult(TypedDict):
+    id: int
     year: int
     exam_type: str
     question: str
@@ -26,9 +27,6 @@ class ExamResult(TypedDict):
 class Exam(Task):
     """
     Represents a legal exam question with multiple choice answers.
-
-    Contains all the information needed for a single exam question including
-    the question text, answer choices, correct answer, and legal basis.
     """
 
     def __init__(
@@ -42,8 +40,7 @@ class Exam(Task):
         legal_basis,
         legal_basis_content,
     ):
-        super().__init__()
-        self.id = id
+        super().__init__(id=id)
         self.year = year
         self.exam_type = exam_type
         self.question = question
@@ -66,9 +63,6 @@ class Exam(Task):
         )
 
     def get_prompt(self) -> str:
-        """
-        Get the prompt for the exam. question and choices are in the context.
-        """
         prompt = f"Pytanie: {self.question}\n\n"
         prompt += "Odpowiedzi:\n"
         for key, val in self.choices.items():
@@ -83,17 +77,8 @@ def load_exams(jsonl_path: Path) -> list[Exam]:
     exams = []
     with open(jsonl_path, encoding=ENCODING) as f:
         for line in f:
+            if not line.strip():
+                continue
             obj = json.loads(line)
-            exams.append(
-                Exam(
-                    obj["id"],
-                    obj["year"],
-                    obj["exam_type"],
-                    obj["question"],
-                    obj["choices"],
-                    obj["answer"],
-                    obj["legal_basis"],
-                    obj["legal_basis_content"],
-                )
-            )
+            exams.append(Exam.from_dict(obj))
     return exams
