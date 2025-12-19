@@ -14,7 +14,7 @@ def calculate_stats(file_path: Path) -> Dict[str, Any]:
 
     if total_count == 0:
         return {
-            "accuracy_metrics": {"answer": 0.0},
+            "accuracy_metrics": {"answer": 0.0, "legal_basis": 0.0},
             "text_metrics": {
                 "exact_match": 0.0,
                 "bleu": 0.0,
@@ -23,7 +23,8 @@ def calculate_stats(file_path: Path) -> Dict[str, Any]:
         }
 
     correct_count = 0
-    empty_legal_basis_count = 0
+    correct_legal_basis = 0
+    malformed_responses_count = 0
 
     # Accumulators for all items
     sum_exact_match = 0.0
@@ -36,9 +37,17 @@ def calculate_stats(file_path: Path) -> Dict[str, Any]:
         if is_correct:
             correct_count += 1
 
-        legal_basis_content = data.get("model_legal_basis_content", "")
-        if not legal_basis_content or legal_basis_content.strip() == "":
-            empty_legal_basis_count += 1
+        is_correct_legal_basis = accuracy_metrics.get("legal_basis", False)
+        if is_correct_legal_basis:
+            correct_legal_basis += 1
+
+        required_keys = [
+            "model_legal_basis_content",
+            "model_legal_basis",
+            "model_answer",
+        ]
+        if any(not (data.get(k) or "").strip() for k in required_keys):
+            malformed_responses_count += 1
 
         text_metrics = data.get("text_metrics", {})
         exact_match = text_metrics.get("exact_match", 0.0)
@@ -57,17 +66,21 @@ def calculate_stats(file_path: Path) -> Dict[str, Any]:
         sum_weighted_bleu += current_weighted
 
     accuracy = correct_count / total_count
+    legal_basis = correct_legal_basis / total_count
     avg_exact_match = sum_exact_match / total_count
     avg_bleu = sum_bleu / total_count
     avg_weighted_bleu = sum_weighted_bleu / total_count
 
+    malformed_response_rate = malformed_responses_count / total_count
+
     return {
-        "accuracy_metrics": {"answer": accuracy},
+        "accuracy_metrics": {"answer": accuracy, "legal_basis": legal_basis},
         "text_metrics": {
             "exact_match": avg_exact_match,
             "bleu": avg_bleu,
             "weighted_bleu": avg_weighted_bleu,
         },
+        "malformed_response_rate": malformed_response_rate,
     }
 
 
@@ -94,8 +107,11 @@ if __name__ == "__main__":
     print("=== Results ===")
     print("Accuracy Metrics:")
     print(f"  Answer accuracy: {results['accuracy_metrics']['answer']:.4f}")
+    print(f"  Legal basis accuracy: {results['accuracy_metrics']['legal_basis']:.4f}")
     print()
     print("Text Metrics:")
     print(f"  Exact match: {results['text_metrics']['exact_match']:.4f}")
     print(f"  BLEU: {results['text_metrics']['bleu']:.4f}")
     print(f"  Weighted BLEU: {results['text_metrics']['weighted_bleu']:.4f}")
+    print()
+    print(f"Malformed Response Rate: {results['malformed_response_rate']:.4f}")

@@ -20,10 +20,16 @@ def process_entry(entry: Dict[str, Any], corpuses_path: Path) -> Dict[str, Any]:
     """
     accuracy_metrics = {}
     if "model_answer" in entry and "correct_answer" in entry:
-        model_answer = entry["model_answer"].strip().lower()
-        correct_answer = entry["correct_answer"].strip().lower()
+        model_answer = entry["model_answer"]
+        correct_answer = entry["correct_answer"]
         exact_match = ExactMatchMetric()
         accuracy_metrics["answer"] = exact_match(model_answer, correct_answer)
+
+    if "legal_basis" in entry and "model_legal_basis" in entry:
+        model_legal_basis = entry["model_legal_basis"]
+        legal_basis = entry["legal_basis"]
+        exact_match = ExactMatchMetric()
+        accuracy_metrics["legal_basis"] = exact_match(model_legal_basis, legal_basis)
 
     text_metrics = {}
     if "model_legal_basis_content" in entry and "legal_basis_content" in entry:

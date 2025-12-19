@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from typing import Iterable, Sequence, Optional
-from collections import Counter
 import string
 
 

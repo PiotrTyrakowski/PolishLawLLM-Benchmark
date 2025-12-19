@@ -88,3 +88,15 @@ def test_exact_match_one_empty_text_returns_zero():
     score = metric(prediction="", reference="zakaz prowadzenia pojazdów")
 
     assert score == 0.0, f"Expected score 0.0 for empty vs non-empty text, got {score}"
+
+
+def test_exact_match_one_legal_basis():
+    metric = ExactMatchMetric()
+    score = metric(prediction="art. 506 § 6 k.p.k.", reference="art. 506 § 6 k.p.k.")
+    assert score == 1.0, f"Expected score 1.0, got {score}"
+
+
+def test_exact_match_one_legal_basis_different_casing():
+    metric = ExactMatchMetric()
+    score = metric(prediction="Art. 506 § 6 k.p.k.", reference="art. 506 § 6 k.p.k.")
+    assert score == 1.0, f"Expected score 1.0, got {score}"
