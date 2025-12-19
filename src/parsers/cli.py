@@ -20,7 +20,7 @@ def parse(
         ..., help="Path to the corpuses directory containing year subdirectories"
     ),
     output_path: Path = typer.Argument(
-        Path("data/exams"), help="Path to the output directory for JSONL files"
+        Path("data/tasks/exams"), help="Path to the output directory for JSONL files"
     ),
 ):
     """

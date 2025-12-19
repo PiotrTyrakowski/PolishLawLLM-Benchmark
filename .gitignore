@@ -21,15 +21,8 @@ changes.txt
 
 helpful.txt
 
-# results
-data/results/exams/*
-data/results/judgments/*
-
 # data
-data/exams/*
-data/judgments/*
-data.zip
-data/corpuses
+data/
 
 # helpers
 metryki_pomoc

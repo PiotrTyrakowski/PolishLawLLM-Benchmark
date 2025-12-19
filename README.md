@@ -36,19 +36,19 @@ A comprehensive benchmark framework for evaluating Large Language Models (LLMs) 
 Run a benchmark using the command-line interface:
 
 ```bash
-python -m benchmark_framework.cli <model_name> <dataset_name> [OPTIONS]
+python -m src.benchmark_framework.cli <model_name> <task_type> [OPTIONS]
 ```
 
 **Examples:**
 ```bash
 # Run on legal exams dataset with Gemini
-python -m benchmark_framework.cli gemini-2.5-flash exams
+python -m src.benchmark_framework.cli gemini-2.5-flash exams
 
 # Run with Google Search enabled (Gemini only)
-python -m benchmark_framework.cli gemini-2.5-pro exams --google-search
+python -m src.benchmark_framework.cli gemini-2.5-pro exams --google-search
 
-# Run on judgments dataset with NVIDIA model
-python -m benchmark_framework.cli deepseek/deepseek-r1-turbo judgments
+# Run for a specific year
+python -m src.benchmark_framework.cli gemini-2.5-flash exams --year 2024
 ```
 
 ## 🤖 Supported Models
@@ -62,7 +62,7 @@ python -m benchmark_framework.cli deepseek/deepseek-r1-turbo judgments
 | `meta/*` | NVIDIA | Meta LLaMA models via NVIDIA API |
 | `CYFRAGOVPL/*` | NVIDIA NIM | Polish government LLM models via NVIDIA NIM |
 
-## 📊 Datasets
+## 📊 Task types
 
 ### Legal Exams (`exams`)
 Polish legal bar exam questions from multiple exam types:
@@ -122,10 +122,10 @@ Tasks involving analysis of masked court judgment reasoning to identify the appl
 The project includes tools to extract exam data from official PDF files:
 
 ```bash
-python -m parsers.cli parse <path-to-pdfs-directory>
+python -m src.parsers.cli <path-to-pdfs-directory>
 ```
 
-See [parsers/README.md](src/parsers/README.md) for detailed instructions.
+See [src/parsers/README.md](src/parsers/README.md) for detailed instructions.
 
 ## 🛠️ Development
 
@@ -134,8 +134,8 @@ See [parsers/README.md](src/parsers/README.md) for detailed instructions.
 pip install -r requirements.txt
 
 # Run code formatting
-black benchmark_framework/ parsers/
+black src/
 
-# Run 
-python -m pytest
+# Run tests
+python -m pytest src/
 ```
