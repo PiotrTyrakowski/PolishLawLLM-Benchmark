@@ -125,7 +125,7 @@ The project includes tools to extract exam data from official PDF files:
 python -m parsers.cli parse <path-to-pdfs-directory>
 ```
 
-See [parsers/README.md](parsers/README.md) for detailed instructions.
+See [parsers/README.md](src/parsers/README.md) for detailed instructions.
 
 ## 🛠️ Development
 
