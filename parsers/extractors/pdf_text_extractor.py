@@ -53,7 +53,10 @@ class PdfTextExtractor:
         """Filter out any lines containing the exam header text."""
         lines = text.split("\n")
         filtered_lines = [
-            line for line in lines if "EGZAMIN WSTĘPNY DLA KANDYDATÓW" not in line
+            line
+            for line in lines
+            if "EGZAMIN WSTĘPNY DLA KANDYDATÓW" not in line
+            and "EGZAMIN KONKURSOWY" not in line
         ]
         return "\n".join(filtered_lines)
 
