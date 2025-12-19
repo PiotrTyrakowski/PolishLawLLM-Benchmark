@@ -1,6 +1,5 @@
 import json
 import re
-from typing import Any
 
 
 def strip_markdown_code_blocks(text: str) -> str:

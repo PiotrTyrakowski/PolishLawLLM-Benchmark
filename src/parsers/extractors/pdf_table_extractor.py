@@ -1,5 +1,5 @@
 import pdfplumber
-from typing import List, Optional, Callable
+from typing import List, Optional
 from pathlib import Path
 
 
