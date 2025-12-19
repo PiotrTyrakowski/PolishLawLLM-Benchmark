@@ -7,3 +7,4 @@ MAX_NEW_TOKENS: Final[int] = 1024
 DATA_PATH: Final[Path] = Path(__file__).parent.parent / "data"
 RESULTS_PATH: Final[Path] = Path(__file__).parent.parent / "results"
 ROOT_PATH: Final[Path] = Path(__file__).parent.parent
+CORPUSES_PATH: Final[Path] = Path("corpuses")

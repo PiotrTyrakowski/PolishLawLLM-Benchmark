@@ -64,8 +64,8 @@ Odpowiedź musi być WYŁĄCZNIE w formacie JSON (bez żadnego innego tekstu prz
 
 WYMÓG DOT. PODSTAWY PRAWNEJ:
 legal_basis - pełne oznaczenie przepisu (np. „art. 415 § 1 k.c.”).
-legal_basis_content - dosłowna treść cytowanego paragrafu/punktu, i tylko treść tego paragrafu/punktu (bez dodatkowego kontekstu ani całego artykułu).
-WAŻNE: Jeśli podstawą odpowiedzi jest konkretny paragraf lub punkt artykułu, podaj WYŁĄCZNIE treść tego paragrafu/punktu, a nie całego artykułu, np. jeśli podstawa prawna to. „art. 32 pkt 1 k.k.”, to legal_basis_content powinno zawierać wyłącznie treść punktu 1 tego artykułu („grzywna;”).
+legal_basis_content - dosłowna treść cytowanego paragrafu/punktu lub artykułu.
+WAŻNE: Jeśli podstawą odpowiedzi jest konkretny paragraf lub punkt artykułu, podaj WYŁĄCZNIE treść tego paragrafu/punktu, a nie całego artykułu, np. jeśli podstawa prawna to. „art. 32 pkt 1 k.k.”, to legal_basis_content powinno zawierać wyłącznie treść punktu 1 tego artykułu („grzywna;”). W przypadku jednak gdy podstawą prawną jest konkretny artykuł, przytocz jego pełną treść.
 
 Pola JSON:
 "answer": "A" lub "B" lub "C"
@@ -88,11 +88,11 @@ C) z mocy prawa.
 </input>
 
 <output>
-{
+{{
 "answer": "C",
 "legal_basis": "art. 4 § 4 k.k.",
 "legal_basis_content": "Jeżeli według nowej ustawy czyn objęty wyrokiem nie jest już zabroniony pod groźbą kary, skazanie ulega zatarciu z mocy prawa."
-}
+}}
 </output>
 </example>
 
