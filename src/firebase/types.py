@@ -1,7 +1,6 @@
 from typing import Dict, Any, Set
 from pydantic import BaseModel, model_validator
 
-
 class FirebaseCollection(BaseModel):
     id: str
     documents: Dict[str, "FirebaseDocument"] = {}

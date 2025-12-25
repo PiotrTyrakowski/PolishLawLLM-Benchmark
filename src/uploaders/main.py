@@ -2,12 +2,16 @@ import json
 from pathlib import Path
 from benchmark_framework.calculate_stats import calculate_stats
 from firebase.types import ModelDocument, FirebaseCollection, ExamDocument
-
 from firebase.main import firestore_db
 
 
 class Uploader:
-    def __init__(self, db, path: Path, collection_id: str = "results"):
+    def __init__(
+        self,
+        db,
+        path: Path | str,
+        collection_id: str = "results",
+    ):
         self.path = Path(path)
         self.db = db
         if not self.validate_dir_structure():
