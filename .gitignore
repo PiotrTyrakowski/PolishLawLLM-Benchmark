@@ -43,3 +43,8 @@ kk_extracted.txt
 
 # macOS
 .DS_Store
+
+data/*
+
+# firbease adminsdk
+firebase/polishlawllm-benchmark-firebase-adminsdk-fbsvc-e3c923bf3f.json

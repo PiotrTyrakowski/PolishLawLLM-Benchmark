@@ -162,9 +162,7 @@ def enrich_judgments(
         )
         total_updated += updated
         total_skipped += skipped
-        typer.echo(
-            f"  ↳ Updated: {updated} record(s), Skipped: {skipped} record(s)."
-        )
+        typer.echo(f"  ↳ Updated: {updated} record(s), Skipped: {skipped} record(s).")
 
     typer.echo(
         "\nSummary:\n"
@@ -177,4 +175,3 @@ def enrich_judgments(
 
 if __name__ == "__main__":
     typer.run(enrich_judgments)
-
