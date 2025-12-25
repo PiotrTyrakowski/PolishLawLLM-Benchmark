@@ -36,3 +36,6 @@ kk_extracted.txt
 
 # macOS
 .DS_Store
+
+# secrets for admin firebase
+polishlawllm-benchmark-firebase-adminsdk-fbsvc-e3c923bf3f.json
