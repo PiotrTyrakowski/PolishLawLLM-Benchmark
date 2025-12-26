@@ -1,13 +1,14 @@
 import argparse
 from pathlib import Path
 from typing import Dict, Any
+from collections import defaultdict
 
 from src.parsers.utils.file_utils import FileOperations
 
 
 def calculate_stats(file_path: Path) -> Dict[str, Any]:
     """
-    Loads a JSONL file and calculates accuracy and averages specific metrics.
+    Loads a JSONL file and calculates accuracy and averages for all text metrics.
     """
     dataset = FileOperations.load_jsonl(file_path)
     total_count = len(dataset)
@@ -15,21 +16,16 @@ def calculate_stats(file_path: Path) -> Dict[str, Any]:
     if total_count == 0:
         return {
             "accuracy_metrics": {"answer": 0.0, "legal_basis": 0.0},
-            "text_metrics": {
-                "exact_match": 0.0,
-                "bleu": 0.0,
-                "weighted_bleu": 0.0,
-            },
+            "text_metrics": {},
+            "malformed_response_rate": 0.0,
         }
 
     correct_count = 0
     correct_legal_basis = 0
     malformed_responses_count = 0
 
-    # Accumulators for all items
-    sum_exact_match = 0.0
-    sum_bleu = 0.0
-    sum_weighted_bleu = 0.0
+    # Accumulators for text metrics (dynamically collected)
+    text_metrics_sum = defaultdict(float)
 
     for data in dataset:
         accuracy_metrics = data.get("accuracy_metrics", {})
@@ -49,37 +45,26 @@ def calculate_stats(file_path: Path) -> Dict[str, Any]:
         if any(not (data.get(k) or "").strip() for k in required_keys):
             malformed_responses_count += 1
 
+        # Accumulate all text metrics dynamically
         text_metrics = data.get("text_metrics", {})
-        exact_match = text_metrics.get("exact_match", 0.0)
-        sum_exact_match += exact_match
-
-        current_bleu = 0.0
-        current_weighted = 0.0
-
-        for key, value in text_metrics.items():
-            if key.startswith("bleu"):
-                current_bleu = value
-            elif key.startswith("weighted_bleu"):
-                current_weighted = value
-
-        sum_bleu += current_bleu
-        sum_weighted_bleu += current_weighted
+        for metric_name, metric_value in text_metrics.items():
+            if isinstance(metric_value, (int, float)):
+                text_metrics_sum[metric_name] += metric_value
 
     accuracy = correct_count / total_count
     legal_basis = correct_legal_basis / total_count
-    avg_exact_match = sum_exact_match / total_count
-    avg_bleu = sum_bleu / total_count
-    avg_weighted_bleu = sum_weighted_bleu / total_count
+
+    # Calculate averages for all text metrics
+    avg_text_metrics = {
+        metric_name: total_sum / total_count
+        for metric_name, total_sum in text_metrics_sum.items()
+    }
 
     malformed_response_rate = malformed_responses_count / total_count
 
     return {
         "accuracy_metrics": {"answer": accuracy, "legal_basis": legal_basis},
-        "text_metrics": {
-            "exact_match": avg_exact_match,
-            "bleu": avg_bleu,
-            "weighted_bleu": avg_weighted_bleu,
-        },
+        "text_metrics": avg_text_metrics,
         "malformed_response_rate": malformed_response_rate,
     }
 
@@ -110,8 +95,7 @@ if __name__ == "__main__":
     print(f"  Legal basis accuracy: {results['accuracy_metrics']['legal_basis']:.4f}")
     print()
     print("Text Metrics:")
-    print(f"  Exact match: {results['text_metrics']['exact_match']:.4f}")
-    print(f"  BLEU: {results['text_metrics']['bleu']:.4f}")
-    print(f"  Weighted BLEU: {results['text_metrics']['weighted_bleu']:.4f}")
+    for metric_name, metric_value in sorted(results["text_metrics"].items()):
+        print(f"  {metric_name}: {metric_value:.4f}")
     print()
     print(f"Malformed Response Rate: {results['malformed_response_rate']:.4f}")
