@@ -11,6 +11,7 @@ app = typer.Typer(help="Upload results to Firebase")
 DEFAULT_PATH: Final[Path] = DATA_PATH / "results_with_metrics"
 DEFAULT_COLLECTION: Final[str] = "results"
 
+
 @app.command()
 def upload(
     path: Annotated[
@@ -41,13 +42,10 @@ def upload(
     Firestore in the format expected by the frontend.
     """
 
-    uploader = Uploader(
-        db=firestore_db,
-        path=path,
-        collection_id=collection_id
-    )
+    uploader = Uploader(db=firestore_db, path=path, collection_id=collection_id)
     if not dry_run:
         uploader.upload()
+
 
 if __name__ == "__main__":
     app()

@@ -18,6 +18,8 @@ export async function getModelProfileById(
   if (!snap.exists()) return null;
 
   return { id: snap.id, ...(snap.data() as FirestoreRecord) };
+
+  console.log(snap.data());
 }
 
 

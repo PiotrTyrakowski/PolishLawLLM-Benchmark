@@ -1,19 +1,20 @@
 // ===== Firestore Types (snake_case, matches DB) =====
 export interface FirestoreModelDoc {
   model_name: string;
-  is_polish_model: boolean;
+  is_polish: boolean;
+  model_config: any;
 }
 
 export interface FirestoreExamDoc {
-  accuracy_metrics: { answer: number; identification: number };
-  text_metrics: { exact_match: number; bleu: number; weighted_bleu: number };
+  accuracy_metrics: any;
+  text_metrics: any;
   type: string;
   year: number;
 }
 
 export interface FirestoreJudgmentDoc {
-  accuracy_metrics: { identification: number };
-  text_metrics: { exact_match: number; bleu: number; weighted_bleu: number };
+  accuracy_metrics: any;
+  text_metrics: any;
 }
 
 // ===== App Types (camelCase) =====

@@ -1,5 +1,7 @@
 import json
 from pathlib import Path
+from typing import List
+
 from benchmark_framework.calculate_stats import calculate_stats
 from firebase.types import ModelDocument, FirebaseCollection, ExamDocument
 from firebase.main import firestore_db
@@ -50,20 +52,28 @@ class Uploader:
 
         exams_root = model_dir / "exams"
         exam_coll = FirebaseCollection(id="exams")
+        docs = [
+            self.create_exam_document(f)
+            for d in exams_root.iterdir()
+            for f in d.glob("*.jsonl")
+        ]
 
-        for year_dir in exams_root.iterdir():
-            for jsonl_file in year_dir.glob("*.jsonl"):
-                exam_doc = self.create_exam_document(jsonl_file)
-                exam_coll.add_document(exam_doc)
+        for doc in docs:
+            exam_coll.add_document(doc)
 
-        model_doc.add_collection(exam_coll)
+        if docs:
+            avg_doc = self.create_avg_exam_document(docs)
+            exam_coll.add_document(avg_doc)
 
     @staticmethod
     def create_model_document(json_path: Path) -> ModelDocument:
+        """
+        Creates a ModelDocument instance from a given JSON file.
+        """
         with open(json_path, "r") as f:
             data = json.load(f)
 
-        doc_id = json_path.stem
+        doc_id = json_path.parent.name
         return ModelDocument(
             id=doc_id,
             fields={
@@ -75,6 +85,9 @@ class Uploader:
 
     @staticmethod
     def create_exam_document(jsonl_path: Path) -> ExamDocument:
+        """
+        Creates an ExamDocument instance from a given JSONL file.
+        """
         try:
             stats = calculate_stats(jsonl_path)
             exam_type = jsonl_path.stem
@@ -92,6 +105,31 @@ class Uploader:
 
         except Exception as e:
             raise ValueError(f"Failed to create exam document for {jsonl_path}: {e}")
+
+    @staticmethod
+    def create_avg_exam_document(exam_documents: List[ExamDocument]) -> ExamDocument:
+        """
+        Creates an averaged exam document by aggregating data across a list of exam documents.
+        """
+        avg = lambda keys, d_list: {
+            k: sum(d[k] for d in d_list) / len(d_list) for k in keys
+        }
+        avg_accuracy_metrics = avg(
+            exam_documents[0].fields["accuracy_metrics"].keys(),
+            [d.fields["accuracy_metrics"] for d in exam_documents],
+        )
+        avg_text_metrics = avg(
+            exam_documents[0].fields["text_metrics"].keys(),
+            [d.fields["text_metrics"] for d in exam_documents],
+        )
+
+        all_fields = {
+            "accuracy_metrics": avg_accuracy_metrics,
+            "text_metrics": avg_text_metrics,
+            "type": "all",
+            "year": "all",
+        }
+        return ExamDocument(id="all", fields=all_fields)
 
 
 if __name__ == "__main__":

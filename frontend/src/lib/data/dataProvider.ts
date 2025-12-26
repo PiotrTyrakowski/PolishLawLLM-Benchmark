@@ -29,7 +29,7 @@ function transformExam(
   return {
     modelId,
     model: modelData.model_name,
-    isPolish: modelData.is_polish_model,
+    isPolish: modelData.is_polish,
     year: String(examDoc.year),
     examType: examDoc.type,
     accuracy: examDoc.accuracy_metrics.answer,
