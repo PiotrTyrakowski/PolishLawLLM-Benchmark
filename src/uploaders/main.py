@@ -1,10 +1,23 @@
 import json
 from pathlib import Path
 from typing import List
+from enum import Enum
+
 
 from benchmark_framework.calculate_stats import calculate_stats
-from firebase.types import ModelDocument, FirebaseCollection, ExamDocument
+from firebase.types import (
+    ModelDocument,
+    FirebaseCollection,
+    ExamDocument,
+    JudgmentDocument,
+)
 from firebase.main import firestore_db
+
+
+class ExamType(str, Enum):
+    ADWOKACKI_RADCOWY = "adwokacki_radcowy"
+    KOMORNICZY = "komorniczy"
+    NOTARIALNY = "notarialny
 
 
 class Uploader:
@@ -12,29 +25,32 @@ class Uploader:
         self,
         db,
         path: Path | str,
-        collection_id: str = "results",
+        collection_id: str,
     ):
         self.path = Path(path)
         self.db = db
-        if not self.validate_dir_structure():
-            raise ValueError(f"Invalid path structure provided: {path}")
-
         self.root_collection = FirebaseCollection(id=collection_id)
         self._build_tree()
 
     def upload(self):
         self.root_collection.upload(self.db)
 
-    def validate_dir_structure(self):
-        return True
-
     def _build_tree(self):
         """
         Traverses: /results/{model_name}/
         """
 
+        assert (
+            self.path.exists() and self.path.is_dir()
+        ), "Path does not exist or is not a directory"
+
         for model_dir in self.path.iterdir():
-            model_fields_path = list(model_dir.glob("*.json"))[0]
+            json_files = list(model_dir.glob("*.json"))
+            assert (
+                len(json_files) == 1
+            ), "There should be exactly one json file representing model fields"
+
+            model_fields_path = json_files[0]
             model_doc = self.create_model_document(model_fields_path)
 
             # Look for exams: /results/model/exams/{year}/*.jsonl
@@ -51,25 +67,32 @@ class Uploader:
         """
 
         exams_root = model_dir / "exams"
-        exam_coll = FirebaseCollection(id="exams")
+        if not exams_root.exists():
+            return
+
         docs = [
             self.create_exam_document(f)
             for d in exams_root.iterdir()
             for f in d.glob("*.jsonl")
         ]
 
+        if not docs:
+            return
+
+        exam_coll = FirebaseCollection(id="exams")
         for doc in docs:
             exam_coll.add_document(doc)
 
-        if docs:
-            avg_doc = self.create_avg_exam_document(docs)
-            exam_coll.add_document(avg_doc)
+        avg_doc = self.create_avg_exam_document(docs)
+        exam_coll.add_document(avg_doc)
+        model_doc.add_collection(exam_coll)
 
     @staticmethod
     def create_model_document(json_path: Path) -> ModelDocument:
         """
         Creates a ModelDocument instance from a given JSON file.
         """
+
         with open(json_path, "r") as f:
             data = json.load(f)
 
@@ -91,7 +114,9 @@ class Uploader:
         try:
             stats = calculate_stats(jsonl_path)
             exam_type = jsonl_path.stem
-            year = jsonl_path.parent.name
+            assert exam_type in EXAM_TYPES, f"Invalid exam type: {exam_type}"
+
+            year = int(jsonl_path.parent.name)
             doc_id = f"{exam_type}_{year}"
             return ExamDocument(
                 id=doc_id,
@@ -111,25 +136,36 @@ class Uploader:
         """
         Creates an averaged exam document by aggregating data across a list of exam documents.
         """
-        avg = lambda keys, d_list: {
-            k: sum(d[k] for d in d_list) / len(d_list) for k in keys
-        }
-        avg_accuracy_metrics = avg(
-            exam_documents[0].fields["accuracy_metrics"].keys(),
-            [d.fields["accuracy_metrics"] for d in exam_documents],
-        )
-        avg_text_metrics = avg(
-            exam_documents[0].fields["text_metrics"].keys(),
-            [d.fields["text_metrics"] for d in exam_documents],
+
+        assert exam_documents, "Exam documents list cannot be empty"
+
+        def avg_metrics(name: str) -> dict:
+            keys = exam_documents[0].fields[name].keys()
+            sum_d = {k: 0 for k in keys}
+
+            for doc in exam_documents:
+                assert keys == doc.fields[name].keys(), f"Keys mismatch for {name}"
+                for k in keys:
+                    sum_d[k] += doc.fields[name][k]
+
+            return {k: v / len(exam_documents) for k, v in sum_d.items()}
+
+        return ExamDocument(
+            id="all",
+            fields={
+                "accuracy_metrics": avg_metrics("accuracy_metrics"),
+                "text_metrics": avg_metrics("text_metrics"),
+                "type": "all",
+                "year": "all",
+            },
         )
 
-        all_fields = {
-            "accuracy_metrics": avg_accuracy_metrics,
-            "text_metrics": avg_text_metrics,
-            "type": "all",
-            "year": "all",
-        }
-        return ExamDocument(id="all", fields=all_fields)
+    @staticmethod
+    def create_judgment_document(json_path: Path) -> JudgmentDocument:  # TODO:
+        """
+        Creates a JudgmentDocument instance from a given JSON file.
+        """
+        pass
 
 
 if __name__ == "__main__":

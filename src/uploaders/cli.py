@@ -10,6 +10,7 @@ DEFAULT_COLLECTION: Final[str] = "results"
 
 app = typer.Typer(help="Upload results to Firebase")
 
+
 @app.command()
 def upload(
     path: Annotated[
@@ -33,16 +34,13 @@ def upload(
     ] = False,
 ):
     """
-    Upload exam results from results_with_metrics to Firebase.
-
-    This command reads JSONL files from the results_with_metrics/exams directory,
-    aggregates the metrics per exam (year + exam_type), and uploads them to
-    Firestore in the format expected by the frontend.
+    Upload test results from results_with_metrics to Firebase.
     """
 
     uploader = Uploader(db=firestore_db, path=path, collection_id=collection_id)
     if not dry_run:
         uploader.upload()
+
 
 if __name__ == "__main__":
     app()
