@@ -26,11 +26,20 @@ class RougeNMetric(BaseMetric):
         if not self.ngrams_importances:
             return 0.0
 
+        # Get tokens to determine maximum possible n-gram size
+        pred_tokens = self.get_normalized_words(prediction)
+        ref_tokens = self.get_normalized_words(reference)
+        max_possible_n = min(len(pred_tokens), len(ref_tokens))
+
+        # If both texts are empty, return 0
+        if max_possible_n == 0:
+            return 0.0
+
         weighted_sum = 0.0
         total_weight = 0.0
 
         for n, weight in enumerate(self.ngrams_importances, start=1):
-            if weight > 0:
+            if weight > 0 and n <= max_possible_n:
                 f1_score = self.calculate_f1(prediction, reference, n)
                 weighted_sum += weight * f1_score
                 total_weight += weight
@@ -38,7 +47,9 @@ class RougeNMetric(BaseMetric):
         if total_weight == 0:
             return 0.0
 
-        return weighted_sum / total_weight
+        result = weighted_sum / total_weight
+        assert 0.0 <= result <= 1.0
+        return result
 
     def _calculate_intersection_ngrams_count(
         self, pred_ngrams_counts, ref_ngrams_counts
@@ -60,11 +71,14 @@ class RougeNMetric(BaseMetric):
             pred_counts, ref_counts
         )
         pred_total_count = sum(pred_counts.values())
-        return (
+
+        precision = (
             intersection_ngram_counts / pred_total_count
             if pred_total_count > 0
             else 0.0
         )
+        assert 0.0 <= precision <= 1.0
+        return precision
 
     def calculate_recall(self, prediction: str, reference: str, n: int) -> float:
         """Calculate ROUGE-N recall score."""
@@ -78,9 +92,12 @@ class RougeNMetric(BaseMetric):
             pred_counts, ref_counts
         )
         ref_total_count = sum(ref_counts.values())
-        return (
+
+        recall = (
             intersection_ngram_counts / ref_total_count if ref_total_count > 0 else 0.0
         )
+        assert 0.0 <= recall <= 1.0
+        return recall
 
     def calculate_f1(self, prediction: str, reference: str, n: int) -> float:
         """Calculate ROUGE-N F1 score from precision and recall."""
@@ -91,10 +108,14 @@ class RougeNMetric(BaseMetric):
         if precision + recall == 0:
             return 0.0
 
-        return 2 * (precision * recall) / (precision + recall)
+        f1 = 2 * (precision * recall) / (precision + recall)
+        assert 0.0 <= f1 <= 1.0
+        return f1
 
     @staticmethod
     def _get_ngrams(tokens: Sequence[str], n: int) -> Counter[tuple[str, ...]]:
+        if n <= 0:
+            raise ValueError(f"n must be > 0, got {n}")
         return Counter(
             tuple(tokens[i : i + n]) for i in range(max(len(tokens) - n + 1, 0))
         )
