@@ -64,8 +64,8 @@ class RougeNMetric(BaseMetric):
         pred_tokens = self.get_normalized_words(prediction)
         ref_tokens = self.get_normalized_words(reference)
 
-        pred_counts = self._get_ngrams(pred_tokens, n)
-        ref_counts = self._get_ngrams(ref_tokens, n)
+        pred_counts = self.get_ngrams(pred_tokens, n)
+        ref_counts = self.get_ngrams(ref_tokens, n)
 
         intersection_ngram_counts = self._calculate_intersection_ngrams_count(
             pred_counts, ref_counts
@@ -85,8 +85,8 @@ class RougeNMetric(BaseMetric):
         pred_tokens = self.get_normalized_words(prediction)
         ref_tokens = self.get_normalized_words(reference)
 
-        pred_counts = self._get_ngrams(pred_tokens, n)
-        ref_counts = self._get_ngrams(ref_tokens, n)
+        pred_counts = self.get_ngrams(pred_tokens, n)
+        ref_counts = self.get_ngrams(ref_tokens, n)
 
         intersection_ngram_counts = self._calculate_intersection_ngrams_count(
             pred_counts, ref_counts
@@ -113,7 +113,7 @@ class RougeNMetric(BaseMetric):
         return f1
 
     @staticmethod
-    def _get_ngrams(tokens: Sequence[str], n: int) -> Counter[tuple[str, ...]]:
+    def get_ngrams(tokens: Sequence[str], n: int) -> Counter[tuple[str, ...]]:
         if n <= 0:
             raise ValueError(f"n must be > 0, got {n}")
         return Counter(

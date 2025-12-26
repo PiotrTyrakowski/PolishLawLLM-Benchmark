@@ -9,7 +9,7 @@ class TestRougeNGetNgrams:
     def test_get_ngrams_unigrams(self):
         """Test unigram extraction."""
         tokens = ["the", "cat", "sat"]
-        result = RougeNMetric._get_ngrams(tokens, n=1)
+        result = RougeNMetric.get_ngrams(tokens, n=1)
 
         expected = Counter([("the",), ("cat",), ("sat",)])
         assert result == expected
@@ -17,7 +17,7 @@ class TestRougeNGetNgrams:
     def test_get_ngrams_bigrams(self):
         """Test bigram extraction."""
         tokens = ["the", "cat", "sat"]
-        result = RougeNMetric._get_ngrams(tokens, n=2)
+        result = RougeNMetric.get_ngrams(tokens, n=2)
 
         expected = Counter([("the", "cat"), ("cat", "sat")])
         assert result == expected
@@ -25,7 +25,7 @@ class TestRougeNGetNgrams:
     def test_get_ngrams_trigrams(self):
         """Test trigram extraction."""
         tokens = ["the", "cat", "sat", "down"]
-        result = RougeNMetric._get_ngrams(tokens, n=3)
+        result = RougeNMetric.get_ngrams(tokens, n=3)
 
         expected = Counter([("the", "cat", "sat"), ("cat", "sat", "down")])
         assert result == expected
@@ -33,21 +33,21 @@ class TestRougeNGetNgrams:
     def test_get_ngrams_empty_tokens(self):
         """Test n-gram extraction from empty token list."""
         tokens = []
-        result = RougeNMetric._get_ngrams(tokens, n=1)
+        result = RougeNMetric.get_ngrams(tokens, n=1)
 
         assert result == Counter()
 
     def test_get_ngrams_tokens_shorter_than_n(self):
         """Test when token list is shorter than n."""
         tokens = ["the", "cat"]
-        result = RougeNMetric._get_ngrams(tokens, n=3)
+        result = RougeNMetric.get_ngrams(tokens, n=3)
 
         assert result == Counter()
 
     def test_get_ngrams_tokens_equal_to_n(self):
         """Test when token list length equals n."""
         tokens = ["the", "cat", "sat"]
-        result = RougeNMetric._get_ngrams(tokens, n=3)
+        result = RougeNMetric.get_ngrams(tokens, n=3)
 
         expected = Counter([("the", "cat", "sat")])
         assert result == expected
@@ -55,7 +55,7 @@ class TestRougeNGetNgrams:
     def test_get_ngrams_single_token_unigram(self):
         """Test single token with unigram."""
         tokens = ["hello"]
-        result = RougeNMetric._get_ngrams(tokens, n=1)
+        result = RougeNMetric.get_ngrams(tokens, n=1)
 
         expected = Counter([("hello",)])
         assert result == expected
@@ -63,14 +63,14 @@ class TestRougeNGetNgrams:
     def test_get_ngrams_single_token_bigram(self):
         """Test single token with bigram returns empty."""
         tokens = ["hello"]
-        result = RougeNMetric._get_ngrams(tokens, n=2)
+        result = RougeNMetric.get_ngrams(tokens, n=2)
 
         assert result == Counter()
 
     def test_get_ngrams_duplicate_ngrams(self):
         """Test counting of duplicate n-grams."""
         tokens = ["the", "cat", "the", "cat"]
-        result = RougeNMetric._get_ngrams(tokens, n=2)
+        result = RougeNMetric.get_ngrams(tokens, n=2)
 
         # ("the", "cat") appears twice
         expected = Counter([("the", "cat"), ("cat", "the"), ("the", "cat")])
@@ -81,19 +81,19 @@ class TestRougeNGetNgrams:
         """Test n=0 returns empty counter."""
         tokens = ["the", "cat", "sat"]
         with pytest.raises(ValueError, match="n must be > 0, got 0"):
-            RougeNMetric._get_ngrams(tokens, n=0)
+            RougeNMetric.get_ngrams(tokens, n=0)
 
     def test_get_ngrams_large_n(self):
         """Test with very large n value."""
         tokens = ["a", "b", "c"]
-        result = RougeNMetric._get_ngrams(tokens, n=100)
+        result = RougeNMetric.get_ngrams(tokens, n=100)
 
         assert result == Counter()
 
     def test_get_ngrams_fourgrams(self):
         """Test 4-gram extraction."""
         tokens = ["a", "b", "c", "d", "e"]
-        result = RougeNMetric._get_ngrams(tokens, n=4)
+        result = RougeNMetric.get_ngrams(tokens, n=4)
 
         expected = Counter([("a", "b", "c", "d"), ("b", "c", "d", "e")])
         assert result == expected
