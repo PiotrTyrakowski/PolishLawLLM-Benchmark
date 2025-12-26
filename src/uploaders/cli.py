@@ -1,16 +1,14 @@
 import typer
 from pathlib import Path
 from typing import Annotated, Optional, Final
-
-from benchmark_framework.constants import DATA_PATH
 from firebase.main import firestore_db
 from uploaders.main import Uploader
 
-app = typer.Typer(help="Upload results to Firebase")
-
+DATA_PATH: Final[Path] = Path(__file__).resolve().parents[2] / "data"
 DEFAULT_PATH: Final[Path] = DATA_PATH / "results_with_metrics"
 DEFAULT_COLLECTION: Final[str] = "results"
 
+app = typer.Typer(help="Upload results to Firebase")
 
 @app.command()
 def upload(
@@ -45,7 +43,6 @@ def upload(
     uploader = Uploader(db=firestore_db, path=path, collection_id=collection_id)
     if not dry_run:
         uploader.upload()
-
 
 if __name__ == "__main__":
     app()

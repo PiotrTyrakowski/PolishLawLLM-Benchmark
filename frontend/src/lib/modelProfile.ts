@@ -19,7 +19,6 @@ export async function getModelProfileById(
 
   return { id: snap.id, ...(snap.data() as FirestoreRecord) };
 
-  console.log(snap.data());
 }
 
 

@@ -10,5 +10,5 @@ data/results_with_metrics/
         └── {year}/
             └── {exam_type}.jsonl
     └── judgments/
-         # TODO: structure for judgment   
+         # TODO: structure for judgments   
 ```
