@@ -1,14 +1,29 @@
-import typer
+import logging
 from pathlib import Path
-from typing import Annotated, Optional, Final
+from typing import Annotated, Final
+
+import typer
+from rich.console import Console
+from rich.logging import RichHandler
+
 from firebase.main import firestore_db
 from uploaders.main import Uploader
 
 DATA_PATH: Final[Path] = Path(__file__).resolve().parents[2] / "data"
-DEFAULT_PATH: Final[Path] = DATA_PATH / "results_with_metrics"
-DEFAULT_COLLECTION: Final[str] = "results"
+DEFAULT_PATH: Final[Path] = DATA_PATH / "results_with_metrics_test"
+DEFAULT_COLLECTION: Final[str] = "results3"
 
-app = typer.Typer(help="Upload results to Firebase")
+app = typer.Typer(help="Upload benchmark results to Firebase")
+console = Console()
+
+
+def setup_logging(verbose: bool) -> None:
+    level = logging.DEBUG if verbose else logging.INFO
+    logging.basicConfig(
+        level=level,
+        format="%(message)s",
+        handlers=[RichHandler(rich_tracebacks=True, console=console)],
+    )
 
 
 @app.command()
@@ -18,28 +33,26 @@ def upload(
         typer.Option(
             "--path",
             "-p",
-            help="Path to the directory containing results (default: data/results_with_metrics)",
+            help="Path to the results directory",
         ),
     ] = DEFAULT_PATH,
     collection_id: Annotated[
         str,
         typer.Option("--collection", "-c", help="Firestore collection name"),
     ] = DEFAULT_COLLECTION,
-    dry_run: Annotated[
+    verbose: Annotated[
         bool,
-        typer.Option(
-            "--dry-run",
-            help="Preview what would be uploaded without actually uploading",
-        ),
+        typer.Option("--verbose", "-v", help="Enable debug logging"),
     ] = False,
-):
-    """
-    Upload test results from results_with_metrics to Firebase.
-    """
+) -> None:
+    """Upload test results to Firebase."""
+    setup_logging(verbose)
 
     uploader = Uploader(db=firestore_db, path=path, collection_id=collection_id)
-    if not dry_run:
+
+    with console.status("[bold green]Uploading to Firestore..."):
         uploader.upload()
+    console.print("[green]✓[/] Upload complete")
 
 
 if __name__ == "__main__":

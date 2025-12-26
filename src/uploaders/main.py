@@ -1,8 +1,7 @@
 import json
+import logging
 from pathlib import Path
-from typing import List
-from enum import Enum
-
+from typing import Dict, List
 
 from benchmark_framework.calculate_stats import calculate_stats
 from firebase.types import (
@@ -11,13 +10,10 @@ from firebase.types import (
     ExamDocument,
     JudgmentDocument,
 )
-from firebase.main import firestore_db
 
+EXAM_TYPES: List[str] = ["adwokacki_radcowy", "komorniczy", "notarialny"]
 
-class ExamType(str, Enum):
-    ADWOKACKI_RADCOWY = "adwokacki_radcowy"
-    KOMORNICZY = "komorniczy"
-    NOTARIALNY = "notarialny
+logger = logging.getLogger(__name__)
 
 
 class Uploader:
@@ -30,70 +26,79 @@ class Uploader:
         self.path = Path(path)
         self.db = db
         self.root_collection = FirebaseCollection(id=collection_id)
+        self._validate_path()
         self._build_tree()
 
-    def upload(self):
+    def _validate_path(self) -> None:
+        if not self.path.exists():
+            raise FileNotFoundError(f"Path does not exist: {self.path}")
+        if not self.path.is_dir():
+            raise NotADirectoryError(f"Path is not a directory: {self.path}")
+
+    def upload(self) -> None:
+        logger.info(f"Uploading collection '{self.root_collection.id}' to Firestore")
         self.root_collection.upload(self.db)
+        logger.info("Upload complete")
 
-    def _build_tree(self):
-        """
-        Traverses: /results/{model_name}/
-        """
-
-        assert (
-            self.path.exists() and self.path.is_dir()
-        ), "Path does not exist or is not a directory"
-
+    def _build_tree(self) -> None:
+        """Traverses: /results/{model_name}/"""
         for model_dir in self.path.iterdir():
+            if not model_dir.is_dir():
+                logger.warning(f"Skipping non-directory: {model_dir}")
+                continue
+
             json_files = list(model_dir.glob("*.json"))
-            assert (
-                len(json_files) == 1
-            ), "There should be exactly one json file representing model fields"
+            if len(json_files) != 1:
+                raise ValueError(
+                    f"Expected exactly one JSON file in {model_dir}, found {len(json_files)}"
+                )
 
             model_fields_path = json_files[0]
-            model_doc = self.create_model_document(model_fields_path)
+            model_doc = self._create_model_document(model_fields_path)
+            logger.info(f"Processing model: {model_doc.id}")
 
-            # Look for exams: /results/model/exams/{year}/*.jsonl
             self._process_exams(model_dir, model_doc)
-
-            # Look for judgments
-            # TODO: implement _process_judgments
+            # TODO: self._process_judgments(model_dir, model_doc)
 
             self.root_collection.add_document(model_doc)
 
-    def _process_exams(self, model_dir: Path, model_doc: ModelDocument):
-        """
-        Traverses: /results/model/exams/{year}/{test}.jsonl
-        """
-
+    def _process_exams(self, model_dir: Path, model_doc: ModelDocument) -> None:
+        """Traverses: /results/model/exams/{year}/{test}.jsonl"""
         exams_root = model_dir / "exams"
+
         if not exams_root.exists():
+            logger.debug(f"No exams directory found in {model_dir}")
             return
 
-        docs = [
-            self.create_exam_document(f)
-            for d in exams_root.iterdir()
-            for f in d.glob("*.jsonl")
-        ]
+        docs: list[ExamDocument] = []
+        for year_dir in exams_root.iterdir():
+            if not year_dir.is_dir():
+                continue
+            for jsonl_file in year_dir.glob("*.jsonl"):
+                try:
+                    doc = self._create_exam_document(jsonl_file)
+                    docs.append(doc)
+                    logger.debug(f"Created exam document: {doc.id}")
+                except ValueError as e:
+                    logger.error(f"Failed to process {jsonl_file}: {e}")
 
         if not docs:
+            logger.warning(f"No valid exam documents found in {exams_root}")
             return
 
         exam_coll = FirebaseCollection(id="exams")
         for doc in docs:
             exam_coll.add_document(doc)
 
-        avg_doc = self.create_avg_exam_document(docs)
+        avg_doc = self._create_avg_exam_document(docs)
         exam_coll.add_document(avg_doc)
         model_doc.add_collection(exam_coll)
+        logger.info(f"Added {len(docs)} exam documents + 1 averaged document")
 
     @staticmethod
-    def create_model_document(json_path: Path) -> ModelDocument:
-        """
-        Creates a ModelDocument instance from a given JSON file.
-        """
-
-        with open(json_path, "r") as f:
+    def _create_model_document(json_path: Path) -> ModelDocument:
+        """Creates a ModelDocument instance from a given JSON file."""
+        with open(json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         doc_id = json_path.parent.name
@@ -107,46 +112,53 @@ class Uploader:
         )
 
     @staticmethod
-    def create_exam_document(jsonl_path: Path) -> ExamDocument:
-        """
-        Creates an ExamDocument instance from a given JSONL file.
-        """
-        try:
-            stats = calculate_stats(jsonl_path)
-            exam_type = jsonl_path.stem
-            assert exam_type in EXAM_TYPES, f"Invalid exam type: {exam_type}"
+    def _create_exam_document(jsonl_path: Path) -> ExamDocument:
+        """Creates an ExamDocument instance from a given JSONL file."""
+        exam_type = jsonl_path.stem
 
-            year = int(jsonl_path.parent.name)
-            doc_id = f"{exam_type}_{year}"
-            return ExamDocument(
-                id=doc_id,
-                fields={
-                    "accuracy_metrics": stats["accuracy_metrics"],
-                    "text_metrics": stats["text_metrics"],
-                    "type": exam_type,
-                    "year": year,
-                },
+        if exam_type not in EXAM_TYPES:
+            raise ValueError(
+                f"Invalid exam type: '{exam_type}'. Expected one of {EXAM_TYPES}"
             )
 
-        except Exception as e:
-            raise ValueError(f"Failed to create exam document for {jsonl_path}: {e}")
+        try:
+            year = int(jsonl_path.parent.name)
+        except ValueError:
+            raise ValueError(f"Invalid year directory name: '{jsonl_path.parent.name}'")
+
+        stats = calculate_stats(jsonl_path)
+        doc_id = f"{exam_type}_{year}"
+
+        return ExamDocument(
+            id=doc_id,
+            fields={
+                "accuracy_metrics": stats["accuracy_metrics"],
+                "text_metrics": stats["text_metrics"],
+                "type": exam_type,
+                "year": year,
+            },
+        )
 
     @staticmethod
-    def create_avg_exam_document(exam_documents: List[ExamDocument]) -> ExamDocument:
-        """
-        Creates an averaged exam document by aggregating data across a list of exam documents.
-        """
+    def _create_avg_exam_document(exam_documents: list[ExamDocument]) -> ExamDocument:
+        """Creates an averaged exam document by aggregating metrics across documents."""
+        if not exam_documents:
+            raise ValueError("Exam documents list cannot be empty")
 
-        assert exam_documents, "Exam documents list cannot be empty"
+        def avg_metrics(metric_name: str) -> Dict[str, float]:
+            first_metrics = exam_documents[0].fields[metric_name]
+            keys = set(first_metrics.keys())
+            sum_d: Dict[str, float] = dict(first_metrics)
 
-        def avg_metrics(name: str) -> dict:
-            keys = exam_documents[0].fields[name].keys()
-            sum_d = {k: 0 for k in keys}
-
-            for doc in exam_documents:
-                assert keys == doc.fields[name].keys(), f"Keys mismatch for {name}"
+            for doc in exam_documents[1:]:
+                doc_metrics = doc.fields[metric_name]
+                if set(doc_metrics.keys()) != keys:
+                    raise ValueError(
+                        f"Keys mismatch for '{metric_name}' between documents. "
+                        f"Expected {keys}, got {set(doc_metrics.keys())}"
+                    )
                 for k in keys:
-                    sum_d[k] += doc.fields[name][k]
+                    sum_d[k] += doc_metrics[k]
 
             return {k: v / len(exam_documents) for k, v in sum_d.items()}
 
@@ -161,18 +173,6 @@ class Uploader:
         )
 
     @staticmethod
-    def create_judgment_document(json_path: Path) -> JudgmentDocument:  # TODO:
-        """
-        Creates a JudgmentDocument instance from a given JSON file.
-        """
-        pass
-
-
-if __name__ == "__main__":
-    u = Uploader(
-        firestore_db,
-        "/Users/piotrtyrakowski/repos/PolishLawLLM-Benchmark/data/results_with_metrics_test",
-        "test_results",
-    )
-
-    u.upload()
+    def _create_judgment_document(json_path: Path) -> JudgmentDocument:
+        """Creates a JudgmentDocument instance from a given JSON file."""
+        raise NotImplementedError("Judgment document creation not yet implemented")
