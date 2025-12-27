@@ -58,7 +58,7 @@ class Uploader:
             logger.info(f"Processing model: {model_doc.id}")
 
             self._process_exams(model_dir, model_doc)
-            # TODO: self._process_judgments(model_dir, model_doc)
+            self._process_judgments(model_dir, model_doc)
 
             self.root_collection.add_document(model_doc)
 
@@ -92,6 +92,32 @@ class Uploader:
 
         model_doc.add_collection(exam_coll)
         logger.info(f"Added {len(docs)} exam documents")
+
+    def _process_judgments(self, model_dir: Path, model_doc: ModelDocument) -> None:
+        """Traverses: /results/model_id/judgments/all.jsonl"""
+        judgments_root = model_dir / "judgments"
+
+        if not judgments_root.exists():
+            logger.debug(f"No judgments directory found in {model_dir}")
+            return
+
+        jsonl_file = judgments_root / "all.jsonl"
+        if not jsonl_file.exists():
+            logger.warning(f"No all.jsonl found in {judgments_root}")
+            return
+
+        try:
+            doc = self._create_judgment_document(jsonl_file)
+            logger.debug(f"Created judgment document: {doc.id}")
+        except ValueError as e:
+            logger.error(f"Failed to process {jsonl_file}: {e}")
+            return
+
+        judgment_coll = FirebaseCollection(id="judgments")
+        judgment_coll.add_document(doc)
+
+        model_doc.add_collection(judgment_coll)
+        logger.info("Added judgment document")
 
     @staticmethod
     def _create_model_document(json_path: Path) -> ModelDocument:
@@ -138,6 +164,14 @@ class Uploader:
         )
 
     @staticmethod
-    def _create_judgment_document(json_path: Path) -> JudgmentDocument:
-        """Creates a JudgmentDocument instance from a given JSON file."""
-        raise NotImplementedError("Judgment document creation not yet implemented")
+    def _create_judgment_document(jsonl_path: Path) -> JudgmentDocument:
+        """Creates a JudgmentDocument instance from a given JSONL file."""
+        stats = calculate_stats(jsonl_path)
+
+        return JudgmentDocument(
+            id="all",
+            fields={
+                "accuracy_metrics": stats["accuracy_metrics"],
+                "text_metrics": stats["text_metrics"],
+            },
+        )
