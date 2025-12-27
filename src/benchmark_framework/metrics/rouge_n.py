@@ -23,8 +23,7 @@ class RougeNMetric(BaseMetric):
         Calculate weighted average of ROUGE-N F1 scores across all n-gram lengths.
         The index i in ngram_importances corresponds to the weight for n-grams of length i.
         """
-        if not self.ngrams_importances:
-            return 0.0
+        assert self.ngrams_importances is not None
 
         # Get tokens to determine maximum possible n-gram size
         pred_tokens = self.get_normalized_words(prediction)
@@ -44,8 +43,7 @@ class RougeNMetric(BaseMetric):
                 weighted_sum += weight * f1_score
                 total_weight += weight
 
-        if total_weight == 0:
-            return 0.0
+        assert total_weight > 0, "Total weight must be greater than zero."
 
         result = weighted_sum / total_weight
         assert 0.0 <= result <= 1.0

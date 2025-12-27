@@ -48,13 +48,12 @@ def calculate_stats(file_path: Path) -> Dict[str, Any]:
         # Accumulate all text metrics dynamically
         text_metrics = data.get("text_metrics", {})
         for metric_name, metric_value in text_metrics.items():
-            if isinstance(metric_value, (int, float)):
-                text_metrics_sum[metric_name] += metric_value
+            assert isinstance(metric_value, (int, float))
+            text_metrics_sum[metric_name] += metric_value
 
     accuracy = correct_count / total_count
     legal_basis = correct_legal_basis / total_count
 
-    # Calculate averages for all text metrics
     avg_text_metrics = {
         metric_name: total_sum / total_count
         for metric_name, total_sum in text_metrics_sum.items()
