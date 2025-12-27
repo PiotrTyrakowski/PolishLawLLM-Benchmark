@@ -1,10 +1,15 @@
 import typer
 from pathlib import Path
 from typing import List, Dict, Any
+from tqdm import tqdm
 
+from src.benchmark_framework.metrics.base_metric import BaseMetric
 from src.benchmark_framework.metrics.exact_match import ExactMatchMetric
-from src.benchmark_framework.metrics.weighted_bleu import WeightedBleuMetric
+from src.benchmark_framework.metrics.rouge_n import RougeNMetric
+from src.benchmark_framework.metrics.tfidf_rouge_n import TFIDFRougeNMetric
+from src.benchmark_framework.metrics.rouge_w import RougeWMetric
 from src.parsers.utils.file_utils import FileOperations
+from src.parsers.extractors.legal_basis_extractor import LegalBasisExtractor
 
 app = typer.Typer(help="CLI for calculating metrics on benchmark results")
 
@@ -31,25 +36,30 @@ def process_entry(entry: Dict[str, Any], corpuses_path: Path) -> Dict[str, Any]:
         exact_match = ExactMatchMetric()
         accuracy_metrics["legal_basis"] = exact_match(model_legal_basis, legal_basis)
 
+    metrics: List[BaseMetric] = [
+        ExactMatchMetric(),
+        RougeNMetric(ngrams_importances=[1, 1, 1]),
+        TFIDFRougeNMetric(corpuses_dir=corpuses_path, ngrams_importances=[1, 1, 1]),
+        RougeWMetric(alpha=1.2, beta=1.0),
+    ]
+
     text_metrics = {}
-    if "model_legal_basis_content" in entry and "legal_basis_content" in entry:
+    if (
+        "model_legal_basis_content" in entry
+        and "legal_basis_content" in entry
+        and "legal_basis" in entry
+    ):
         model_text = entry["model_legal_basis_content"]
         reference_text = entry["legal_basis_content"]
-
-        exact_match = ExactMatchMetric()
-        text_metrics["exact_match"] = exact_match(model_text, reference_text)
-
-        bleu_metric = WeightedBleuMetric()
-        text_metrics["bleu"] = bleu_metric(
-            prediction=model_text, reference=reference_text
+        legal_basis = entry["legal_basis"]
+        legal_basis_extractor = LegalBasisExtractor()
+        legal_basis_reference = legal_basis_extractor.parse(legal_basis)
+        code_abbr = LegalBasisExtractor.format_code_abbreviation(
+            legal_basis_reference.code
         )
 
-        weighted_bleu_metric = WeightedBleuMetric(
-            ngram_importances=[1, 2, 1], corpuses_dir=corpuses_path
-        )
-        text_metrics["weighted_bleu"] = weighted_bleu_metric(
-            prediction=model_text, reference=reference_text
-        )
+        for metric in metrics:
+            text_metrics[metric.name] = metric(model_text, reference_text, code_abbr)
 
     entry["accuracy_metrics"] = accuracy_metrics
     entry["text_metrics"] = text_metrics
@@ -108,7 +118,6 @@ def calculate_metrics(
             skipped_count += 1
             continue
 
-        typer.echo(f"Processing: {relative_path}")
         entries = FileOperations.load_jsonl(jsonl_file)
 
         if not entries:
@@ -119,7 +128,8 @@ def calculate_metrics(
             continue
 
         processed_entries = [
-            process_entry(entry, Path(corpuses_dir)) for entry in entries
+            process_entry(entry, Path(corpuses_dir) / str(entry.get("year", "")))
+            for entry in tqdm(entries, desc=str(relative_path), unit="entries")
         ]
 
         FileOperations.save_jsonl(processed_entries, output_path)
