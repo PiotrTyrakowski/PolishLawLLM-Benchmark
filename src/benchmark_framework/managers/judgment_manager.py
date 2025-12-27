@@ -29,6 +29,7 @@ class JudgmentManager(BaseManager):
 
         result: JudgmentResult = {
             "id": judgment.id,
+            "year": judgment.get_year(),
             "judgment_link": judgment.judgment_link,
             "legal_basis": judgment.legal_basis,
             "legal_basis_content": judgment.legal_basis_content,

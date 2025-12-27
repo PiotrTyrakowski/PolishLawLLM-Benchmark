@@ -8,6 +8,7 @@ from src.constants import ENCODING
 
 class JudgmentResult(TypedDict):
     id: int
+    year: int
     judgment_link: str
     legal_basis: str
     legal_basis_content: str
