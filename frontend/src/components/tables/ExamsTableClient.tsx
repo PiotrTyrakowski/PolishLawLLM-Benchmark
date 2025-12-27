@@ -1,28 +1,46 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import type { ExamResult } from '@/lib/types';
-import TableFilters from './TableFilters';
+import type { AggregatedModelExams } from '@/lib/types';
+import { getMetricLabel, formatMetricValue, extractMetricKeys } from '@/lib/metricConfig';
 
 interface ExamsTableClientProps {
-  initialData: ExamResult[];
+  initialData: AggregatedModelExams[];
 }
 
-export default function ExamsTableClient({
-  initialData,
-}: ExamsTableClientProps) {
-  const [year, setYear] = useState('all');
-  const [examType, setExamType] = useState('all');
+export default function ExamsTableClient({ initialData }: ExamsTableClientProps) {
+  const [sortKey, setSortKey] = useState<string | null>(null);
+  const [sortAsc, setSortAsc] = useState(false);
 
-  // Sort by accuracy descending and calculate ranks
-  const sorted = [...initialData].sort((a, b) => b.accuracy - a.accuracy);
+  // Extract all metric keys dynamically from the data
+  const { accuracyKeys, textKeys } = useMemo(
+    () => extractMetricKeys(initialData),
+    [initialData]
+  );
 
-  const filtered = sorted.filter((item) => {
-    if (year !== 'all' && item.year !== year) return false;
-    if (examType !== 'all' && item.examType !== examType) return false;
-    return true;
-  });
+  // Set default sort key to first accuracy metric if not set
+  const effectiveSortKey = sortKey ?? accuracyKeys[0] ?? null;
+
+  // Sort data
+  const sorted = useMemo(() => {
+    if (!effectiveSortKey) return initialData;
+
+    return [...initialData].sort((a, b) => {
+      const aVal = a.accuracyMetrics[effectiveSortKey] ?? a.textMetrics[effectiveSortKey] ?? 0;
+      const bVal = b.accuracyMetrics[effectiveSortKey] ?? b.textMetrics[effectiveSortKey] ?? 0;
+      return sortAsc ? aVal - bVal : bVal - aVal;
+    });
+  }, [initialData, effectiveSortKey, sortAsc]);
+
+  const handleSort = (key: string) => {
+    if (sortKey === key) {
+      setSortAsc(!sortAsc);
+    } else {
+      setSortKey(key);
+      setSortAsc(false);
+    }
+  };
 
   return (
     <>
@@ -33,35 +51,9 @@ export default function ExamsTableClient({
               Egzaminy Zawodowe
             </h2>
             <p className="text-sm text-gray-500 mt-1">
-              Testy wyboru (A/B/C) oraz weryfikacja cytowanej podstawy prawnej.
+              Srednie wyniki wszystkich egzaminow dla kazdego modelu.
             </p>
-            <div className="mt-2 text-xs text-gray-500 flex items-center gap-1">
-              <svg
-                className="w-4 h-4 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span>
-                Oficjalny próg zdawalności egzaminu wstępnego wynosi ok. 66%
-                (100/150 pkt).
-              </span>
-            </div>
           </div>
-
-          <TableFilters
-            year={year}
-            setYear={setYear}
-            examType={examType}
-            setExamType={setExamType}
-          />
         </div>
       </div>
 
@@ -69,105 +61,107 @@ export default function ExamsTableClient({
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead>
+              {/* Group header row */}
               <tr className="bg-gray-50 text-xs font-bold text-gray-500 uppercase tracking-wider text-center">
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left w-16 bg-gray-50"
-                  rowSpan={2}
-                >
+                <th scope="col" className="px-6 py-3 text-left w-16 bg-gray-50" rowSpan={2}>
                   #
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left bg-gray-50"
-                  rowSpan={2}
-                >
+                <th scope="col" className="px-6 py-3 text-left bg-gray-50" rowSpan={2}>
                   Model
                 </th>
-                <th
-                  colSpan={2}
-                  className="px-4 py-2 border-b border-gray-200 border-l-2 border-l-gray-200"
-                >
-                  Decyzja i Wiedza
-                </th>
-                <th
-                  colSpan={3}
-                  className="px-4 py-2 border-b border-gray-200 border-l-2 border-l-gray-200"
-                >
-                  Jakość Treści Uzasadnienia
-                </th>
+                {accuracyKeys.length > 0 && (
+                  <th
+                    colSpan={accuracyKeys.length}
+                    className="px-4 py-2 border-b border-gray-200 border-l-2 border-l-gray-200"
+                  >
+                    Decyzja i Wiedza
+                  </th>
+                )}
+                {textKeys.length > 0 && (
+                  <th
+                    colSpan={textKeys.length}
+                    className="px-4 py-2 border-b border-gray-200 border-l-2 border-l-gray-200"
+                  >
+                    Jakosc Tresci Uzasadnienia
+                  </th>
+                )}
               </tr>
+              {/* Metric header row */}
               <tr className="bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
-                <th
-                  scope="col"
-                  className="px-4 py-2 border-l-2 border-l-gray-200"
-                  title="Procent poprawnych odpowiedzi A/B/C"
-                >
-                  Skuteczność (ABC)
-                </th>
-                <th
-                  scope="col"
-                  className="px-4 py-2"
-                  title="Czy model wskazał poprawny artykuł"
-                >
-                  Trafność Przepisu
-                </th>
-                <th
-                  scope="col"
-                  className="px-4 py-2 border-l-2 border-l-gray-200"
-                  title="Exact Match"
-                >
-                  Exact Match
-                </th>
-                <th scope="col" className="px-4 py-2" title="BLEU Score">
-                  BLEU
-                </th>
-                <th scope="col" className="px-4 py-2" title="Weighted BLEU">
-                  W-BLEU
-                </th>
+                {accuracyKeys.map((key, idx) => (
+                  <th
+                    key={`acc-${key}`}
+                    scope="col"
+                    className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${
+                      idx === 0 ? 'border-l-2 border-l-gray-200' : ''
+                    }`}
+                    onClick={() => handleSort(key)}
+                  >
+                    {getMetricLabel(key)}
+                    {effectiveSortKey === key && (sortAsc ? ' ↑' : ' ↓')}
+                  </th>
+                ))}
+                {textKeys.map((key, idx) => (
+                  <th
+                    key={`text-${key}`}
+                    scope="col"
+                    className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${
+                      idx === 0 ? 'border-l-2 border-l-gray-200' : ''
+                    }`}
+                    onClick={() => handleSort(key)}
+                  >
+                    {getMetricLabel(key)}
+                    {effectiveSortKey === key && (sortAsc ? ' ↑' : ' ↓')}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200 text-sm">
-              {filtered.map((item, index) => (
+              {sorted.map((item, index) => (
                 <tr
-                  key={`${item.modelId}-${item.examType}-${item.year}`}
+                  key={item.model.id}
                   className={`hover:bg-gray-50 transition-colors ${
-                    item.isPolish ? 'bg-red-50/20 hover:bg-red-50/40' : ''
+                    item.model.isPolish ? 'bg-red-50/20 hover:bg-red-50/40' : ''
                   }`}
                 >
-                  <td className="px-6 py-4 text-gray-400 font-medium">
-                    {index + 1}
-                  </td>
+                  <td className="px-6 py-4 text-gray-400 font-medium">{index + 1}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center">
                       <Link
-                        href={`/models/${item.modelId}`}
+                        href={`/models/${item.model.id}`}
                         className="font-semibold text-gray-900 hover:text-indigo-600 transition-colors"
                       >
-                        {item.model}
+                        {item.model.name}
                       </Link>
-                      {item.isPolish && (
+                      {item.model.isPolish && (
                         <span className="ml-2" title="Polski Model">
-                          🇵🇱
+                          PL
                         </span>
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-4 text-center border-l-2 border-l-gray-200 font-medium text-gray-900">
-                    {item.accuracy}%
-                  </td>
-                  <td className="px-4 py-4 text-center text-gray-600">
-                    {item.lawAccuracy}%
-                  </td>
-                  <td className="px-4 py-4 text-center border-l-2 border-l-gray-200 text-gray-600">
-                    {item.exactMatch}%
-                  </td>
-                  <td className="px-4 py-4 text-center text-gray-600">
-                    {item.bleu}
-                  </td>
-                  <td className="px-4 py-4 text-center text-gray-600">
-                    {item.wBleu}
-                  </td>
+                  {accuracyKeys.map((key, idx) => (
+                    <td
+                      key={`acc-${key}`}
+                      className={`px-4 py-4 text-center ${
+                        idx === 0
+                          ? 'border-l-2 border-l-gray-200 font-medium text-gray-900'
+                          : 'text-gray-600'
+                      }`}
+                    >
+                      {formatMetricValue(item.accuracyMetrics[key] ?? 0)}
+                    </td>
+                  ))}
+                  {textKeys.map((key, idx) => (
+                    <td
+                      key={`text-${key}`}
+                      className={`px-4 py-4 text-center ${
+                        idx === 0 ? 'border-l-2 border-l-gray-200' : ''
+                      } text-gray-600`}
+                    >
+                      {formatMetricValue(item.textMetrics[key] ?? 0)}
+                    </td>
+                  ))}
                 </tr>
               ))}
             </tbody>
