@@ -1,8 +1,8 @@
-import type { ModelDetailData } from '@/lib/types';
+import type { ModelDetail } from '@/lib/types';
 import Link from 'next/link';
 
 interface ModelHeroSectionProps {
-  data: ModelDetailData;
+  data: ModelDetail;
   examsRank: number;
   judgmentsRank: number;
 }
@@ -12,7 +12,7 @@ export default function ModelHeroSection({
   examsRank,
   judgmentsRank,
 }: ModelHeroSectionProps) {
-  const { profile, examsOverall } = data;
+  const { profile } = data;
 
   return (
     <div className="bg-white border-b border-slate-200 pt-8 pb-10 shadow-sm relative overflow-hidden">
@@ -40,7 +40,7 @@ export default function ModelHeroSection({
                 d="M15 19l-7-7 7-7"
               />
             </svg>
-            Powrót do rankingu
+            Powrot do rankingu
           </Link>
         </div>
 
@@ -53,7 +53,7 @@ export default function ModelHeroSection({
             } text-white flex items-center justify-center text-2xl font-bold shadow-lg flex-shrink-0`}
           >
             {profile.isPolish ? (
-              <span className="text-4xl">🦅</span>
+              <span className="text-4xl">PL</span>
             ) : (
               <span>{profile.name.substring(0, 2).toUpperCase()}</span>
             )}
@@ -87,14 +87,6 @@ export default function ModelHeroSection({
               </div>
               <div className="text-3xl font-bold text-slate-900">
                 #{judgmentsRank}
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-1">
-                Skuteczność
-              </div>
-              <div className="text-3xl font-bold text-indigo-600">
-                {examsOverall.accuracy.toFixed(1)}%
               </div>
             </div>
           </div>
