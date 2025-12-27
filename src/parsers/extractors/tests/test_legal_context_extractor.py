@@ -2,7 +2,7 @@ import json
 import pytest
 from pathlib import Path
 
-from src.parsers.parsers.legal_base_parser import LegalBaseParser
+from src.parsers.extractors.legal_content_extractor import LegalContentExtractor
 from src.parsers.utils.text_utils import TextFormatter
 
 
@@ -114,7 +114,7 @@ def test_extract_paragraph_kk(kk_corpus, article_num, paragraph_num, expected_te
     """Test that paragraph extraction from kk corpus returns the expected text."""
     article_text = kk_corpus.get(article_num)
     assert article_text is not None, f"Article {article_num} not found in corpus"
-    result = LegalBaseParser.get_paragraph(article_text, paragraph_num)
+    result = LegalContentExtractor.get_paragraph(article_text, paragraph_num)
     assert (
         result == expected_text
     ), f"Art. {article_num} § {paragraph_num} does not match expected text"
@@ -139,7 +139,7 @@ def test_extract_paragraph_kks(kks_corpus, article_num, paragraph_num, expected_
     """Test that paragraph extraction from kks corpus returns the expected text."""
     article_text = kks_corpus.get(article_num)
     assert article_text is not None, f"Article {article_num} not found in corpus"
-    result = LegalBaseParser.get_paragraph(article_text, paragraph_num)
+    result = LegalContentExtractor.get_paragraph(article_text, paragraph_num)
     assert (
         result == expected_text
     ), f"Art. {article_num} § {paragraph_num} does not match expected text"
@@ -170,7 +170,7 @@ def test_extract_paragraph_kc(kc_corpus, article_num, paragraph_num, expected_te
     article_text = kc_corpus.get(article_num)
     assert article_text is not None, f"Article {article_num} not found in corpus"
     if paragraph_num:
-        result = LegalBaseParser.get_paragraph(article_text, paragraph_num)
+        result = LegalContentExtractor.get_paragraph(article_text, paragraph_num)
     else:
         result = TextFormatter.format_extracted_text(article_text)
     assert (
@@ -200,7 +200,7 @@ def test_extract_point(kk_corpus, article_num, paragraph_num, point_num, expecte
     """Test that point extraction from corpus returns the expected text."""
     article_text = kk_corpus.get(article_num)
     assert article_text is not None, f"Article {article_num} not found in corpus"
-    result = LegalBaseParser.get_point(article_text, point_num, paragraph_num)
+    result = LegalContentExtractor.get_point(article_text, point_num, paragraph_num)
     assert (
         result == expected_text
     ), f"Art. {article_num} § {paragraph_num} pkt {point_num} does not match expected text"

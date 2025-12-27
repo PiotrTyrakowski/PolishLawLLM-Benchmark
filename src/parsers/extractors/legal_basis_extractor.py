@@ -1,12 +1,13 @@
 from src.parsers.extractors.regex_patterns import RegexPatterns
 from src.parsers.domain.legal_reference import LegalReference
+from src.parsers.extractors.base_extractor import BaseExtractor
 
 
-class LegalBasisExtractor:
+class LegalReferenceExtractor(BaseExtractor):
     """Extract components from legal basis strings."""
 
-    def parse(self, legal_basis: str) -> LegalReference:
-        """Parse legal basis string into components."""
+    def extract(self, legal_basis: str) -> LegalReference:
+        """Extract legal basis from string."""
         article_match = RegexPatterns.article_capture_pattern().search(legal_basis)
         paragraph_match = RegexPatterns.paragraph_capture_pattern().search(legal_basis)
         point_match = RegexPatterns.point_capture_pattern().search(legal_basis)

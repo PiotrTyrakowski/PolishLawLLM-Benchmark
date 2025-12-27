@@ -11,7 +11,7 @@ if str(REPO_ROOT) not in sys.path:
 
 import typer
 
-from src.parsers.extractors.legal_basis_extractor import LegalBasisExtractor
+from src.parsers.extractors.legal_basis_extractor import LegalReferenceExtractor
 from src.parsers.parsers.legal_base_parser import LegalBaseParser
 
 DEFAULT_JUDGMENTS_DIR = REPO_ROOT / "data" / "judgments"
@@ -37,10 +37,10 @@ def build_parser_cache(legal_base_dir: Path) -> Dict[str, LegalBaseParser]:
 
 def extract_legal_content(
     legal_basis: str,
-    extractor: LegalBasisExtractor,
+    extractor: LegalReferenceExtractor,
     parser_cache: Dict[str, LegalBaseParser],
 ) -> str:
-    legal_reference = extractor.parse(legal_basis)
+    legal_reference = extractor.extract(legal_basis)
     if not legal_reference.article or not legal_reference.code:
         raise ValueError(f"Invalid legal basis: {legal_basis}")
 
@@ -63,7 +63,7 @@ def extract_legal_content(
 
 def update_jsonl_file(
     file_path: Path,
-    extractor: LegalBasisExtractor,
+    extractor: LegalReferenceExtractor,
     parser_cache: Dict[str, LegalBaseParser],
     dry_run: bool = False,
 ) -> Tuple[int, int]:
@@ -145,7 +145,7 @@ def enrich_judgments(
 
     typer.echo(f"Loading legal base PDFs from: {legal_base_dir}")
     parser_cache = build_parser_cache(legal_base_dir)
-    extractor = LegalBasisExtractor()
+    extractor = LegalReferenceExtractor()
 
     jsonl_files = sorted(judgments_dir.rglob("*.jsonl"))
     if not jsonl_files:

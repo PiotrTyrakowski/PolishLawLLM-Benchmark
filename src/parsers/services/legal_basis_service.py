@@ -4,8 +4,8 @@ from typing import Dict, List
 from src.parsers.domain.question import Question
 from src.parsers.domain.answer import Answer
 from src.domain.exam import ExamQuestion
-from src.parsers.extractors.legal_basis_extractor import LegalBasisExtractor
-from src.parsers.parsers.legal_base_parser import LegalBaseParser
+from src.parsers.extractors.legal_basis_extractor import LegalReferenceExtractor
+from src.parsers.extractors.legal_content_extractor import LegalContentExtractor
 from src.parsers.utils.text_utils import TextFormatter
 
 
@@ -15,7 +15,7 @@ class LegalBasisService:
     def __init__(self, corpus_year_dir: Path):
         self.corpus_year_dir = corpus_year_dir
         self.corpuses: Dict[str, Dict[str, str]] = {}
-        self.basis_extractor = LegalBasisExtractor()
+        self.basis_extractor = LegalReferenceExtractor()
         self.formatter = TextFormatter()
         self._load_corpuses()
 
@@ -71,7 +71,7 @@ class LegalBasisService:
 
     def _extract_legal_content(self, legal_basis: str) -> str:
         """Extract content for a legal basis reference."""
-        legal_reference = self.basis_extractor.parse(legal_basis)
+        legal_reference = self.basis_extractor.extract(legal_basis)
 
         article_num = legal_reference.article
         paragraph_num = legal_reference.paragraph
@@ -93,8 +93,10 @@ class LegalBasisService:
 
         # Extract based on components present
         if point_num:
-            return LegalBaseParser.get_point(article_text, point_num, paragraph_num)
+            return LegalContentExtractor.get_point(
+                article_text, point_num, paragraph_num
+            )
         elif paragraph_num:
-            return LegalBaseParser.get_paragraph(article_text, paragraph_num)
+            return LegalContentExtractor.get_paragraph(article_text, paragraph_num)
         else:
             return TextFormatter.format_extracted_text(article_text)

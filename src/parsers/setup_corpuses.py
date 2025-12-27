@@ -48,7 +48,7 @@ def extract(
     Extract articles from all PDF files in the input directory and save them as JSON files.
 
     Example:
-        python -m parsers.setup_corpuses data/pdfs/2025/legal_base data/corpuses/2025
+        python -m src.parsers.setup_corpuses data/pdfs/2025/legal_base data/corpuses/2025
     """
     output_dir.mkdir(parents=True, exist_ok=True)
     pdf_files = list(input_dir.glob("*.pdf"))
