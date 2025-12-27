@@ -16,7 +16,7 @@ def create_metric_with_corpus(
         json.dump(corpus_data, f)
     if ngram_importances is not None:
         return TFIDFRougeNMetric(
-            corpuses_dir=Path(tmp_dir), ngram_importances=ngram_importances
+            corpuses_dir=Path(tmp_dir), ngrams_importances=ngram_importances
         )
     return TFIDFRougeNMetric(corpuses_dir=Path(tmp_dir))
 
@@ -57,7 +57,7 @@ class TestBuildIdfLookup:
             assert idf_scores["the"] < idf_scores["unique"]
 
     def test_idf_formula_verification(self):
-        """Test that IDF follows the formula: log((N+1)/(df+1)) + 1."""
+        """Test that IDF follows the formula: log(N/(df+1)) + 1."""
         with tempfile.TemporaryDirectory() as tmp_dir:
             corpus_data = {
                 "1": "apple banana",

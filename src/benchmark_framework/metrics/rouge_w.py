@@ -1,4 +1,4 @@
-from typing import Optional, List, Tuple
+from typing import Optional, List
 from src.benchmark_framework.metrics.base_metric import BaseMetric
 
 
@@ -9,9 +9,9 @@ class RougeWMetric(BaseMetric):
     Attributes:
         alpha: The weighting parameter. Higher values give more weight
                to consecutive matches. Must be >= 1.0.
-               Weighting functions is f(k) = k^alpha.
+               Weighting function is f(k) = k^alpha.
         beta: Parameter for F-measure calculation. When beta = 1, precision and
-              recall have equal weight. Higher beta values favors recall.
+              recall have equal weight. Higher beta values favor recall.
     """
 
     def __init__(self, alpha: float = 1.2, beta: float = 1.0) -> None:

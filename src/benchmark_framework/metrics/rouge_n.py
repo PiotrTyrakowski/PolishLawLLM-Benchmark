@@ -12,9 +12,9 @@ class RougeNMetric(BaseMetric):
     For example, ngram_importances=[1, 1, 1] weights unigrams, bigrams, and trigrams equally.
     """
 
-    def __init__(self, ngram_importances: List[float] = [1, 1, 1]) -> None:
+    def __init__(self, ngrams_importances: List[float] = [1, 1, 1]) -> None:
         super().__init__(f"rouge_n_f1")
-        self.ngrams_importances = ngram_importances
+        self.ngrams_importances = ngrams_importances
 
     def _compute(
         self, prediction: str, reference: str, code_abbr: Optional[str] = None

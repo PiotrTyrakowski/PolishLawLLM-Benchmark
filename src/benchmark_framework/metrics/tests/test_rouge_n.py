@@ -73,7 +73,6 @@ class TestRougeNGetNgrams:
         result = RougeNMetric.get_ngrams(tokens, n=2)
 
         # ("the", "cat") appears twice
-        expected = Counter([("the", "cat"), ("cat", "the"), ("the", "cat")])
         assert result[("the", "cat")] == 2
         assert result[("cat", "the")] == 1
 
@@ -820,7 +819,7 @@ class TestRougeNWeightedAverage:
 
     def test_weighted_average_single_ngram(self):
         """Test weighted average with single n-gram size."""
-        metric = RougeNMetric(ngram_importances=[1.0])
+        metric = RougeNMetric(ngrams_importances=[1.0])
         text = "the cat sat"
 
         score = metric(prediction=text, reference=text)
@@ -831,7 +830,7 @@ class TestRougeNWeightedAverage:
 
     def test_weighted_average_equal_weights(self):
         """Test weighted average with equal weights."""
-        metric = RougeNMetric(ngram_importances=[1.0, 1.0, 1.0])
+        metric = RougeNMetric(ngrams_importances=[1.0, 1.0, 1.0])
         text = "the cat sat on mat"
 
         score = metric(prediction=text, reference=text)
@@ -846,7 +845,7 @@ class TestRougeNWeightedAverage:
 
     def test_weighted_average_different_weights(self):
         """Test weighted average with different weights."""
-        metric = RougeNMetric(ngram_importances=[1.0, 2.0, 3.0])
+        metric = RougeNMetric(ngrams_importances=[1.0, 2.0, 3.0])
         text = "the cat sat on mat"
 
         score = metric(prediction=text, reference=text)
@@ -861,7 +860,7 @@ class TestRougeNWeightedAverage:
 
     def test_weighted_average_empty_importances_returns_zero(self):
         """Test that empty importance list returns 0.0."""
-        metric = RougeNMetric(ngram_importances=[])
+        metric = RougeNMetric(ngrams_importances=[])
 
         score = metric(prediction="test", reference="test")
 
@@ -869,7 +868,7 @@ class TestRougeNWeightedAverage:
 
     def test_weighted_average_zero_weights_returns_zero(self):
         """Test that all zero weights return 0.0."""
-        metric = RougeNMetric(ngram_importances=[0.0, 0.0, 0.0])
+        metric = RougeNMetric(ngrams_importances=[0.0, 0.0, 0.0])
 
         score = metric(prediction="test", reference="test")
 
@@ -877,7 +876,7 @@ class TestRougeNWeightedAverage:
 
     def test_weighted_average_mixed_zero_nonzero_weights(self):
         """Test weighted average with mixed zero and non-zero weights."""
-        metric = RougeNMetric(ngram_importances=[0.0, 1.0, 0.0])
+        metric = RougeNMetric(ngrams_importances=[0.0, 1.0, 0.0])
         text = "the cat sat on mat"
 
         score = metric(prediction=text, reference=text)
@@ -888,7 +887,7 @@ class TestRougeNWeightedAverage:
 
     def test_weighted_average_many_ngram_sizes(self):
         """Test weighted average with many n-gram sizes."""
-        metric = RougeNMetric(ngram_importances=[1.0, 1.0, 1.0, 1.0, 1.0])
+        metric = RougeNMetric(ngrams_importances=[1.0, 1.0, 1.0, 1.0, 1.0])
         text = "one two three four five six"
 
         score = metric(prediction=text, reference=text)
@@ -902,7 +901,7 @@ class TestRougeNCallableInterface:
 
     def test_call_returns_weighted_f1(self):
         """Test that calling the metric returns weighted F1."""
-        metric = RougeNMetric(ngram_importances=[1.0, 1.0, 1.0])
+        metric = RougeNMetric(ngrams_importances=[1.0, 1.0, 1.0])
         text = "the cat sat"
 
         result = metric(prediction=text, reference=text)

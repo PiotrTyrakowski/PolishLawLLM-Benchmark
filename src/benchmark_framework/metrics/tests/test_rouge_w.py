@@ -1,5 +1,4 @@
 import pytest
-import math
 from src.benchmark_framework.metrics.rouge_w import RougeWMetric
 
 

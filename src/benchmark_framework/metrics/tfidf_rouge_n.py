@@ -11,10 +11,10 @@ from src.parsers.utils.text_utils import TextFormatter
 
 class TFIDFRougeNMetric(BaseMetric):
     def __init__(
-        self, corpuses_dir: Path, ngram_importances: List[float] = [1, 1, 1]
+        self, corpuses_dir: Path, ngrams_importances: List[float] = [1, 1, 1]
     ) -> None:
         super().__init__(f"rouge_n_tfidf")
-        self.ngrams_importances = ngram_importances
+        self.ngrams_importances = ngrams_importances
         self.build_idf_lookup(corpuses_dir=corpuses_dir)
 
     def build_idf_lookup(self, corpuses_dir: Path):
@@ -69,16 +69,6 @@ class TFIDFRougeNMetric(BaseMetric):
         assert 0.0 <= result <= 1.0
         return result
 
-    def _calculate_intersection_ngrams_count(
-        self, pred_ngrams_counts, ref_ngrams_counts
-    ) -> int:
-        intersection_ngram_weighted_count = 0
-        for ngram, count in pred_ngrams_counts.items():
-            ngram_count = min(count, ref_ngrams_counts.get(ngram, 0))
-            ngram_weight = 1
-            intersection_ngram_weighted_count += ngram_count * ngram_weight
-        return intersection_ngram_weighted_count
-
     def calculate_recall(
         self, prediction: str, reference: str, n: int, code_abbr: str
     ) -> float:
@@ -104,9 +94,14 @@ class TFIDFRougeNMetric(BaseMetric):
         assert 0.0 <= recall <= 1.0
         return recall
 
-    def get_tokens_tfidf(self, ref_tokens: Sequence[str], code_abbr: str) -> float:
+    def get_tokens_tfidf(
+        self, ref_tokens: Sequence[str], code_abbr: str
+    ) -> dict[str, float]:
         assert self.idf_lookup is not None
         weights = {}
+        assert (
+            code_abbr in self.idf_lookup
+        ), f"Code abbreviation '{code_abbr}' not found in IDF lookup"
         idf_dict = self.idf_lookup.get(code_abbr)
 
         for token in set(ref_tokens):

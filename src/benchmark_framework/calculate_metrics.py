@@ -38,13 +38,17 @@ def process_entry(entry: Dict[str, Any], corpuses_path: Path) -> Dict[str, Any]:
 
     metrics: List[BaseMetric] = [
         ExactMatchMetric(),
-        RougeNMetric(ngram_importances=[1, 1, 1]),
-        TFIDFRougeNMetric(corpuses_dir=corpuses_path, ngram_importances=[1, 1, 1]),
+        RougeNMetric(ngrams_importances=[1, 1, 1]),
+        TFIDFRougeNMetric(corpuses_dir=corpuses_path, ngrams_importances=[1, 1, 1]),
         RougeWMetric(alpha=1.2, beta=1.0),
     ]
 
     text_metrics = {}
-    if "model_legal_basis_content" in entry and "legal_basis_content" in entry:
+    if (
+        "model_legal_basis_content" in entry
+        and "legal_basis_content" in entry
+        and "legal_basis" in entry
+    ):
         model_text = entry["model_legal_basis_content"]
         reference_text = entry["legal_basis_content"]
         legal_basis = entry["legal_basis"]
