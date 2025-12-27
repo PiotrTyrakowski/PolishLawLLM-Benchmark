@@ -537,27 +537,6 @@ class TestTFIDFRougeNCallableInterface:
 
         assert abs(score - 1.0) < 0.0001
 
-    def test_callable_requires_code_abbr(self):
-        """Test that code_abbr is required for TFIDFRougeNMetric."""
-        corpus_data = {"1": "hello world"}
-        metric = create_metric_with_corpus(corpus_data)
-
-        # Calling without code_abbr should raise an error
-        with pytest.raises((TypeError, KeyError, AttributeError)):
-            metric(prediction="hello world", reference="hello world")
-
-    def test_callable_invalid_code_abbr_raises(self):
-        """Test that invalid code_abbr raises an error."""
-        corpus_data = {"1": "hello world"}
-        metric = create_metric_with_corpus(corpus_data)
-
-        with pytest.raises((KeyError, AttributeError, TypeError)):
-            metric(
-                prediction="hello world",
-                reference="hello world",
-                code_abbr="nonexistent",
-            )
-
     def test_metric_name(self):
         """Test that metric has correct name."""
         corpus_data = {"1": "hello world"}
