@@ -21,7 +21,7 @@ class ExamManager(BaseManager):
         year_str = str(task.year)
         filename = f"{task.exam_type}.jsonl"
         return (
-            results_dir / self.task_type / self.model.model_name / year_str / filename
+            results_dir / self.model.model_name / self.task_type / year_str / filename
         )
 
     def get_result(self, exam: ExamQuestion, model_response: str) -> ExamResult:
