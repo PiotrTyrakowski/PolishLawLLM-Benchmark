@@ -41,7 +41,7 @@ class Uploader:
         logger.info("Upload complete")
 
     def _build_tree(self) -> None:
-        """Traverses: /results/{model_name}/"""
+        """Traverses: /results/{model_id}/"""
         for model_dir in self.path.iterdir():
             if not model_dir.is_dir():
                 logger.warning(f"Skipping non-directory: {model_dir}")
@@ -63,7 +63,7 @@ class Uploader:
             self.root_collection.add_document(model_doc)
 
     def _process_exams(self, model_dir: Path, model_doc: ModelDocument) -> None:
-        """Traverses: /results/model/exams/{year}/{test}.jsonl"""
+        """Traverses: /results/model_id/exams/{year}/{test}.jsonl"""
         exams_root = model_dir / "exams"
 
         if not exams_root.exists():
