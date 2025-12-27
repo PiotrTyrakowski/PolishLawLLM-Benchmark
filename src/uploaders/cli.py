@@ -10,8 +10,8 @@ from firebase.main import firestore_db
 from uploaders.main import Uploader
 
 DATA_PATH: Final[Path] = Path(__file__).resolve().parents[2] / "data"
-DEFAULT_PATH: Final[Path] = DATA_PATH / "results_with_metrics_test"
-DEFAULT_COLLECTION: Final[str] = "results3"
+DEFAULT_PATH: Final[Path] = DATA_PATH / "results_with_metrics"
+DEFAULT_COLLECTION: Final[str] = "results"
 
 app = typer.Typer(help="Upload benchmark results to Firebase")
 console = Console()
