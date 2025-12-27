@@ -1,6 +1,7 @@
 import typer
 from pathlib import Path
 from typing import List, Dict, Any
+from tqdm import tqdm
 
 from src.benchmark_framework.metrics.base_metric import BaseMetric
 from src.benchmark_framework.metrics.exact_match import ExactMatchMetric
@@ -49,11 +50,12 @@ def process_entry(entry: Dict[str, Any], corpuses_path: Path) -> Dict[str, Any]:
         legal_basis = entry["legal_basis"]
         legal_basis_extractor = LegalBasisExtractor()
         legal_basis_reference = legal_basis_extractor.parse(legal_basis)
+        code_abbr = LegalBasisExtractor.format_code_abbreviation(
+            legal_basis_reference.code
+        )
 
         for metric in metrics:
-            text_metrics[metric.name] = metric(
-                model_text, reference_text, legal_basis_reference.code
-            )
+            text_metrics[metric.name] = metric(model_text, reference_text, code_abbr)
 
     entry["accuracy_metrics"] = accuracy_metrics
     entry["text_metrics"] = text_metrics
@@ -112,7 +114,6 @@ def calculate_metrics(
             skipped_count += 1
             continue
 
-        typer.echo(f"Processing: {relative_path}")
         entries = FileOperations.load_jsonl(jsonl_file)
 
         if not entries:
@@ -123,7 +124,8 @@ def calculate_metrics(
             continue
 
         processed_entries = [
-            process_entry(entry, Path(corpuses_dir)) for entry in entries
+            process_entry(entry, Path(corpuses_dir) / str(entry.get("year", "")))
+            for entry in tqdm(entries, desc=str(relative_path), unit="entries")
         ]
 
         FileOperations.save_jsonl(processed_entries, output_path)
