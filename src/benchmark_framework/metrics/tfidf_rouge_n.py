@@ -41,8 +41,7 @@ class TFIDFRougeNMetric(BaseMetric):
             self.idf_lookup[file.stem] = idf_lookup
 
     def _compute(self, prediction: str, reference: str, code_abbr: str) -> float:
-        if not self.ngrams_importances:
-            return 0.0
+        assert self.ngrams_importances is not None
 
         # Get tokens to determine maximum possible n-gram size
         pred_tokens = self.get_normalized_words(prediction)
@@ -62,8 +61,7 @@ class TFIDFRougeNMetric(BaseMetric):
                 weighted_sum += weight * recall
                 total_weight += weight
 
-        if total_weight == 0:
-            return 0.0
+        assert total_weight > 0, "Total weight must be greater than zero."
 
         result = weighted_sum / total_weight
         assert 0.0 <= result <= 1.0
