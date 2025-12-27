@@ -29,7 +29,6 @@ function StatCard({ label, value, color = 'text-slate-900' }: { label: string; v
   );
 }
 
-// Calculate average metrics from an array of exam data
 function averageMetrics(exams: Array<{ accuracyMetrics: Record<string, number>; textMetrics: Record<string, number> }>): { accuracyMetrics: Record<string, number>; textMetrics: Record<string, number> } {
   if (exams.length === 0) {
     return { accuracyMetrics: {}, textMetrics: {} };
@@ -61,16 +60,13 @@ export default function ModelStatsSection({ data }: ModelStatsSectionProps) {
   const { profile, exams, judgments } = data;
   const accentColor = profile.isPolish ? 'bg-amber-500' : 'bg-indigo-600';
 
-  // Calculate overall exam metrics
   const examsOverall = useMemo(() => averageMetrics(exams), [exams]);
 
-  // Extract metric keys from exams
-  const { accuracyKeys: examAccKeys, textKeys: examTextKeys } = useMemo(
-    () => extractMetricKeys(exams),
-    [exams]
-  );
+  const { accuracyKeys: examAccKeys, textKeys: examTextKeys } = useMemo(() => {
+    if (!exams) return { accuracyKeys: [], textKeys: [] };
+    return extractMetricKeys(exams);
+  }, [exams]);
 
-  // Extract metric keys from judgments (if present)
   const { accuracyKeys: judgmentAccKeys, textKeys: judgmentTextKeys } = useMemo(() => {
     if (!judgments) return { accuracyKeys: [], textKeys: [] };
     return extractMetricKeys([judgments]);

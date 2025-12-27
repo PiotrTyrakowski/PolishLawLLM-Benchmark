@@ -14,7 +14,6 @@ import type {
 
 const COLLECTION = process.env.RESULTS_COLLECTION || 'results';
 
-// Helper: Calculate average of metric records
 function averageMetrics(metricsArray: Record<string, number>[]): Record<string, number> {
   if (metricsArray.length === 0) return {};
 
@@ -30,7 +29,6 @@ function averageMetrics(metricsArray: Record<string, number>[]): Record<string, 
   return result;
 }
 
-// Helper: Transform Firestore model doc to ModelSummary
 function toModelSummary(id: string, data: FirestoreModel): ModelSummary {
   return {
     id,
@@ -40,7 +38,6 @@ function toModelSummary(id: string, data: FirestoreModel): ModelSummary {
   };
 }
 
-// Get all models with their aggregated exam metrics
 export async function getAggregatedExams(): Promise<AggregatedModelExams[]> {
   const modelsSnap = await adminDb.collection(COLLECTION).get();
   const results: AggregatedModelExams[] = [];
@@ -76,7 +73,6 @@ export async function getAggregatedExams(): Promise<AggregatedModelExams[]> {
   return results;
 }
 
-// Get all models with their judgment metrics (single doc per model, no averaging)
 export async function getAllJudgments(): Promise<AggregatedModelJudgments[]> {
   const modelsSnap = await adminDb.collection(COLLECTION).get();
   const results: AggregatedModelJudgments[] = [];
@@ -106,7 +102,6 @@ export async function getAllJudgments(): Promise<AggregatedModelJudgments[]> {
   return results;
 }
 
-// Get detailed data for a specific model
 export async function getModelDetail(modelId: string): Promise<ModelDetail | null> {
   const modelDoc = await adminDb.collection(COLLECTION).doc(modelId).get();
 
@@ -154,7 +149,6 @@ export async function getModelDetail(modelId: string): Promise<ModelDetail | nul
   };
 }
 
-// Get all model IDs for static generation
 export async function getAllModelIds(): Promise<string[]> {
   const modelsSnap = await adminDb.collection(COLLECTION).get();
   return modelsSnap.docs.map((doc) => doc.id);

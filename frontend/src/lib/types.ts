@@ -1,10 +1,10 @@
-// ===== Dynamic Metrics - No hardcoded field names =====
 export interface DynamicMetrics {
   accuracy_metrics: Record<string, number>;
   text_metrics: Record<string, number>;
 }
 
 // ===== Firestore Document Types (snake_case, matches DB) =====
+
 export interface FirestoreModel {
   model_name: string;
   is_polish: boolean;

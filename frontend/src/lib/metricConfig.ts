@@ -1,18 +1,11 @@
-// Convert snake_case to Title Case for display
-function snakeToTitleCase(str: string): string {
-  return str
+// Get display label for a metric key - dynamically converts snake_case to Title Case
+export function getMetricLabel(key: string): string {
+  return key
     .split('_')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 }
 
-// Get display label for a metric key - dynamically converts snake_case to Title Case
-export function getMetricLabel(key: string): string {
-  return snakeToTitleCase(key);
-}
-
-// Format metric value for display
-// All values are treated as decimals, displayed with 2 decimal places
 export function formatMetricValue(value: number): string {
   return value.toFixed(2);
 }
