@@ -1,4 +1,4 @@
-from src.parsers.domain.exam import Exam
+from src.domain.exam import Exam
 from src.parsers.domain.question import Question
 from src.parsers.domain.answer import Answer
 from src.parsers.parsers.base import BaseParser
@@ -28,7 +28,7 @@ class ExamService:
 
         # Enrich with legal basis content
         exam_tasks = self.legal_basis_service.enrich_with_legal_content(
-            questions, answers
+            questions, answers, exam_type, year
         )
 
         # Create domain aggregate

@@ -4,7 +4,7 @@ from typing import Optional
 from dataclasses import asdict
 
 from src.benchmark_framework.models.base_model import BaseModel
-from src.benchmark_framework.types.exam import Exam, ExamResult
+from src.domain.exam import ExamQuestion, ExamResult
 from src.benchmark_framework.managers.base_manager import BaseManager
 from src.benchmark_framework.utils.response_parser import extract_json_field
 
@@ -17,14 +17,14 @@ class ExamManager(BaseManager):
     def __init__(self, model: BaseModel, tasks_path: Path, year: Optional[int] = None):
         super().__init__(model, "exams", tasks_path, year)
 
-    def get_output_path(self, task: Exam, results_dir: Path) -> Path:
+    def get_output_path(self, task: ExamQuestion, results_dir: Path) -> Path:
         year_str = str(task.year)
         filename = f"{task.exam_type}.jsonl"
         return (
             results_dir / self.task_type / self.model.model_name / year_str / filename
         )
 
-    def get_result(self, exam: Exam, model_response: str) -> ExamResult:
+    def get_result(self, exam: ExamQuestion, model_response: str) -> ExamResult:
         model_answer = extract_json_field(model_response, "answer").upper()
         model_legal_basis = extract_json_field(model_response, "legal_basis")
         model_legal_basis_content = extract_json_field(

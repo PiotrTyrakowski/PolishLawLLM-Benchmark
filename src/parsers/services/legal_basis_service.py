@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Dict, List
 from src.parsers.domain.question import Question
 from src.parsers.domain.answer import Answer
-from src.parsers.domain.exam import ExamTask
+from src.domain.exam import ExamQuestion
 from src.parsers.extractors.legal_basis_extractor import LegalBasisExtractor
 from src.parsers.parsers.legal_base_parser import LegalBaseParser
 from src.parsers.utils.text_utils import TextFormatter
@@ -27,8 +27,12 @@ class LegalBasisService:
                 self.corpuses[code_name] = json.load(f)
 
     def enrich_with_legal_content(
-        self, questions: List[Question], answers: List[Answer]
-    ) -> List[ExamTask]:
+        self,
+        questions: List[Question],
+        answers: List[Answer],
+        exam_type: str,
+        year: int,
+    ) -> List[ExamQuestion]:
         """Combine questions with answers and legal basis content."""
         answer_dict = {a.question_id: a for a in answers}
         enriched_questions = []
@@ -40,9 +44,21 @@ class LegalBasisService:
 
             try:
                 content = self._extract_legal_content(answer.legal_basis)
+                choices = {
+                    "A": question.option_a,
+                    "B": question.option_b,
+                    "C": question.option_c,
+                }
                 enriched_questions.append(
-                    ExamTask(
-                        question=question, answer=answer, legal_basis_content=content
+                    ExamQuestion(
+                        id=question.id,
+                        year=year,
+                        exam_type=exam_type,
+                        question=question.text,
+                        choices=choices,
+                        answer=answer.answer,
+                        legal_basis=answer.legal_basis,
+                        legal_basis_content=content,
                     )
                 )
             except Exception as e:

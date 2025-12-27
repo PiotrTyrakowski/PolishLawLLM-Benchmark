@@ -1,5 +1,5 @@
 from pathlib import Path
-from src.parsers.domain.exam import Exam, ExamTask
+from src.domain.exam import Exam, ExamQuestion
 from src.parsers.repositories.exam_repository import ExamRepository
 from src.parsers.utils.file_utils import FileOperations
 
@@ -22,5 +22,5 @@ class JSONLRepository(ExamRepository):
         file_path = self.base_dir / str(year) / f"{exam_type}.jsonl"
         data = self.file_ops.load_jsonl(file_path)
 
-        tasks = [ExamTask.from_dict(task_data) for task_data in data]
+        tasks = [ExamQuestion.from_dict(task_data) for task_data in data]
         return Exam(year=year, exam_type=exam_type, tasks=tasks)

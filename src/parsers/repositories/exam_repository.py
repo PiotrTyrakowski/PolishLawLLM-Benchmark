@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from src.parsers.domain.exam import Exam
+from src.domain.exam import Exam
 
 
 class ExamRepository(ABC):

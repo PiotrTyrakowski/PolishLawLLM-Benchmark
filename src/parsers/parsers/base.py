@@ -6,8 +6,6 @@ T = TypeVar("T")
 
 
 class BaseParser(ABC, Generic[T]):
-    """Abstract base parser following Open-Closed Principle."""
-
     def __init__(self, file_path: Path):
         self.file_path = file_path
         self._validate_file()
