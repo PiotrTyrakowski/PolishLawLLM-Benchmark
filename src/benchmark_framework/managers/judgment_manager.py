@@ -4,9 +4,8 @@ from typing import Optional
 from dataclasses import asdict
 
 from src.benchmark_framework.models.base_model import BaseModel
-from src.benchmark_framework.types.judgment import Judgment, JudgmentResult
+from src.domain.judgment import Judgment, JudgmentResult
 from src.benchmark_framework.managers.base_manager import BaseManager
-from src.benchmark_framework.constants import MAX_NEW_TOKENS
 from src.benchmark_framework.utils.response_parser import extract_json_field
 
 
@@ -70,6 +69,5 @@ class JudgmentManager(BaseManager):
             "  WAŻNE: Podaj TYLKO treść wskazanego artykułu, bez innych fragmentów aktów prawnych\n"
             "# WAŻNE UWAGI\n"
             "- Zwróć TYLKO poprawny JSON - bez markdown, bez dodatkowego tekstu\n"
-            f"- Maksymalna długość odpowiedzi: {MAX_NEW_TOKENS} tokenów"
             f"- Zwróć poprawne dane na dzień 20 września {year} roku."
         )

@@ -2,7 +2,6 @@ import os
 from openai import OpenAI
 from src.benchmark_framework.configs.runner_config import RunnerConfig
 from src.benchmark_framework.models.base_model import BaseModel
-from src.benchmark_framework.constants import MAX_NEW_TOKENS
 from src.benchmark_framework.configs.model_config import ModelConfig
 
 
@@ -35,7 +34,6 @@ class BielikModel(BaseModel):
         completion = self.client.chat.completions.create(
             model="speakleash/bielik-11b-v2.6-instruct",
             messages=messages,
-            max_tokens=MAX_NEW_TOKENS,
         )
 
         return completion.choices[0].message.content

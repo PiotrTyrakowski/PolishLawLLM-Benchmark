@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import TypedDict
 
 from src.domain.task import Task
-from src.benchmark_framework.constants import ENCODING
+from src.constants import ENCODING
 
 
 class JudgmentResult(TypedDict):

@@ -1,5 +1,5 @@
 from src.domain.exam import ExamQuestion
-from src.benchmark_framework.types.judgment import Judgment
+from src.domain.judgment import Judgment
 from src.domain.task import Task
 
 TYPE_REGISTRY = {
