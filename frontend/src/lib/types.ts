@@ -1,76 +1,68 @@
-// ===== Firestore Types (snake_case, matches DB) =====
-export interface FirestoreModelDoc {
-  model_name: string;
-  is_polish: boolean;
-  model_config: any;
+// ===== Dynamic Metrics - No hardcoded field names =====
+export interface DynamicMetrics {
+  accuracy_metrics: Record<string, number>;
+  text_metrics: Record<string, number>;
 }
 
-export interface FirestoreExamDoc {
-  accuracy_metrics: any;
-  text_metrics: any;
+// ===== Firestore Document Types (snake_case, matches DB) =====
+export interface FirestoreModel {
+  model_name: string;
+  is_polish: boolean;
+  model_config: Record<string, unknown>;
+}
+
+export interface FirestoreExam extends DynamicMetrics {
   type: string;
   year: number;
 }
 
-export interface FirestoreJudgmentDoc {
-  accuracy_metrics: any;
-  text_metrics: any;
-}
+export interface FirestoreJudgment extends DynamicMetrics {}
 
-// ===== App Types (camelCase) =====
-export interface ExamResult {
-  modelId: string;
-  model: string;
-  isPolish: boolean;
-  year: string;
-  examType: string;
-  accuracy: number;
-  lawAccuracy: number;
-  exactMatch: number;
-  bleu: number;
-  wBleu: number;
-}
+// ===== API Response Types =====
 
-export interface JudgmentResult {
-  modelId: string;
-  model: string;
-  isPolish: boolean;
-  retrieval: number;
-  exactMatch: number;
-  bleu: number;
-  wBleu: number;
-}
-
-export interface ModelProfile {
+export interface ModelSummary {
   id: string;
   name: string;
   isPolish: boolean;
+  config: Record<string, unknown>;
 }
 
-export interface ExamBreakdown {
+// Home page table row - model with aggregated metrics
+export interface AggregatedModelExams {
+  model: ModelSummary;
+  accuracyMetrics: Record<string, number>;
+  textMetrics: Record<string, number>;
+}
+
+// Home page table row - model with judgment metrics (same structure)
+export interface AggregatedModelJudgments {
+  model: ModelSummary;
+  accuracyMetrics: Record<string, number>;
+  textMetrics: Record<string, number>;
+}
+
+// Model detail page
+export interface ExamData {
   examType: string;
-  year: string;
-  accuracy: number;
-  lawAccuracy: number;
-  exactMatch: number;
-  bleu: number;
-  wBleu: number;
+  year: number;
+  accuracyMetrics: Record<string, number>;
+  textMetrics: Record<string, number>;
 }
 
-export interface ModelDetailData {
-  profile: ModelProfile;
-  examsOverall: {
-    accuracy: number;
-    lawAccuracy: number;
-    exactMatch: number;
-    bleu: number;
-    wBleu: number;
-  };
-  examsBreakdown: ExamBreakdown[];
-  judgmentsOverall: {
-    retrieval: number;
-    exactMatch: number;
-    bleu: number;
-    wBleu: number;
-  };
+export interface JudgmentData {
+  accuracyMetrics: Record<string, number>;
+  textMetrics: Record<string, number>;
+}
+
+export interface ModelDetail {
+  profile: ModelSummary;
+  exams: ExamData[];
+  judgments: JudgmentData | null;
+}
+
+// ===== Utility types for metric display =====
+export interface MetricDisplayInfo {
+  key: string;
+  label: string;
+  isPercentage: boolean;
 }
