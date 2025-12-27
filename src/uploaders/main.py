@@ -90,10 +90,8 @@ class Uploader:
         for doc in docs:
             exam_coll.add_document(doc)
 
-        avg_doc = self._create_avg_exam_document(docs)
-        exam_coll.add_document(avg_doc)
         model_doc.add_collection(exam_coll)
-        logger.info(f"Added {len(docs)} exam documents + 1 averaged document")
+        logger.info(f"Added {len(docs)} exam documents")
 
     @staticmethod
     def _create_model_document(json_path: Path) -> ModelDocument:
@@ -136,39 +134,6 @@ class Uploader:
                 "text_metrics": stats["text_metrics"],
                 "type": exam_type,
                 "year": year,
-            },
-        )
-
-    @staticmethod
-    def _create_avg_exam_document(exam_documents: list[ExamDocument]) -> ExamDocument:
-        """Creates an averaged exam document by aggregating metrics across documents."""
-        if not exam_documents:
-            raise ValueError("Exam documents list cannot be empty")
-
-        def avg_metrics(metric_name: str) -> Dict[str, float]:
-            first_metrics = exam_documents[0].fields[metric_name]
-            keys = set(first_metrics.keys())
-            sum_d: Dict[str, float] = dict(first_metrics)
-
-            for doc in exam_documents[1:]:
-                doc_metrics = doc.fields[metric_name]
-                if set(doc_metrics.keys()) != keys:
-                    raise ValueError(
-                        f"Keys mismatch for '{metric_name}' between documents. "
-                        f"Expected {keys}, got {set(doc_metrics.keys())}"
-                    )
-                for k in keys:
-                    sum_d[k] += doc_metrics[k]
-
-            return {k: v / len(exam_documents) for k, v in sum_d.items()}
-
-        return ExamDocument(
-            id="all",
-            fields={
-                "accuracy_metrics": avg_metrics("accuracy_metrics"),
-                "text_metrics": avg_metrics("text_metrics"),
-                "type": "all",
-                "year": "all",
             },
         )
 
