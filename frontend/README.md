@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PolishLawLLM Benchmark Frontend
 
-## Getting Started
+Next.js frontend for displaying benchmark results of LLMs on Polish legal exams and judgment interpretation tasks.
 
-First, run the development server:
+## Setup
 
+1. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+bun install
+```
+
+2. Configure environment variables:
+```bash
+cp .env.example .env.local
+```
+
+3. Add Firebase Admin SDK credentials to `.env.local`:
+```
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_CLIENT_EMAIL=your-service-account@project.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+RESULTS_COLLECTION=results
+```
+
+4. Run development server:
+```bash
+bun run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Architecture
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Firebase Structure
+```
+/results/{model_id}/
+  - fields: model_name, is_polish, model_config
+  - /exams/{exam_doc_id}
+    - fields: accuracy_metrics, text_metrics, type, year
+  - /judgments/all
+    - fields: accuracy_metrics, text_metrics
+```
 
-## Learn More
+### API Routes
+- `GET /api/exams` - Aggregated exam metrics per model
+- `GET /api/judgments` - Judgment metrics per model
+- `GET /api/models/[modelId]` - Detailed model data
 
-To learn more about Next.js, take a look at the following resources:
+### Key Files
+- `src/lib/firebase-admin.ts` - Firebase Admin SDK (server-only)
+- `src/lib/server/firestore.ts` - Firestore query functions
+- `src/lib/types.ts` - TypeScript types
+- `src/lib/metricConfig.ts` - Metric display utilities
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Dynamic Metrics
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The frontend dynamically renders whatever metrics exist in `accuracy_metrics` and `text_metrics` objects. No metric names are hardcoded - column headers are generated from snake_case keys (e.g., `exact_match` becomes "Exact Match").
+
+## Development Mode
+
+To use mock data instead of Firebase:
+```
+NEXT_PUBLIC_USE_MOCK_DATA=true
+```
+
+## Build
+
+```bash
+bun run build
+```
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
