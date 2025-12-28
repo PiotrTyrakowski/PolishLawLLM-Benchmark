@@ -6,7 +6,7 @@ from typing import List, Sequence
 
 from src.benchmark_framework.metrics.base_metric import BaseMetric
 from src.benchmark_framework.metrics.rouge_n import RougeNMetric
-from src.parsers.utils.text_formatter import TextFormatter
+from src.common.text_formatter import TextFormatter
 
 
 class TFIDFRougeNMetric(BaseMetric):

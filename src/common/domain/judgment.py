@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import TypedDict
 
-from src.domain.task import Task
+from src.common.domain.task import Task
 from src.constants import ENCODING
 
 

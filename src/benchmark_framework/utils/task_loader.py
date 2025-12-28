@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import Optional
 from src.constants import ENCODING
-from src.domain.task import Task
+from src.common.domain import Task
 from src.benchmark_framework.getters.get_type import get_task_by_dataset
 
 

@@ -3,7 +3,7 @@ import pytest
 from pathlib import Path
 
 from src.parsers.extractors.legal_content_extractor import LegalContentExtractor
-from src.parsers.utils.text_formatter import TextFormatter
+from src.common.text_formatter import TextFormatter
 
 
 def get_corpus_path(code: str) -> Path:

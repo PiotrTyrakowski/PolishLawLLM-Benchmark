@@ -2,7 +2,7 @@ from typing import List
 from src.parsers.domain.answer import Answer
 from src.parsers.extractors.base_extractor import BaseExtractor
 from src.parsers.extractors.regex_patterns import RegexPatterns
-from src.parsers.utils.text_formatter import TextFormatter
+from src.common.text_formatter import TextFormatter
 
 
 class AnswerExtractor(BaseExtractor):

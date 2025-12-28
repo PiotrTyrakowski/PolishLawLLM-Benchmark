@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import List, Dict, TypedDict
-from src.domain.task import Task
+from src.common.domain.task import Task
 
 
 class ExamResult(TypedDict):

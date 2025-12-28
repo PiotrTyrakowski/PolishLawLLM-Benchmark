@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Optional, Dict, Set
 
-from src.domain.task import Task
+from src.common.domain import Task
 from src.benchmark_framework.utils.task_loader import initialize_tasks
 from src.benchmark_framework.models.base_model import BaseModel
 from src.constants import ENCODING

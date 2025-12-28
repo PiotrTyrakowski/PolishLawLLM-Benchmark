@@ -4,7 +4,7 @@ from typing import Optional
 from dataclasses import asdict
 
 from src.benchmark_framework.models.base_model import BaseModel
-from src.domain.judgment import Judgment, JudgmentResult
+from src.common.domain import Judgment, JudgmentResult
 from src.benchmark_framework.managers.base_manager import BaseManager
 from src.benchmark_framework.utils.response_parser import extract_json_field
 

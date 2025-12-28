@@ -1,6 +1,6 @@
 import pytest
 from src.parsers.extractors.legal_reference_extractor import LegalReferenceExtractor
-from src.parsers.utils.text_formatter import TextFormatter
+from src.common.text_formatter import TextFormatter
 
 
 @pytest.fixture

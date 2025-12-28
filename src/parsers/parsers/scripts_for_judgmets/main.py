@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 from typing import Dict, Tuple
 
-from src.parsers.utils.text_formatter import TextFormatter
+from src.common.text_formatter import TextFormatter
 
 # Fix import path - must be before any other imports
 CURRENT_FILE = Path(__file__).resolve()

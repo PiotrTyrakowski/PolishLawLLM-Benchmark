@@ -10,7 +10,7 @@ from src.benchmark_framework.metrics.tfidf_rouge_n import TFIDFRougeNMetric
 from src.benchmark_framework.metrics.rouge_w import RougeWMetric
 from src.parsers.utils.file_utils import FileOperations
 from src.parsers.extractors.legal_reference_extractor import LegalReferenceExtractor
-from src.parsers.utils.text_formatter import TextFormatter
+from src.common.text_formatter import TextFormatter
 
 app = typer.Typer(help="CLI for calculating metrics on benchmark results")
 
