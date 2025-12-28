@@ -16,7 +16,6 @@ class LegalBasisService:
         self.corpus_year_dir = corpus_year_dir
         self.corpuses: Dict[str, Dict[str, str]] = {}
         self.basis_extractor = LegalReferenceExtractor()
-        self.formatter = TextFormatter()
         self._load_corpuses()
 
     def _load_corpuses(self) -> None:
@@ -81,7 +80,7 @@ class LegalBasisService:
         if not article_num or not code_abbr:
             raise ValueError(f"Invalid legal basis: {legal_basis}")
 
-        formatted_code = self.basis_extractor.format_code_abbreviation(code_abbr)
+        formatted_code = TextFormatter.format_code_abbreviation(code_abbr)
         corpus = self.corpuses.get(formatted_code)
 
         if not corpus:

@@ -10,6 +10,7 @@ from src.benchmark_framework.metrics.tfidf_rouge_n import TFIDFRougeNMetric
 from src.benchmark_framework.metrics.rouge_w import RougeWMetric
 from src.parsers.utils.file_utils import FileOperations
 from src.parsers.extractors.legal_reference_extractor import LegalReferenceExtractor
+from src.parsers.utils.text_formatter import TextFormatter
 
 app = typer.Typer(help="CLI for calculating metrics on benchmark results")
 
@@ -54,9 +55,7 @@ def process_entry(entry: Dict[str, Any], corpuses_path: Path) -> Dict[str, Any]:
         legal_basis = entry["legal_basis"]
         legal_basis_extractor = LegalReferenceExtractor()
         legal_basis_reference = legal_basis_extractor.extract(legal_basis)
-        code_abbr = LegalReferenceExtractor.format_code_abbreviation(
-            legal_basis_reference.code
-        )
+        code_abbr = TextFormatter.format_code_abbreviation(legal_basis_reference.code)
 
         for metric in metrics:
             text_metrics[metric.name] = metric(model_text, reference_text, code_abbr)

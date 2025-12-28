@@ -22,8 +22,3 @@ class LegalReferenceExtractor(BaseExtractor):
             point=point_match.group(1) if point_match else None,
             code=code_match.group(1) if code_match else None,
         )
-
-    @staticmethod
-    def format_code_abbreviation(abbreviation: str) -> str:
-        """Format code abbreviation for file lookup."""
-        return abbreviation.replace(".", "").replace(" ", "").lower()

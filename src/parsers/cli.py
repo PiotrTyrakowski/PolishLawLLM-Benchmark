@@ -79,7 +79,6 @@ def parse(
                 console.print(
                     f"[yellow]Warning: Corpus directory for year {year} not found at '{corpus_year_dir}', skipping all exams for this year[/yellow]"
                 )
-                # Advance progress for skipped exams
                 progress.advance(task, advance=len(exam_types))
                 failed += len(exam_types)
                 continue

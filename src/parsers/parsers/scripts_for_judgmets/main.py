@@ -3,6 +3,8 @@ import sys
 from pathlib import Path
 from typing import Dict, Tuple
 
+from src.parsers.utils.text_formatter import TextFormatter
+
 # Fix import path - must be before any other imports
 CURRENT_FILE = Path(__file__).resolve()
 REPO_ROOT = CURRENT_FILE.parents[3]
@@ -44,7 +46,7 @@ def extract_legal_content(
     if not legal_reference.article or not legal_reference.code:
         raise ValueError(f"Invalid legal basis: {legal_basis}")
 
-    formatted_code = extractor.format_code_abbreviation(legal_reference.code)
+    formatted_code = TextFormatter.format_code_abbreviation(legal_reference.code)
     parser = parser_cache.get(formatted_code)
     if not parser:
         raise ValueError(f"No parser available for code '{formatted_code}'")

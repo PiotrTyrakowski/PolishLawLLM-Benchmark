@@ -1,5 +1,6 @@
 import pytest
 from src.parsers.extractors.legal_reference_extractor import LegalReferenceExtractor
+from src.parsers.utils.text_formatter import TextFormatter
 
 
 @pytest.fixture
@@ -128,5 +129,5 @@ def test_parse_different_code_abbreviations(extractor, legal_basis, expected_cod
 )
 def test_format_code_abbreviation(input_abbr, expected_output):
     """Test formatting of various code abbreviations."""
-    result = LegalReferenceExtractor.format_code_abbreviation(input_abbr)
+    result = TextFormatter.format_code_abbreviation(input_abbr)
     assert result == expected_output
