@@ -10,7 +10,7 @@ from rich.progress import (
 )
 
 from src.parsers.parsers.getters import get_legal_base_parser
-from src.parsers.utils.file_utils import FileOperations
+from src.common.file_operations import FileOperations
 
 app = typer.Typer(help="Extract articles from legal PDF documents")
 console = Console()

@@ -13,7 +13,7 @@ from src.parsers.parsers.getters import get_questions_parser, get_answers_parser
 from src.parsers.services.exam_service import ExamService
 from src.parsers.services.legal_basis_service import LegalBasisService
 from src.parsers.utils.discover_exams import discover_exams
-from src.parsers.utils.file_utils import FileOperations
+from src.common.file_operations import FileOperations
 
 app = typer.Typer()
 console = Console()
