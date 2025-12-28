@@ -1,7 +1,7 @@
 import re
 from typing import Dict, Optional
 from src.parsers.extractors.base_extractor import BaseExtractor
-from src.parsers.utils.text_utils import TextFormatter
+from src.parsers.utils.text_formatter import TextFormatter
 
 
 class LegalContentExtractor(BaseExtractor):

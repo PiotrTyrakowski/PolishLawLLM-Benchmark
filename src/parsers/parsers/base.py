@@ -1,13 +1,21 @@
-from abc import ABC, abstractmethod
-from typing import List, Generic, TypeVar, Tuple
 from pathlib import Path
 
-T = TypeVar("T")
+from src.parsers.extractors.base_extractor import BaseExtractor
+from src.parsers.pdf_readers.base_pdf_reader import BasePdfReader
 
 
-class BaseParser(ABC, Generic[T]):
-    def __init__(self, file_path: Path):
+class BaseParser:
+    def __init__(
+        self,
+        file_path: Path,
+        extractor: BaseExtractor,
+        pdf_reader: BasePdfReader,
+        start_page: int = 1,
+    ):
         self.file_path = file_path
+        self.extractor = extractor
+        self.pdf_reader = pdf_reader
+        self.start_page = start_page
         self._validate_file()
 
     def _validate_file(self) -> None:
@@ -15,12 +23,7 @@ class BaseParser(ABC, Generic[T]):
         if not self.file_path.exists():
             raise FileNotFoundError(f"File not found: {self.file_path}")
 
-    @abstractmethod
-    def parse(self) -> List[T]:
+    def parse(self):
         """Parse the file and return domain objects."""
-        pass
-
-    @abstractmethod
-    def validate(self, item: T) -> Tuple[bool, List[str]]:
-        """Validate a single parsed item."""
-        pass
+        text = self.pdf_reader.read(self.file_path, start_page=self.start_page)
+        return self.extractor.extract(text)

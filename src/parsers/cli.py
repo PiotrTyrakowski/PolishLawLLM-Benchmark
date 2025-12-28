@@ -1,8 +1,6 @@
 import typer
 from pathlib import Path
 
-from src.parsers.parsers.pdf_question_parser import PDFQuestionParser
-from src.parsers.parsers.pdf_answer_parser import PDFAnswerParser
 from src.parsers.services.exam_service import ExamService
 from src.parsers.services.legal_basis_service import LegalBasisService
 from src.parsers.repositories.jsonl_repository import JSONLRepository
@@ -77,9 +75,6 @@ def parse(
 
             try:
                 # Create parsers
-                question_parser = PDFQuestionParser(files["questions"])
-                answer_parser = PDFAnswerParser(files["answers"])
-
                 exam_service = ExamService(
                     question_parser=question_parser,
                     answer_parser=answer_parser,

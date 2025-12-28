@@ -1,5 +1,5 @@
 import pytest
-from src.parsers.extractors.legal_basis_extractor import LegalReferenceExtractor
+from src.parsers.extractors.legal_reference_extractor import LegalReferenceExtractor
 
 
 @pytest.fixture

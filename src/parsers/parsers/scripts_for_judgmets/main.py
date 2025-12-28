@@ -11,7 +11,7 @@ if str(REPO_ROOT) not in sys.path:
 
 import typer
 
-from src.parsers.extractors.legal_basis_extractor import LegalReferenceExtractor
+from src.parsers.extractors.legal_reference_extractor import LegalReferenceExtractor
 from src.parsers.parsers.legal_base_parser import LegalBaseParser
 
 DEFAULT_JUDGMENTS_DIR = REPO_ROOT / "data" / "judgments"

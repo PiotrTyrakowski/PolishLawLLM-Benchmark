@@ -9,7 +9,8 @@ from rich.progress import (
     TaskProgressColumn,
 )
 
-from src.parsers.parsers.legal_base_parser import LegalBaseParser
+from src.parsers.parsers.getters import get_legal_base_parser
+from src.parsers.utils.file_utils import FileOperations
 
 app = typer.Typer(help="Extract articles from legal PDF documents")
 console = Console()
@@ -18,8 +19,9 @@ console = Console()
 def process_pdf(pdf_path: Path, output_dir: Path) -> bool:
     try:
         output_path = output_dir / f"{pdf_path.stem}.json"
-        parser = LegalBaseParser(pdf_path)
-        parser.save_all_articles(output_path=output_path)
+        parser = get_legal_base_parser(pdf_path)
+        articles = parser.parse()
+        FileOperations.save_json(articles, output_path)
         return True
     except Exception as e:
         console.print(f"[red]Error processing {pdf_path.name}: {e}[/red]")
