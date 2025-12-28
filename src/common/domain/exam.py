@@ -21,11 +21,9 @@ class ExamResult(TypedDict):
     model_legal_basis_content: str
 
 
-@dataclass
 class ExamQuestion(Task):
     """
     Represents a legal exam question with multiple choice answers.
-    Unified class replacing parsers.domain.ExamTask and benchmark_framework.types.Exam.
     """
 
     exam_type: str

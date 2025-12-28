@@ -4,7 +4,7 @@ from src.parsers.extractors.base_extractor import BaseExtractor
 from src.parsers.pdf_readers.base_pdf_reader import BasePdfReader
 
 
-class BaseParser:
+class Parser:
     def __init__(
         self,
         file_path: Path,

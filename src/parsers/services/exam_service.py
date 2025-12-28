@@ -1,5 +1,5 @@
 from src.common.domain.exam import Exam
-from src.parsers.parsers.base import BaseParser
+from src.parsers.parsers.parser import Parser
 from src.parsers.services.legal_basis_service import LegalBasisService
 
 
@@ -8,8 +8,8 @@ class ExamService:
 
     def __init__(
         self,
-        question_parser: BaseParser,
-        answer_parser: BaseParser,
+        question_parser: Parser,
+        answer_parser: Parser,
         legal_basis_service: LegalBasisService,
     ):
         self.question_parser = question_parser

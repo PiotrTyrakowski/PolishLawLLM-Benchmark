@@ -1,7 +1,7 @@
 import typer
 import re
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 
 
 def discover_exams(pdf_dir: Path) -> Dict[str, Dict[str, Dict[str, Path]]]:
@@ -59,7 +59,7 @@ def discover_exams(pdf_dir: Path) -> Dict[str, Dict[str, Dict[str, Path]]]:
     return exams
 
 
-def _determine_exam_type(filename: str) -> str:
+def _determine_exam_type(filename: str) -> Optional[str]:
     """Determine exam type from filename."""
     filename_lower = filename.lower()
 
