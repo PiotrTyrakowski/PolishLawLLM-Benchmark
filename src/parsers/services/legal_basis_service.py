@@ -3,10 +3,10 @@ from pathlib import Path
 from typing import Dict, List
 from src.parsers.domain.question import Question
 from src.parsers.domain.answer import Answer
-from src.domain.exam import ExamQuestion
+from src.common.domain.exam import ExamQuestion
 from src.parsers.extractors.legal_reference_extractor import LegalReferenceExtractor
 from src.parsers.extractors.legal_content_extractor import LegalContentExtractor
-from src.parsers.utils.text_formatter import TextFormatter
+from src.common.text_formatter import TextFormatter
 
 
 class LegalBasisService:

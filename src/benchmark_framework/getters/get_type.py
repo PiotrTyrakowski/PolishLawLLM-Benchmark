@@ -1,6 +1,6 @@
-from src.common.domain import ExamQuestion
-from src.common.domain import Judgment
-from src.common.domain import Task
+from src.common.domain.exam import ExamQuestion
+from src.common.domain.judgment import Judgment
+from src.common.domain.task import Task
 
 TYPE_REGISTRY = {
     "exams": ExamQuestion,

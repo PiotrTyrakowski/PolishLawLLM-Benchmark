@@ -1,4 +1,4 @@
-from src.common.domain import Exam
+from src.common.domain.exam import Exam
 from src.parsers.parsers.base import BaseParser
 from src.parsers.services.legal_basis_service import LegalBasisService
 
