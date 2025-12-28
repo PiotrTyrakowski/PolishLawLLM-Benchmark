@@ -106,8 +106,5 @@ class Exam:
         data = []
         for t in self.tasks:
             d = t.to_dict()
-            # Ensure consistency
-            d["exam_type"] = self.exam_type
-            d["year"] = self.year
             data.append(d)
         return data

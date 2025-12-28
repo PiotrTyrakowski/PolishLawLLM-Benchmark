@@ -2,6 +2,7 @@ from src.domain.exam import Exam
 from src.parsers.domain.question import Question
 from src.parsers.domain.answer import Answer
 from src.parsers.parsers.base import BaseParser
+from src.parsers.parsers.getters import get_questions_parser
 from src.parsers.services.legal_basis_service import LegalBasisService
 
 
@@ -10,8 +11,8 @@ class ExamService:
 
     def __init__(
         self,
-        question_parser: BaseParser[Question],
-        answer_parser: BaseParser[Answer],
+        question_parser: BaseParser,
+        answer_parser: BaseParser,
         legal_basis_service: LegalBasisService,
     ):
         self.question_parser = question_parser

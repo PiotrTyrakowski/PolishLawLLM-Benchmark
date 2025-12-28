@@ -1,12 +1,22 @@
-import typer
 from pathlib import Path
+import typer
+from rich.console import Console
+from rich.progress import (
+    Progress,
+    SpinnerColumn,
+    TextColumn,
+    BarColumn,
+    TaskProgressColumn,
+)
 
+from src.parsers.parsers.getters import get_questions_parser, get_answers_parser
 from src.parsers.services.exam_service import ExamService
 from src.parsers.services.legal_basis_service import LegalBasisService
-from src.parsers.repositories.jsonl_repository import JSONLRepository
-from src.parsers.utils.exam_file_discovery import ExamFileDiscovery
+from src.parsers.utils.discover_exams import discover_exams
+from src.parsers.utils.file_utils import FileOperations
 
 app = typer.Typer()
+console = Console()
 
 
 @app.command()
@@ -27,76 +37,110 @@ def parse(
     This command processes exam PDFs from the specified directory,
     extracts legal basis content from pre-generated corpus files,
     and saves the results in JSONL format.
+
+    python -m src.parsers.cli data/pdfs/ data/corpuses/ data/tasks/exams/
     """
     if not pdfs_path.exists():
-        typer.echo(f"Error: Directory '{pdfs_path}' not found", err=True)
+        console.print(f"[red]Error: Directory '{pdfs_path}' not found[/red]")
         raise typer.Exit(code=1)
 
     if not corpuses_path.exists():
-        typer.echo(f"Error: Corpuses directory '{corpuses_path}' not found", err=True)
+        console.print(
+            f"[red]Error: Corpuses directory '{corpuses_path}' not found[/red]"
+        )
         raise typer.Exit(code=1)
 
-    # Initialize shared services
-    repository = JSONLRepository(output_path)
-
-    # Discover exam files
-    exams = ExamFileDiscovery.discover_exams(pdfs_path)
-
+    exams = discover_exams(pdfs_path)
     if not exams:
-        typer.echo("No exam files found in directory")
+        console.print("[yellow]No exam files found in directory[/yellow]")
         raise typer.Exit(code=1)
 
-    # Process each exam
-    total_processed = 0
-    for year, exam_types in exams.items():
-        # Check if corpus exists for this year
-        corpus_year_dir = corpuses_path / year
-        if not corpus_year_dir.exists():
-            typer.echo(
-                f"\n⚠ Warning: Corpus directory for year {year} not found at '{corpus_year_dir}', skipping all exams for this year"
-            )
-            continue
+    total_exams = sum(len(exam_types) for exam_types in exams.values())
+    console.print(
+        f"[cyan]Found {total_exams} exam(s) in {len(exams)} year groups[/cyan]"
+    )
+    console.print(f"[cyan]Output directory: {output_path}[/cyan]\n")
 
-        legal_basis_service = LegalBasisService(corpus_year_dir)
+    successful = 0
+    failed = 0
 
-        for exam_type, files in exam_types.items():
-            typer.echo(f"\n{'=' * 60}")
-            typer.echo(f"Processing: {exam_type} - {year}")
-            typer.echo(f"{'=' * 60}")
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        BarColumn(),
+        TaskProgressColumn(),
+        console=console,
+    ) as progress:
+        task = progress.add_task("[green]Processing exams...", total=total_exams)
 
-            # Validate required files
-            if "questions" not in files:
-                typer.echo("  ⚠ Questions file not found, skipping")
+        for year, exam_types in exams.items():
+            corpus_year_dir = corpuses_path / year
+            if not corpus_year_dir.exists():
+                console.print(
+                    f"[yellow]Warning: Corpus directory for year {year} not found at '{corpus_year_dir}', skipping all exams for this year[/yellow]"
+                )
+                # Advance progress for skipped exams
+                progress.advance(task, advance=len(exam_types))
+                failed += len(exam_types)
                 continue
 
-            if "answers" not in files:
-                typer.echo("  ⚠ Answers file not found, skipping")
-                continue
+            legal_basis_service = LegalBasisService(corpus_year_dir)
 
-            try:
-                # Create parsers
-                exam_service = ExamService(
-                    question_parser=question_parser,
-                    answer_parser=answer_parser,
-                    legal_basis_service=legal_basis_service,
+            for exam_type, files in exam_types.items():
+                progress.update(
+                    task, description=f"[green]Processing: {exam_type} - {year}"
                 )
 
-                exam = exam_service.process_exam(exam_type=exam_type, year=int(year))
+                if "questions" not in files:
+                    console.print(
+                        f"[yellow]Questions file not found for {exam_type} {year}, skipping[/yellow]"
+                    )
+                    progress.advance(task)
+                    failed += 1
+                    continue
 
-                # Save exam
-                repository.save(exam)
+                if "answers" not in files:
+                    console.print(
+                        f"[yellow]Answers file not found for {exam_type} {year}, skipping[/yellow]"
+                    )
+                    progress.advance(task)
+                    failed += 1
+                    continue
 
-                typer.echo(f"  ✓ Successfully processed {len(exam.tasks)} tasks")
-                total_processed += 1
+                try:
+                    exam_service = ExamService(
+                        question_parser=get_questions_parser(
+                            file_path=files["questions"]
+                        ),
+                        answer_parser=get_answers_parser(file_path=files["answers"]),
+                        legal_basis_service=legal_basis_service,
+                    )
 
-            except Exception as e:
-                typer.echo(f"  ✗ Error processing exam: {str(e)}", err=True)
-                continue
+                    exam = exam_service.process_exam(
+                        exam_type=exam_type, year=int(year)
+                    )
+
+                    # Save exam
+                    output_file = output_path / str(year) / f"{exam.exam_type}.jsonl"
+                    FileOperations.save_jsonl(exam.to_jsonl_data(), output_file)
+
+                    console.print(f"{exam_type} {year} ({len(exam.tasks)} tasks)")
+                    successful += 1
+
+                except Exception as e:
+                    console.print(
+                        f"[red]Error processing {exam_type} {year}: {str(e)}[/red]"
+                    )
+                    failed += 1
+
+                progress.advance(task)
 
     # Summary
-    typer.echo(f"\n{'=' * 60}")
-    typer.echo(f"Processing complete: {total_processed} exam(s) processed")
-    typer.echo(f"{'=' * 60}")
+    console.print("\n[bold]Summary:[/bold]")
+    console.print(f"  Total exams: {total_exams}")
+    console.print(f"  [green]Successful: {successful}[/green]")
+    if failed > 0:
+        console.print(f"  [red]Failed: {failed}[/red]")
 
 
 if __name__ == "__main__":
