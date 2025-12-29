@@ -11,20 +11,21 @@ class LegalContentExtractor(BaseExtractor):
         """Extracts all articles from the text."""
         articles = {}
         article_pattern = (
-            r"Art\.\s+(\d+[a-z]?)\.\s+"  # Capture article number
+            r"Art\.\s+(\d+[a-z]*)\.\s+"  # Capture article number
             r"(.*?)"  # Capture article content (non-greedy)
             r"(?="  # Lookahead for:
-            r"(?:Art\.\s+\d+[a-z]?\s*\.)|"  # Next article OR
-            r"(?:Rozdział\s+[IVXLCDM]+)|"  # Chapter heading OR
-            r"(?:Rozdział\s+\d+)|"
+            r"(?:Art\.\s+\d+[a-z]*\s*\.)|"  # Next article OR
+            r"(?:KSIĘGA\s+[A-Z]+)|"  # Book heading OR
+            r"(?:CZĘŚĆ\s+[A-Z]+)|"  # Part heading OR
             r"(?:TYTUŁ\s+[IVXLCDM]+)|"  # Title heading OR
             r"(?:DZIAŁ\s+[IVXLCDM]+)|"  # Section heading OR
+            r"(?:Rozdział\s+[IVXLCDM\d]+)|"  # Chapter heading OR
             r"$"  # End of document
             r")"
         )
         matches = re.finditer(article_pattern, text, re.DOTALL)
         for match in matches:
-            articles[match.group(1)] = match.group(2)
+            articles[match.group(1)] = match.group(2).strip()
         return articles
 
     @staticmethod
