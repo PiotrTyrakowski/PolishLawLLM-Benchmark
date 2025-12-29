@@ -27,10 +27,10 @@ def get_answers_parser(file_path: Path) -> Parser:
     )
 
 
-def get_legal_base_parser(file_path: Path) -> Parser:
+def get_legal_base_parser(file_path: Path, start_page: int) -> Parser:
     return Parser(
         file_path=file_path,
         extractor=LegalContentExtractor(),
         pdf_reader=PdfLegalTextReader(),
-        start_page=1,
+        start_page=start_page,
     )

@@ -36,3 +36,6 @@ kk_extracted.txt
 
 # macOS
 .DS_Store
+
+# debug
+debug/
