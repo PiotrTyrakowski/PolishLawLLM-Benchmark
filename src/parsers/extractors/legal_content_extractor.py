@@ -31,10 +31,10 @@ class LegalContentExtractor(BaseExtractor):
     def get_paragraph(article_text: str, paragraph_number: str) -> str:
         """Get specific paragraph from article."""
         paragraph_pattern = (
-            rf"^(?:\s{{11}}\s*)?"
+            rf"^(?:\s{{10}}\s*)?"
             rf"§\s+{paragraph_number}\.\s+"
             rf"(.+?)"
-            rf"(?=^\s{{11}}\s*§\s+\d+[a-z]*\.|\Z)"
+            rf"(?=^\s{{10}}\s*§\s+\d+[a-z]*\.|\Z)"
         )
 
         match = re.search(paragraph_pattern, article_text, re.MULTILINE | re.DOTALL)
