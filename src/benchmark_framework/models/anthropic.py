@@ -3,7 +3,6 @@ import anthropic
 
 from src.benchmark_framework.configs.runner_config import RunnerConfig
 from src.benchmark_framework.models.base_model import BaseModel
-from src.benchmark_framework.constants import MAX_NEW_TOKENS
 from src.benchmark_framework.configs.model_config import ModelConfig
 
 
@@ -29,7 +28,6 @@ class AnthropicModel(BaseModel):
         """
         message = self.client.messages.create(
             model=self.model_name,
-            max_tokens=MAX_NEW_TOKENS,
             system=system_prompt,
             messages=[
                 {"role": "user", "content": prompt},
