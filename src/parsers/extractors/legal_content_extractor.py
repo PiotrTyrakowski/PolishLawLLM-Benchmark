@@ -4,6 +4,8 @@ from src.parsers.extractors.base_extractor import BaseExtractor
 from src.common.text_formatter import TextFormatter
 from src.parsers.extractors.regex_patterns import RegexPatterns
 
+PARAGRAPH_INDENT_SPACES = 10
+
 
 class LegalContentExtractor(BaseExtractor):
     """Extracts articles, paragraphs, and points from full legal code text."""
@@ -33,10 +35,10 @@ class LegalContentExtractor(BaseExtractor):
     def get_paragraph(article_text: str, paragraph_number: str) -> str:
         """Get specific paragraph from article."""
         paragraph_pattern = (
-            rf"^(?:\s{{10}}\s*)?"
+            rf"^(?:\s{{{PARAGRAPH_INDENT_SPACES}}}\s*)?"
             rf"§\s+{paragraph_number}\.\s+"
             rf"(.+?)"
-            rf"(?=^\s{{10}}\s*§\s+{RegexPatterns.ENTITY_ID}\.|\Z)"
+            rf"(?=^\s{{{PARAGRAPH_INDENT_SPACES}}}\s*§\s+{RegexPatterns.ENTITY_ID}\.|\Z)"
         )
 
         match = re.search(paragraph_pattern, article_text, re.MULTILINE | re.DOTALL)
