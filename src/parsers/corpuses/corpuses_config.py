@@ -1,9 +1,3 @@
-"""
-Configuration for filtering articles when processing legal PDF corpuses.
-
-Structure: year -> kodeks_name -> list of ArticleFilter entries to skip
-"""
-
 from dataclasses import dataclass
 from typing import Dict, List, Optional
 
@@ -14,29 +8,8 @@ class ArticleFilter:
     paragraph: Optional[str] = None
     point: Optional[str] = None
 
-    def matches(
-        self, article: str, paragraph: Optional[str] = None, point: Optional[str] = None
-    ) -> bool:
-        """
-        Check if the given article/paragraph/point matches this filter.
-
-        If paragraph or point is None in the filter, it matches any value.
-        """
-        if self.article != article:
-            return False
-
-        # temporary
-        return True
-
-        # If filter has paragraph specified, it must match
-        if self.paragraph is not None and self.paragraph != paragraph:
-            return False
-
-        # If filter has point specified, it must match
-        if self.point is not None and self.point != point:
-            return False
-
-        return True
+    def matches(self, article: str) -> bool:
+        return self.article == article
 
 
 ArticleSkipConfig = Dict[int, Dict[str, List[ArticleFilter]]]
@@ -90,22 +63,16 @@ START_PAGE = {
 }
 
 
-def should_skip_article(
-    year: int,
-    kodeks_name: str,
-    article: str,
-    paragraph: Optional[str] = None,
-    point: Optional[str] = None,
-) -> bool:
+def should_skip_article(year: int, code_abbr: str, article: str) -> bool:
     if year not in ARTICLES_TO_SKIP:
         return False
 
     year_config = ARTICLES_TO_SKIP[year]
-    if kodeks_name not in year_config:
+    if code_abbr not in year_config:
         return False
 
-    for filter_entry in year_config[kodeks_name]:
-        if filter_entry.matches(article, paragraph, point):
+    for filter_entry in year_config[code_abbr]:
+        if filter_entry.matches(article):
             return True
 
     return False

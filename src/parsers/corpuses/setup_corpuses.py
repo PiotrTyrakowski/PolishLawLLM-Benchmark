@@ -11,29 +11,38 @@ from rich.progress import (
 
 from src.parsers.parsers.getters import get_legal_base_parser
 from src.common.file_operations import FileOperations
-from src.parsers.corpuses.corpuses_config import START_PAGE
+from src.parsers.corpuses.corpuses_config import START_PAGE, should_skip_article
 
 app = typer.Typer(help="Extract articles from legal PDF documents")
 console = Console()
 
 
-def get_start_page(pdf_path: Path, year: int) -> int:
-    kodeks_name = pdf_path.stem.lower()
+def get_start_page(code_abbr: str, year: int) -> int:
+    if year in START_PAGE and code_abbr in START_PAGE[year]:
+        return START_PAGE[year][code_abbr]
+    raise ValueError(f"Start page not defined for {code_abbr} in year {year}")
 
-    if year in START_PAGE and kodeks_name in START_PAGE[year]:
-        return START_PAGE[year][kodeks_name]
 
-    print("WARNING!!! No start page found for kodeks: ", kodeks_name)
-    return 1
+def filter_articles(articles: dict, year: int, code_abbr: str) -> dict:
+    """Filter out articles that should be skipped based on the configuration."""
+    return {
+        article_key: article_value
+        for article_key, article_value in articles.items()
+        if not should_skip_article(year, code_abbr, article_key)
+    }
 
 
 def process_pdf(pdf_path: Path, output_dir: Path, year: int) -> bool:
     try:
         output_path = output_dir / f"{pdf_path.stem}.json"
-        start_page = get_start_page(pdf_path, year)
+        code_abbr = pdf_path.stem.lower()
+        start_page = get_start_page(code_abbr, year)
+
         parser = get_legal_base_parser(pdf_path, start_page)
         articles = parser.parse()
-        FileOperations.save_json(articles, output_path)
+
+        filtered_articles = filter_articles(articles, year, code_abbr)
+        FileOperations.save_json(filtered_articles, output_path)
         return True
     except Exception as e:
         console.print(f"[red]Error processing {pdf_path.name}: {e}[/red]")
