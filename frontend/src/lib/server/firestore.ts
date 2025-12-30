@@ -127,8 +127,3 @@ export async function getModelDetail(modelId: string): Promise<ModelDetail | nul
     judgments,
   };
 }
-
-export async function getAllModelIds(): Promise<string[]> {
-  const modelsSnap = await adminDb.collection(COLLECTION).get();
-  return modelsSnap.docs.map((doc) => doc.id);
-}
