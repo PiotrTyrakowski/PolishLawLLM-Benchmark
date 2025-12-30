@@ -168,6 +168,14 @@ def load_corpus(code: str) -> dict:
             "za przestępstwa określone w art. 228 § 1 i 3–6, art. 229 § 1 i 3–5, art. 230 § 1, art. 230a § 1, art. 250a § 1 i 2, art. 271 § 3, art. 296a § 1, 2 i 4, art. 305 § 1–4 oraz art. 306b.",
             "kk",
         ),
+        # kpc
+        (
+            "14",
+            None,
+            None,
+            "(uchylony)",
+            "kpc",
+        ),
     ],
 )
 def test_extract_legal_content(
