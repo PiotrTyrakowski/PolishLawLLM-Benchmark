@@ -59,10 +59,3 @@ export interface ModelDetail {
   exams: ExamData[];
   judgments: JudgmentData | null;
 }
-
-// ===== Utility types for metric display =====
-export interface MetricDisplayInfo {
-  key: string;
-  label: string;
-  isPercentage: boolean;
-}
