@@ -42,8 +42,7 @@ def test_parse_returns_answer_objects(parser):
 
 def test_parse_extracts_all_answers(parser):
     answers = parser.parse()
-    # 2025 exam has 76 answers of the supported format
-    assert len(answers) == 76
+    assert len(answers) == 80
 
 
 def test_parse_first_answer_content(parser):
@@ -74,7 +73,7 @@ def test_parse_answer_with_superindex(parser):
     assert answer is not None
     assert answer.question_id == 100
     assert answer.answer == "C"
-    assert "SKIP" in answer.legal_basis
+    assert answer.legal_basis == "art. 300^73 § 1 k.s.h."
 
 
 def test_parse_at_the_bottom_of_the_page(parser):

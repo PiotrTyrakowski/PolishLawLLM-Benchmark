@@ -48,6 +48,12 @@ from src.parsers.extractors.answer_extractor import AnswerExtractor
             "A",
             "art. 39 pkt 3 k.k.",
         ),
+        (
+            "1. A art. 39^1 pkt 3 k.k.",
+            1,
+            "A",
+            "art. 39^1 pkt 3 k.k.",
+        ),
     ],
 )
 def test_extract_answers_regexp(text, question_number, correct_answer, legal_basis):

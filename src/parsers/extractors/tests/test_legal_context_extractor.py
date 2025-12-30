@@ -16,7 +16,7 @@ def get_corpus_path(code: str) -> Path:
         / ".."
         / ".."
         / "data"
-        / "corpuses2"
+        / "corpuses"
         / "2025"
         / f"{code}.json"
     )
