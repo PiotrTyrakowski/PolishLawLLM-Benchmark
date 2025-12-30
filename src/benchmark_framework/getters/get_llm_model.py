@@ -1,5 +1,7 @@
 import re
 
+from benchmark_framework.models.anthropic import AnthropicModel
+from benchmark_framework.models.openai import OpenAIModel
 from src.benchmark_framework.models.base_model import BaseModel
 from src.benchmark_framework.models.bielik import BielikModel
 from src.benchmark_framework.models.gemini import GeminiModel
@@ -14,6 +16,8 @@ MODEL_REGISTRY = {
     "bielik": BielikModel,
     "deepseek": NvidiaModel,
     "meta": NvidiaModel,
+    "gpt": OpenAIModel,
+    "claude": AnthropicModel,
     "CYFRAGOVPL": NvidiaNimModel,
 }
 
