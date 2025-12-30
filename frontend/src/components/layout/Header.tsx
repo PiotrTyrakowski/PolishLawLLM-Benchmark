@@ -18,14 +18,6 @@ export default function Header() {
               </span>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <a
-              href="#"
-              className="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors"
-            >
-              Metodologia
-            </a>
-          </div>
         </div>
       </div>
     </nav>

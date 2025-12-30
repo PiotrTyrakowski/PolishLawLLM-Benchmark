@@ -45,20 +45,6 @@ export default function ModelHeroSection({
         </div>
 
         <div className="flex flex-col md:flex-row md:items-start gap-6">
-          <div
-            className={`h-20 w-20 rounded-2xl ${
-              profile.isPolish
-                ? 'bg-white border-2 border-amber-200'
-                : 'bg-indigo-600'
-            } text-white flex items-center justify-center text-2xl font-bold shadow-lg flex-shrink-0`}
-          >
-            {profile.isPolish ? (
-              <span className="text-4xl">PL</span>
-            ) : (
-              <span>{profile.name.substring(0, 2).toUpperCase()}</span>
-            )}
-          </div>
-
           <div className="flex-1">
             <div className="flex flex-wrap items-center gap-3 mb-2">
               <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
