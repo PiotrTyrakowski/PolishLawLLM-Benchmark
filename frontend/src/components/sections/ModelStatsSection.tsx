@@ -29,38 +29,20 @@ function StatCard({ label, value, color = 'text-slate-900' }: { label: string; v
   );
 }
 
-function averageMetrics(exams: Array<{ accuracyMetrics: Record<string, number>; textMetrics: Record<string, number> }>): { accuracyMetrics: Record<string, number>; textMetrics: Record<string, number> } {
-  if (exams.length === 0) {
-    return { accuracyMetrics: {}, textMetrics: {} };
-  }
-
-  const accKeys = new Set<string>();
-  const textKeys = new Set<string>();
-  exams.forEach(e => {
-    Object.keys(e.accuracyMetrics).forEach(k => accKeys.add(k));
-    Object.keys(e.textMetrics).forEach(k => textKeys.add(k));
-  });
-
-  const accuracyMetrics: Record<string, number> = {};
-  accKeys.forEach(key => {
-    const values = exams.map(e => e.accuracyMetrics[key]).filter(v => v !== undefined);
-    accuracyMetrics[key] = values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0;
-  });
-
-  const textMetrics: Record<string, number> = {};
-  textKeys.forEach(key => {
-    const values = exams.map(e => e.textMetrics[key]).filter(v => v !== undefined);
-    textMetrics[key] = values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0;
-  });
-
-  return { accuracyMetrics, textMetrics };
-}
-
 export default function ModelStatsSection({ data }: ModelStatsSectionProps) {
   const { profile, exams, judgments } = data;
   const accentColor = profile.isPolish ? 'bg-amber-500' : 'bg-indigo-600';
 
-  const examsOverall = useMemo(() => averageMetrics(exams), [exams]);
+  // Get the 'all' document for overall stats
+  const examsOverall = useMemo(() => {
+    const allDoc = exams.find(e => e.examType === 'all');
+    return allDoc
+      ? { accuracyMetrics: allDoc.accuracyMetrics, textMetrics: allDoc.textMetrics }
+      : { accuracyMetrics: {}, textMetrics: {} };
+  }, [exams]);
+
+  // Filter out 'all' document for the breakdown table
+  const individualExams = useMemo(() => exams.filter(e => e.examType !== 'all'), [exams]);
 
   const { accuracyKeys: examAccKeys, textKeys: examTextKeys } = useMemo(() => {
     if (!exams) return { accuracyKeys: [], textKeys: [] };
@@ -110,7 +92,7 @@ export default function ModelStatsSection({ data }: ModelStatsSectionProps) {
         </div>
 
         {/* Breakdown table */}
-        {exams.length > 0 && (
+        {individualExams.length > 0 && (
           <div className="bg-white shadow-xl shadow-slate-200/50 rounded-2xl border border-slate-200 overflow-hidden">
             <div className="px-6 py-4 bg-slate-50 border-b border-slate-200">
               <h3 className="font-semibold text-slate-900">Wyniki wg typu egzaminu i roku</h3>
@@ -150,7 +132,7 @@ export default function ModelStatsSection({ data }: ModelStatsSectionProps) {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-slate-100 text-sm">
-                  {exams.map((item) => (
+                  {individualExams.map((item) => (
                     <tr key={`${item.examType}-${item.year}`} className="hover:bg-slate-50 transition-colors">
                       <td className="px-6 py-4 font-medium text-slate-900">
                         {item.examType}
