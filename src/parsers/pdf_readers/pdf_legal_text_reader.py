@@ -28,12 +28,45 @@ class PdfLegalTextReader(BasePdfReader):
         self, pdf_path: Path, start_page: int = 1, min_char_size: float = 9.0
     ) -> str:
         text_parts = []
+        valid_superindex_pattern = re.compile(r"^\d*[a-z]*$")
 
         try:
             with pdfplumber.open(pdf_path) as pdf:
                 pages_to_process = pdf.pages[start_page - 1 :]
-                print(f"Loading PDF: {len(pages_to_process)} pages...")
                 for i, page in enumerate(pages_to_process, start_page):
+                    # Superindex processing
+                    chars = page.chars
+                    idx = 0
+                    total_chars = len(chars)
+
+                    while idx < total_chars:
+                        if chars[idx]["size"] < min_char_size:
+                            # Identify the full sequence (run) of small characters
+                            end = idx
+                            sequence_text = ""
+
+                            while (
+                                end < total_chars and chars[end]["size"] < min_char_size
+                            ):
+                                sequence_text += chars[end].get("text", "")
+                                end += 1
+
+                            clean_seq = sequence_text.strip()
+
+                            if (
+                                valid_superindex_pattern.match(clean_seq)
+                                and len(clean_seq) > 0
+                            ):
+                                chars[idx]["text"] = f"^{chars[idx]['text']}"
+                            else:
+                                for k in range(idx, end):
+                                    chars[k]["text"] = ""
+
+                            # Advance the main loop index to the end of this sequence
+                            idx = end
+                        else:
+                            idx += 1
+
                     horizontals = self._find_horizontal_lines(
                         page, min_length_ratio=0.2, y_tolerance=2
                     )
@@ -57,9 +90,7 @@ class PdfLegalTextReader(BasePdfReader):
                         keep_y0 = 0.0
                         keep_y1 = page_h
 
-                    filter_fn = self._make_char_filter(
-                        keep_y0=keep_y0, keep_y1=keep_y1, min_size=min_char_size
-                    )
+                    filter_fn = self._make_char_filter(keep_y0=keep_y0, keep_y1=keep_y1)
                     filtered_page = page.filter(filter_fn)
                     page_text = filtered_page.extract_text(
                         x_tolerance=3, y_tolerance=3, layout=True
@@ -97,17 +128,13 @@ class PdfLegalTextReader(BasePdfReader):
     def _make_char_filter(
         keep_y0: Optional[float] = None,
         keep_y1: Optional[float] = None,
-        min_size: float = 9.0,
     ):
         """
         Return a function usable by page.filter() that:
         - drops chars whose midpoint is outside [keep_y0, keep_y1] (if provided)
-        - drops chars smaller than min_size (superscripts)
         """
 
         def char_filter(char):
-            if "size" in char and char["size"] < min_size:
-                return False
             if keep_y0 is not None and keep_y1 is not None:
                 # compute vertical midpoint of the character box
                 y0 = char.get("y0", None)

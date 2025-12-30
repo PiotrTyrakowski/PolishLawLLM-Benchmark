@@ -2,6 +2,7 @@ import re
 from typing import Dict, Optional
 from src.parsers.extractors.base_extractor import BaseExtractor
 from src.common.text_formatter import TextFormatter
+from src.parsers.extractors.regex_patterns import RegexPatterns
 
 
 class LegalContentExtractor(BaseExtractor):
@@ -11,10 +12,10 @@ class LegalContentExtractor(BaseExtractor):
         """Extracts all articles from the text."""
         articles = {}
         article_pattern = (
-            r"Art\.\s+(\d+[a-z]*)\.\s+"  # Capture article number
+            rf"Art\.\s+({RegexPatterns.ENTITY_ID})\.\s+"  # Capture article number
             r"(.*?)"  # Capture article content (non-greedy)
             r"(?="  # Lookahead for:
-            r"(?:Art\.\s+\d+[a-z]*\s*\.)|"  # Next article OR
+            rf"(?:Art\.\s+{RegexPatterns.ENTITY_ID}\s*\.)|"  # Next article OR
             r"(?:KSIĘGA\s+[A-Z]+)|"  # Book heading OR
             r"(?:CZĘŚĆ\s+[A-Z]+)|"  # Part heading OR
             r"(?:TYTUŁ\s+[IVXLCDM]+)|"  # Title heading OR
@@ -35,7 +36,7 @@ class LegalContentExtractor(BaseExtractor):
             rf"^(?:\s{{10}}\s*)?"
             rf"§\s+{paragraph_number}\.\s+"
             rf"(.+?)"
-            rf"(?=^\s{{10}}\s*§\s+\d+[a-z]*\.|\Z)"
+            rf"(?=^\s{{10}}\s*§\s+{RegexPatterns.ENTITY_ID}\.|\Z)"
         )
 
         match = re.search(paragraph_pattern, article_text, re.MULTILINE | re.DOTALL)
@@ -57,7 +58,7 @@ class LegalContentExtractor(BaseExtractor):
             else article_text
         )
 
-        point_pattern = rf"(?:^|\s){point_number}\)\s+(.+?)(?=(?:^|\s)\d+[a-z]*\)|\Z)"
+        point_pattern = rf"(?:^|\s){point_number}\)\s+(.+?)(?=(?:^|\s){RegexPatterns.ENTITY_ID}\)|\Z)"
 
         match = re.search(point_pattern, text, re.MULTILINE | re.DOTALL)
         if not match:
