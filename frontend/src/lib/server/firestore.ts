@@ -14,21 +14,6 @@ import type {
 
 const COLLECTION = process.env.RESULTS_COLLECTION || 'results';
 
-function averageMetrics(metricsArray: Record<string, number>[]): Record<string, number> {
-  if (metricsArray.length === 0) return {};
-
-  const allKeys = new Set<string>();
-  metricsArray.forEach((m) => Object.keys(m).forEach((k) => allKeys.add(k)));
-
-  const result: Record<string, number> = {};
-  allKeys.forEach((key) => {
-    const values = metricsArray.map((m) => m[key]).filter((v) => v !== undefined);
-    result[key] = values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0;
-  });
-
-  return result;
-}
-
 function toModelSummary(id: string, data: FirestoreModel): ModelSummary {
   return {
     id,
@@ -46,27 +31,21 @@ export async function getAggregatedExams(): Promise<AggregatedModelExams[]> {
     const modelData = modelDoc.data() as FirestoreModel;
     const model = toModelSummary(modelDoc.id, modelData);
 
-    const examsSnap = await adminDb
+    // Fetch the 'all' document directly instead of averaging
+    const allDoc = await adminDb
       .collection(COLLECTION)
       .doc(modelDoc.id)
       .collection('exams')
+      .doc('all')
       .get();
 
-    if (examsSnap.empty) continue;
+    if (!allDoc.exists) continue;
 
-    const accuracyMetricsArray: Record<string, number>[] = [];
-    const textMetricsArray: Record<string, number>[] = [];
-
-    for (const examDoc of examsSnap.docs) {
-      const exam = examDoc.data() as FirestoreExam;
-      accuracyMetricsArray.push(exam.accuracy_metrics);
-      textMetricsArray.push(exam.text_metrics);
-    }
-
+    const examData = allDoc.data() as FirestoreExam;
     results.push({
       model,
-      accuracyMetrics: averageMetrics(accuracyMetricsArray),
-      textMetrics: averageMetrics(textMetricsArray),
+      accuracyMetrics: examData.accuracy_metrics,
+      textMetrics: examData.text_metrics,
     });
   }
 
