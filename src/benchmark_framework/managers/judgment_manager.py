@@ -18,8 +18,7 @@ class JudgmentManager(BaseManager):
         super().__init__(model, "judgments", tasks_path, year)
 
     def get_output_path(self, task: Judgment, results_dir: Path) -> Path:
-        filename = f"{self.task_type}.jsonl"
-        return results_dir / self.model.model_name / filename
+        return results_dir / self.model.model_name / self.task_type / "all.jsonl"
 
     def get_result(self, judgment: Judgment, model_response: str) -> JudgmentResult:
         model_legal_basis = extract_json_field(model_response, "legal_basis")
