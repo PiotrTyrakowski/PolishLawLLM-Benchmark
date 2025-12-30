@@ -49,7 +49,7 @@ export default function JudgmentsTableClient({ initialData }: JudgmentsTableClie
           Interpretacja Orzecznictwa
         </h2>
         <p className="text-sm text-gray-500 mt-1">
-          Generatywna identyfikacja zamaskowanych artykulow w tresci orzeczen.
+          Generatywna identyfikacja zamaskowanych artykułów w treści orzeczeń
         </p>
       </div>
 
@@ -78,7 +78,7 @@ export default function JudgmentsTableClient({ initialData }: JudgmentsTableClie
                     colSpan={textKeys.length}
                     className="px-4 py-2 border-b border-gray-200 border-l-2 border-l-gray-200"
                   >
-                    Jakosc Generacji Tekstu
+                    Jakość Generacji Tekstu
                   </th>
                 )}
               </tr>

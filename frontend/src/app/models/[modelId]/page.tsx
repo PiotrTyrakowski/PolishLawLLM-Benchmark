@@ -73,7 +73,7 @@ async function ModelContent({ modelId }: { modelId: string }) {
 function LoadingSkeleton() {
   return (
     <div className="flex-1 flex items-center justify-center">
-      <div className="text-slate-500">Ladowanie...</div>
+      <div className="text-slate-500">Ładowanie...</div>
     </div>
   );
 }
@@ -104,6 +104,6 @@ export async function generateMetadata({ params }: ModelPageProps) {
 
   return {
     title: `${modelData.profile.name} | PolishLawLLM Benchmark`,
-    description: `Szczegolowe wyniki ${modelData.profile.name} w polskim benchmarku prawniczym.`,
+    description: `Szczegółowe wyniki ${modelData.profile.name} w polskim benchmarku prawniczym.`,
   };
 }

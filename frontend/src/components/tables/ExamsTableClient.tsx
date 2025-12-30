@@ -51,7 +51,7 @@ export default function ExamsTableClient({ initialData }: ExamsTableClientProps)
               Egzaminy Zawodowe
             </h2>
             <p className="text-sm text-gray-500 mt-1">
-              Srednie wyniki wszystkich egzaminow dla kazdego modelu.
+              Średnie wyniki wszystkich egzaminów dla każdego modelu.
             </p>
           </div>
         </div>
