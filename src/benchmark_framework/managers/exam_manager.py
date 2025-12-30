@@ -8,6 +8,10 @@ from src.common.domain.exam import ExamQuestion, ExamResult
 from src.benchmark_framework.managers.base_manager import BaseManager
 from src.benchmark_framework.utils.response_parser import extract_json_field
 
+EXACT_DATE_DICT = {
+    2025: "17 marca 2025",
+}
+
 
 class ExamManager(BaseManager):
     """
@@ -72,7 +76,7 @@ Pola JSON:
 "legal_basis_content": dosłowna treść cytowanego paragrafu/punktu lub artykułu
 
 **DODATKOWE OGRANICZENIA**
-- Stan prawny: na dzień 20 września {year} roku. (Upewnij się, że przytaczany przepis istniał w tym brzmieniu na tę datę.)
+- Stan prawny: na dzień {EXACT_DATE_DICT[year]} roku. (Upewnij się, że przytaczany przepis obowiązywał w tym brzmieniu na tę datę.)
 - Maksymalna długość odpowiedzi: ogranicz do niezbędnego minimum (tylko wymagane pole JSON).
 
 **PRZYKŁAD**
