@@ -40,6 +40,66 @@ class Uploader:
         self.root_collection.upload(self.db)
         logger.info("Upload complete")
 
+        for model_id in self.root_collection.documents.keys():
+            self._sync_all_exam_aggregate(model_id)
+
+    def _sync_all_exam_aggregate(self, model_id: str) -> None:
+        """Fetches all exam docs from Firebase for a model and creates/updates 'all' aggregate."""
+        exams_path = f"{self.root_collection.id}/{model_id}/exams"
+        exams_ref = self.db.collection(exams_path)
+        docs = exams_ref.stream()
+
+        exam_data: List[Dict] = []
+        for doc in docs:
+            if doc.id == "all":
+                continue
+            exam_data.append(doc.to_dict())
+
+        if not exam_data:
+            logger.warning(f"No exam documents found for model {model_id}")
+            return
+
+        averaged = self._average_metrics(exam_data)
+
+        all_doc = ExamDocument(
+            id="all",
+            fields={
+                "accuracy_metrics": averaged["accuracy_metrics"],
+                "text_metrics": averaged["text_metrics"],
+                "type": "all",
+                "year": "all",
+            },
+        )
+
+        doc_ref = exams_ref.document("all")
+        doc_ref.set(all_doc.fields)
+        logger.info(f"Created 'all' aggregate document for model {model_id}")
+
+    @staticmethod
+    def _average_metrics(docs: List[Dict]) -> Dict[str, Dict]:
+        """Averages accuracy_metrics and text_metrics across documents dynamically."""
+        if not docs:
+            return {"accuracy_metrics": {}, "text_metrics": {}}
+
+        accuracy_sums: Dict[str, List] = {}
+        text_sums: Dict[str, List] = {}
+
+        for doc in docs:
+            for key, value in doc.get("accuracy_metrics", {}).items():
+                if key not in accuracy_sums:
+                    accuracy_sums[key] = []
+                accuracy_sums[key].append(value)
+
+            for key, value in doc.get("text_metrics", {}).items():
+                if key not in text_sums:
+                    text_sums[key] = []
+                text_sums[key].append(value)
+
+        return {
+            "accuracy_metrics": {k: sum(v) / len(v) for k, v in accuracy_sums.items()},
+            "text_metrics": {k: sum(v) / len(v) for k, v in text_sums.items()},
+        }
+
     def _build_tree(self) -> None:
         """Traverses: /results/{model_id}/"""
         for model_dir in self.path.iterdir():
