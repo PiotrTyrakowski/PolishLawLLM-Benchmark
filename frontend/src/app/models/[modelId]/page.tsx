@@ -22,17 +22,6 @@ export async function generateStaticParams() {
   return modelIds.map((modelId) => ({ modelId }));
 }
 
-// Helper: Calculate average of first accuracy metric for ranking
-function getFirstAccuracyMetricAvg(
-  data: { accuracyMetrics: Record<string, number> }[]
-): number {
-  if (data.length === 0) return 0;
-  const firstKey = Object.keys(data[0].accuracyMetrics)[0];
-  if (!firstKey) return 0;
-  const values = data.map((d) => d.accuracyMetrics[firstKey] ?? 0);
-  return values.reduce((a, b) => a + b, 0) / values.length;
-}
-
 async function ModelContent({ modelId }: { modelId: string }) {
   // Fetch model data and all results in parallel
   const [modelData, allExams, allJudgments] = await Promise.all([
@@ -45,23 +34,16 @@ async function ModelContent({ modelId }: { modelId: string }) {
     notFound();
   }
 
-  // Calculate exams rank: aggregate by model, sort by avg of first accuracy metric
-  const modelExamsMap = new Map<string, { accuracyMetrics: Record<string, number> }[]>();
-  for (const exam of allExams) {
-    const list = modelExamsMap.get(exam.model.id) || [];
-    list.push({ accuracyMetrics: exam.accuracyMetrics });
-    modelExamsMap.set(exam.model.id, list);
-  }
-
-  const modelExamsAvg = Array.from(modelExamsMap.entries())
-    .map(([id, exams]) => ({
-      modelId: id,
-      avgMetric: getFirstAccuracyMetricAvg(exams),
-    }))
-    .sort((a, b) => b.avgMetric - a.avgMetric);
-
+  // Calculate exams rank: data is already aggregated per model, just sort by first accuracy metric
+  const sortedExams = [...allExams].sort((a, b) => {
+    const aKey = Object.keys(a.accuracyMetrics)[0];
+    const bKey = Object.keys(b.accuracyMetrics)[0];
+    const aVal = aKey ? a.accuracyMetrics[aKey] : 0;
+    const bVal = bKey ? b.accuracyMetrics[bKey] : 0;
+    return bVal - aVal;
+  });
   const examsRank =
-    modelExamsAvg.findIndex((m) => m.modelId === modelId) + 1 || 1;
+    sortedExams.findIndex((e) => e.model.id === modelId) + 1 || 1;
 
   // Calculate judgments rank: sort by first accuracy metric
   const sortedJudgments = [...allJudgments].sort((a, b) => {
