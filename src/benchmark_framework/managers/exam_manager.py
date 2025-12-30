@@ -4,9 +4,13 @@ from typing import Optional
 from dataclasses import asdict
 
 from src.benchmark_framework.models.base_model import BaseModel
-from src.benchmark_framework.types.exam import Exam, ExamResult
+from src.common.domain.exam import ExamQuestion, ExamResult
 from src.benchmark_framework.managers.base_manager import BaseManager
 from src.benchmark_framework.utils.response_parser import extract_json_field
+
+EXACT_DATE_DICT = {
+    2025: "17 marca 2025",
+}
 
 
 class ExamManager(BaseManager):
@@ -17,14 +21,14 @@ class ExamManager(BaseManager):
     def __init__(self, model: BaseModel, tasks_path: Path, year: Optional[int] = None):
         super().__init__(model, "exams", tasks_path, year)
 
-    def get_output_path(self, task: Exam, results_dir: Path) -> Path:
+    def get_output_path(self, task: ExamQuestion, results_dir: Path) -> Path:
         year_str = str(task.year)
         filename = f"{task.exam_type}.jsonl"
         return (
-            results_dir / self.task_type / self.model.model_name / year_str / filename
+            results_dir / self.model.model_name / self.task_type / year_str / filename
         )
 
-    def get_result(self, exam: Exam, model_response: str) -> ExamResult:
+    def get_result(self, exam: ExamQuestion, model_response: str) -> ExamResult:
         model_answer = extract_json_field(model_response, "answer").upper()
         model_legal_basis = extract_json_field(model_response, "legal_basis")
         model_legal_basis_content = extract_json_field(
@@ -72,7 +76,7 @@ Pola JSON:
 "legal_basis_content": dosłowna treść cytowanego paragrafu/punktu lub artykułu
 
 **DODATKOWE OGRANICZENIA**
-- Stan prawny: na dzień 20 września {year} roku. (Upewnij się, że przytaczany przepis istniał w tym brzmieniu na tę datę.)
+- Stan prawny: na dzień {EXACT_DATE_DICT[year]} roku. (Upewnij się, że przytaczany przepis obowiązywał w tym brzmieniu na tę datę.)
 - Maksymalna długość odpowiedzi: ogranicz do niezbędnego minimum (tylko wymagane pole JSON).
 
 **PRZYKŁAD**

@@ -23,6 +23,7 @@ helpful.txt
 
 # data
 data/
+data_old/
 
 # helpers
 metryki_pomoc
@@ -36,3 +37,6 @@ kk_extracted.txt
 
 # macOS
 .DS_Store
+
+# debug
+debug/

@@ -3,10 +3,10 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Optional, Dict, Set
 
-from src.benchmark_framework.types.task import Task
+from src.common.domain.task import Task
 from src.benchmark_framework.utils.task_loader import initialize_tasks
 from src.benchmark_framework.models.base_model import BaseModel
-from src.benchmark_framework.constants import ENCODING
+from src.constants import ENCODING
 
 
 class BaseManager(ABC):

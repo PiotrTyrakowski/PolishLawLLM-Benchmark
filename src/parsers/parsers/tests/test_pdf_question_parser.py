@@ -1,7 +1,10 @@
 import pytest
 from pathlib import Path
-from src.parsers.parsers.pdf_question_parser import PDFQuestionParser
+
+from src.parsers.extractors.question_extractor import QuestionExtractor
+from src.parsers.parsers.parser import Parser
 from src.parsers.domain.question import Question
+from src.parsers.pdf_readers.pdf_text_reader import PdfTextReader
 
 
 def get_pdf_path():
@@ -22,7 +25,12 @@ def get_pdf_path():
 
 @pytest.fixture
 def parser_with_mock():
-    return PDFQuestionParser(file_path=get_pdf_path())
+    return Parser(
+        file_path=get_pdf_path(),
+        extractor=QuestionExtractor(),
+        pdf_reader=PdfTextReader(),
+        start_page=2,
+    )
 
 
 def test_parse_returns_question_objects(parser_with_mock):

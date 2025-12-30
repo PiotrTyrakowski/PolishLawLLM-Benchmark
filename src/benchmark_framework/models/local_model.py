@@ -1,5 +1,4 @@
 from src.benchmark_framework.models.base_model import BaseModel
-from src.benchmark_framework.constants import MAX_NEW_TOKENS
 from src.benchmark_framework.configs.model_config import ModelConfig
 
 

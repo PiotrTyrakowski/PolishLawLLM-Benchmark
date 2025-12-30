@@ -2,12 +2,13 @@ import json
 from pathlib import Path
 from typing import TypedDict
 
-from src.benchmark_framework.types.task import Task
-from src.benchmark_framework.constants import ENCODING
+from src.common.domain.task import Task
+from src.constants import ENCODING
 
 
 class JudgmentResult(TypedDict):
     id: int
+    year: int
     judgment_link: str
     legal_basis: str
     legal_basis_content: str
@@ -19,7 +20,6 @@ class JudgmentResult(TypedDict):
     model_legal_basis_content: str
 
 
-# TODO: align with future implementaion of judgments with metrics
 class Judgment(Task):
     """
     Represents a legal judgment with masked legal references.

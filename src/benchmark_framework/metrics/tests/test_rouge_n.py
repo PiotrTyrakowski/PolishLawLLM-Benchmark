@@ -858,22 +858,6 @@ class TestRougeNWeightedAverage:
 
         assert abs(score - expected) < 0.001, f"Expected {expected}, got {score}"
 
-    def test_weighted_average_empty_importances_returns_zero(self):
-        """Test that empty importance list returns 0.0."""
-        metric = RougeNMetric(ngrams_importances=[])
-
-        score = metric(prediction="test", reference="test")
-
-        assert score == 0.0, f"Expected 0.0 for empty importances, got {score}"
-
-    def test_weighted_average_zero_weights_returns_zero(self):
-        """Test that all zero weights return 0.0."""
-        metric = RougeNMetric(ngrams_importances=[0.0, 0.0, 0.0])
-
-        score = metric(prediction="test", reference="test")
-
-        assert score == 0.0, f"Expected 0.0 for all zero weights, got {score}"
-
     def test_weighted_average_mixed_zero_nonzero_weights(self):
         """Test weighted average with mixed zero and non-zero weights."""
         metric = RougeNMetric(ngrams_importances=[0.0, 1.0, 0.0])

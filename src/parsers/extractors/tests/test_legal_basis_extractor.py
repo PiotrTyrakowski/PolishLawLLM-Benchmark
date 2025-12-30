@@ -1,10 +1,11 @@
 import pytest
-from src.parsers.extractors.legal_basis_extractor import LegalBasisExtractor
+from src.parsers.extractors.legal_reference_extractor import LegalReferenceExtractor
+from src.common.text_formatter import TextFormatter
 
 
 @pytest.fixture
 def extractor():
-    return LegalBasisExtractor()
+    return LegalReferenceExtractor()
 
 
 @pytest.mark.parametrize(
@@ -84,7 +85,7 @@ def extractor():
 )
 def test_parse_valid_legal_basis(extractor, legal_basis, expected):
     """Test parsing of valid legal basis strings."""
-    result = extractor.parse(legal_basis)
+    result = extractor.extract(legal_basis)
 
     assert result.article == expected["article_number"]
     assert result.paragraph == expected["paragraph_number"]
@@ -108,7 +109,7 @@ def test_parse_valid_legal_basis(extractor, legal_basis, expected):
 )
 def test_parse_different_code_abbreviations(extractor, legal_basis, expected_code):
     """Test parsing of different Polish legal code abbreviations."""
-    result = extractor.parse(legal_basis)
+    result = extractor.extract(legal_basis)
     assert result.code == expected_code
 
 
@@ -128,5 +129,5 @@ def test_parse_different_code_abbreviations(extractor, legal_basis, expected_cod
 )
 def test_format_code_abbreviation(input_abbr, expected_output):
     """Test formatting of various code abbreviations."""
-    result = LegalBasisExtractor.format_code_abbreviation(input_abbr)
+    result = TextFormatter.format_code_abbreviation(input_abbr)
     assert result == expected_output

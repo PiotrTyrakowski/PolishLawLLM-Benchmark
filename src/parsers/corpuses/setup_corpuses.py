@@ -9,17 +9,40 @@ from rich.progress import (
     TaskProgressColumn,
 )
 
-from src.parsers.parsers.legal_base_parser import LegalBaseParser
+from src.parsers.parsers.getters import get_legal_base_parser
+from src.common.file_operations import FileOperations
+from src.parsers.corpuses.corpuses_config import START_PAGE, should_skip_article
 
 app = typer.Typer(help="Extract articles from legal PDF documents")
 console = Console()
 
 
-def process_pdf(pdf_path: Path, output_dir: Path) -> bool:
+def get_start_page(code_abbr: str, year: int) -> int:
+    if year in START_PAGE and code_abbr in START_PAGE[year]:
+        return START_PAGE[year][code_abbr]
+    raise ValueError(f"Start page not defined for {code_abbr} in year {year}")
+
+
+def filter_articles(articles: dict, year: int, code_abbr: str) -> dict:
+    """Filter out articles that should be skipped based on the configuration."""
+    return {
+        article_key: article_value
+        for article_key, article_value in articles.items()
+        if not should_skip_article(year, code_abbr, article_key)
+    }
+
+
+def process_pdf(pdf_path: Path, output_dir: Path, year: int) -> bool:
     try:
         output_path = output_dir / f"{pdf_path.stem}.json"
-        parser = LegalBaseParser(pdf_path)
-        parser.save_all_articles(output_path=output_path)
+        code_abbr = pdf_path.stem.lower()
+        start_page = get_start_page(code_abbr, year)
+
+        parser = get_legal_base_parser(pdf_path, start_page)
+        articles = parser.parse()
+
+        filtered_articles = filter_articles(articles, year, code_abbr)
+        FileOperations.save_json(filtered_articles, output_path)
         return True
     except Exception as e:
         console.print(f"[red]Error processing {pdf_path.name}: {e}[/red]")
@@ -43,15 +66,20 @@ def extract(
         dir_okay=True,
         resolve_path=True,
     ),
+    year: int = typer.Argument(..., help="year"),
 ):
     """
     Extract articles from all PDF files in the input directory and save them as JSON files.
 
     Example:
-        python -m parsers.setup_corpuses data/pdfs/2025/legal_base data/corpuses/2025
+        python -m src.parsers.corpuses.setup_corpuses data/pdfs/2025/legal_base data/corpuses/2025 2025
     """
     output_dir.mkdir(parents=True, exist_ok=True)
     pdf_files = list(input_dir.glob("*.pdf"))
+
+    if not year:
+        console.print(f"[yellow]No year specified[/yellow]")
+        raise typer.Exit(code=1)
 
     if not pdf_files:
         console.print(f"[yellow]No PDF files found in {input_dir}[/yellow]")
@@ -75,7 +103,7 @@ def extract(
         for pdf_path in pdf_files:
             progress.update(task, description=f"[green]Processing: {pdf_path.name}")
 
-            if process_pdf(pdf_path, output_dir):
+            if process_pdf(pdf_path, output_dir, year):
                 successful += 1
                 console.print(f"[green]✓[/green] {pdf_path.name}")
             else:

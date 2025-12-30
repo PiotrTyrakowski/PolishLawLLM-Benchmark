@@ -4,7 +4,6 @@ from openai import OpenAI
 
 from src.benchmark_framework.configs.runner_config import RunnerConfig
 from src.benchmark_framework.models.base_model import BaseModel
-from src.benchmark_framework.constants import MAX_NEW_TOKENS
 from src.benchmark_framework.configs.model_config import ModelConfig
 
 
@@ -37,7 +36,6 @@ class NvidiaModel(BaseModel):
         completion = self.client.chat.completions.create(
             model=self.model_name,
             messages=messages,
-            max_tokens=MAX_NEW_TOKENS,
             extra_body=self.model_config.extra_body,
             stream=False,
         )
