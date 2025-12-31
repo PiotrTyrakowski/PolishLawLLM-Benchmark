@@ -1,78 +1,72 @@
 from pathlib import Path
-from typing import Optional, Callable
+from typing import Optional
 import pdfplumber
 import re
 
+from src.parsers.pdf_readers.base_pdf_reader import BasePdfReader
 
-class PdfTextExtractor:
-    """Extract text from PDF files with filtering capabilities."""
-
-    def extract_text(
-        self, pdf_path: Path, start_page: int = 1, min_char_size: float = 9.0
-    ) -> str:
-        """
-        Extract text from PDF starting from specified page.
-
-        Args:
-            pdf_path: Path to PDF file
-            start_page: Page number to start extraction (1-indexed)
-            min_char_size: Minimum character size to include
-
-        Returns:
-            Extracted text
-        """
-        text_parts = []
-
-        with pdfplumber.open(pdf_path) as pdf:
-            for page in pdf.pages[start_page - 1 :]:
-                filter_fn = self._make_char_filter(min_size=min_char_size)
-                filtered_page = page.filter(filter_fn)
-                page_text = filtered_page.extract_text(
-                    x_tolerance=3, y_tolerance=3, layout=True
-                )
-                if page_text:
-                    text_parts.append(page_text)
-
-        result = "\n".join(text_parts)
-        result = self._filter_exam_headers(result)
-        return result
-
-    @staticmethod
-    def _make_char_filter(min_size: float = 9.0) -> Callable:
-        """Create character filter function."""
-
-        def char_filter(char):
-            if "size" in char and char["size"] < min_size:
-                return False
-            return True
-
-        return char_filter
-
-    @staticmethod
-    def _filter_exam_headers(text: str) -> str:
-        """Filter out any lines containing the exam header text."""
-        lines = text.split("\n")
-        filtered_lines = [
-            line
-            for line in lines
-            if "EGZAMIN WSTĘPNY DLA KANDYDATÓW" not in line
-            and "EGZAMIN KONKURSOWY" not in line
-        ]
-        return "\n".join(filtered_lines)
+DEBUG_LOG = True
 
 
-class LegalBaseTextExtractor(PdfTextExtractor):
-    """Extract text from legal code documents."""
+class PdfLegalTextReader(BasePdfReader):
+    """Specialized reader for Legal Code PDFs."""
 
-    def extract_text(
+    def read(self, pdf_path: Path, start_page: int = 1) -> str:
+        text = self._extract_text(pdf_path, start_page)
+
+        # Save debug text file
+        if DEBUG_LOG:
+            debug_dir = Path("debug")
+            debug_dir.mkdir(exist_ok=True)
+            debug_file = debug_dir / f"{pdf_path.stem}.txt"
+            with open(debug_file, "w", encoding="utf-8") as f:
+                f.write(text)
+
+        return text
+
+    def _extract_text(
         self, pdf_path: Path, start_page: int = 1, min_char_size: float = 9.0
     ) -> str:
         text_parts = []
+        valid_superindex_pattern = re.compile(r"^\d*[a-z]*$")
 
         try:
             with pdfplumber.open(pdf_path) as pdf:
-                print(f"Loading PDF: {len(pdf.pages)} pages...")
-                for i, page in enumerate(pdf.pages, 1):
+                pages_to_process = pdf.pages[start_page - 1 :]
+                for i, page in enumerate(pages_to_process, start_page):
+                    # Superindex processing
+                    chars = page.chars
+                    idx = 0
+                    total_chars = len(chars)
+
+                    while idx < total_chars:
+                        if chars[idx]["size"] < min_char_size:
+                            # Identify the full sequence (run) of small characters
+                            end = idx
+                            sequence_text = ""
+
+                            while (
+                                end < total_chars and chars[end]["size"] < min_char_size
+                            ):
+                                sequence_text += chars[end].get("text", "")
+                                end += 1
+
+                            clean_seq = sequence_text.strip()
+
+                            if (
+                                valid_superindex_pattern.match(clean_seq)
+                                and len(clean_seq) > 0
+                            ):
+                                chars[idx]["text"] = f"^{chars[idx]['text']}"
+                            else:
+                                for k in range(idx, end):
+                                    chars[k]["text"] = ""
+
+                            # Advance the main loop index to the end of this sequence
+                            idx = end
+                        else:
+                            idx += 1
+
                     horizontals = self._find_horizontal_lines(
                         page, min_length_ratio=0.2, y_tolerance=2
                     )
@@ -96,9 +90,7 @@ class LegalBaseTextExtractor(PdfTextExtractor):
                         keep_y0 = 0.0
                         keep_y1 = page_h
 
-                    filter_fn = self._make_char_filter(
-                        keep_y0=keep_y0, keep_y1=keep_y1, min_size=9.0
-                    )
+                    filter_fn = self._make_char_filter(keep_y0=keep_y0, keep_y1=keep_y1)
                     filtered_page = page.filter(filter_fn)
                     page_text = filtered_page.extract_text(
                         x_tolerance=3, y_tolerance=3, layout=True
@@ -136,17 +128,13 @@ class LegalBaseTextExtractor(PdfTextExtractor):
     def _make_char_filter(
         keep_y0: Optional[float] = None,
         keep_y1: Optional[float] = None,
-        min_size: float = 9.0,
     ):
         """
         Return a function usable by page.filter() that:
         - drops chars whose midpoint is outside [keep_y0, keep_y1] (if provided)
-        - drops chars smaller than min_size (superscripts)
         """
 
         def char_filter(char):
-            if "size" in char and char["size"] < min_size:
-                return False
             if keep_y0 is not None and keep_y1 is not None:
                 # compute vertical midpoint of the character box
                 y0 = char.get("y0", None)

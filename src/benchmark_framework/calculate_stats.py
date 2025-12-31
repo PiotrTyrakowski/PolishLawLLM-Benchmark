@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Dict, Any
 from collections import defaultdict
 
-from src.parsers.utils.file_utils import FileOperations
+from src.common.file_operations import FileOperations
 
 
 def calculate_stats(file_path: Path) -> Dict[str, Any]:

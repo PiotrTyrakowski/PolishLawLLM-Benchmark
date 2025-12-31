@@ -28,3 +28,8 @@ class TextFormatter:
     def clean_whitespace(text: str) -> str:
         """Clean excessive whitespace from text."""
         return re.sub(r"\s+", " ", text.strip())
+
+    @staticmethod
+    def format_code_abbreviation(abbreviation: str) -> str:
+        """Format code abbreviation for file lookup."""
+        return abbreviation.replace(".", "").replace(" ", "").lower()

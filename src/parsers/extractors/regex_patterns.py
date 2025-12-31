@@ -6,7 +6,7 @@ class RegexPatterns:
 
     # Legal basis components
     ARTICLE_PREFIX: str = r"art\."
-    ENTITY_ID: str = r"\d+[a-z]*"
+    ENTITY_ID: str = r"\d+[a-z]*(?:\^\d*[a-z]*)?"
     CODE_ABBREVIATION: str = r"(?:[a-z\.]+|k\.r\.\s+i\s+o\.|k\.\s+r\.\s+i\s+o\.)"
 
     @classmethod

@@ -23,6 +23,7 @@ helpful.txt
 
 # data
 data/
+data_old/
 
 # helpers
 metryki_pomoc
@@ -40,3 +41,5 @@ kk_extracted.txt
 # secrets for admin firebase
 polishlawllm-benchmark-firebase-adminsdk-fbsvc-e3c923bf3f.json
 
+# debug
+debug/

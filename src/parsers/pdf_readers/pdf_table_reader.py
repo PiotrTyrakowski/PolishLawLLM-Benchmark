@@ -1,18 +1,37 @@
-import pdfplumber
-from typing import List, Optional
 from pathlib import Path
+from typing import List, Optional
+
+import pdfplumber
+from src.parsers.pdf_readers.base_pdf_reader import BasePdfReader
 
 
-class PdfTableExtractor:
-    def extract_text(
+class PdfTableReader(BasePdfReader):
+    """Reader that flattens PDF tables into text for Answer parsing."""
+
+    def read(self, pdf_path: Path, start_page: int = 1) -> str:
+        text = self._extract_text(pdf_path, start_page)
+
+        # Log extracted text to debug folder
+        debug_dir = Path("debug")
+        debug_dir.mkdir(exist_ok=True)
+        debug_file = debug_dir / f"{pdf_path.stem}.txt"
+        debug_file.write_text(text, encoding="utf-8")
+
+        return text
+
+    def _extract_text(
         self, pdf_path: Path, start_page: int = 1, min_char_size: float = 9.0
     ) -> str:
         extracted_lines = []
         with pdfplumber.open(pdf_path) as pdf:
             for page in pdf.pages[start_page - 1 :]:
+                prev_was_small = False
                 for char in page.chars:
-                    if char.get("size", 0) < min_char_size:
-                        char["text"] = "SKIP"
+                    is_small = char.get("size", 0) < min_char_size
+                    if is_small:
+                        if not prev_was_small:
+                            char["text"] = f"^{char['text']}"
+                    prev_was_small = is_small
 
                 tables = page.extract_tables()
 

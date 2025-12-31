@@ -1,9 +1,9 @@
-from src.benchmark_framework.types.exam import Exam
-from src.benchmark_framework.types.judgment import Judgment
-from src.benchmark_framework.types.task import Task
+from src.common.domain.exam import ExamQuestion
+from src.common.domain.judgment import Judgment
+from src.common.domain.task import Task
 
 TYPE_REGISTRY = {
-    "exams": Exam,
+    "exams": ExamQuestion,
     "judgments": Judgment,
 }
 

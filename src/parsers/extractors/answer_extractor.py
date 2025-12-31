@@ -1,8 +1,8 @@
 from typing import List
-import re
 from src.parsers.domain.answer import Answer
 from src.parsers.extractors.base_extractor import BaseExtractor
 from src.parsers.extractors.regex_patterns import RegexPatterns
+from src.common.text_formatter import TextFormatter
 
 
 class AnswerExtractor(BaseExtractor):
@@ -19,8 +19,8 @@ class AnswerExtractor(BaseExtractor):
             except ValueError:
                 continue
 
-            correct_answer = match.group(2).strip()
-            legal_basis = re.sub(r"\s+", " ", match.group(3).strip())
+            correct_answer = TextFormatter.clean_whitespace(match.group(2))
+            legal_basis = TextFormatter.clean_whitespace(match.group(3))
 
             answers.append(
                 Answer(

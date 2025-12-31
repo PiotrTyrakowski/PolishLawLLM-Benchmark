@@ -1,8 +1,8 @@
 from typing import List
-import re
 from src.parsers.extractors.base_extractor import BaseExtractor
 from src.parsers.extractors.regex_patterns import RegexPatterns
 from src.parsers.domain.question import Question
+from src.common.text_formatter import TextFormatter
 
 
 class QuestionExtractor(BaseExtractor):
@@ -22,16 +22,11 @@ class QuestionExtractor(BaseExtractor):
             questions.append(
                 Question(
                     id=question_num,
-                    text=self._clean_text(match.group(2)),
-                    option_a=self._clean_text(match.group(3)),
-                    option_b=self._clean_text(match.group(4)),
-                    option_c=self._clean_text(match.group(5)),
+                    text=TextFormatter.clean_whitespace(match.group(2)),
+                    option_a=TextFormatter.clean_whitespace(match.group(3)),
+                    option_b=TextFormatter.clean_whitespace(match.group(4)),
+                    option_c=TextFormatter.clean_whitespace(match.group(5)),
                 )
             )
 
         return questions
-
-    @staticmethod
-    def _clean_text(text: str) -> str:
-        """Clean and normalize text."""
-        return re.sub(r"\s+", " ", text.strip())
