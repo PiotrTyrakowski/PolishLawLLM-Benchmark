@@ -8,7 +8,7 @@ from src.common.domain.exam import ExamQuestion, ExamResult
 from src.benchmark_framework.managers.base_manager import BaseManager
 from src.benchmark_framework.utils.response_parser import extract_json_field
 
-EXACT_DATE_DICT = {
+EXACT_DATE_DICT: dict[int, str] = {
     2025: "17 marca 2025",
 }
 
@@ -24,9 +24,8 @@ class ExamManager(BaseManager):
     def get_output_path(self, task: ExamQuestion, results_dir: Path) -> Path:
         year_str = str(task.year)
         filename = f"{task.exam_type}.jsonl"
-        return (
-            results_dir / self.model.model_name / self.task_type / year_str / filename
-        )
+        model_name = self.model.model_name.replace("/", "-")
+        return results_dir / model_name / self.task_type / year_str / filename
 
     def get_result(self, exam: ExamQuestion, model_response: str) -> ExamResult:
         model_answer = extract_json_field(model_response, "answer").upper()
