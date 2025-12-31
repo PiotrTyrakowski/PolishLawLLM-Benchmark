@@ -68,7 +68,7 @@ export default function ModelStatsSection({ data }: ModelStatsSectionProps) {
             Egzaminy Zawodowe
           </h2>
           <p className="text-sm text-slate-500 mt-2">
-            Wyniki na egzaminach wstepnych na aplikacje prawnicze.
+            Wyniki na egzaminach wstępnych na aplikacje prawnicze.
           </p>
         </div>
 
