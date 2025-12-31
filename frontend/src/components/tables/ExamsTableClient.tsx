@@ -12,7 +12,7 @@ export default function ExamsTableClient({ initialData }: ExamsTableClientProps)
       title="Egzaminy Zawodowe"
       description="Średnie wyniki wszystkich egzaminów dla każdego modelu."
       accuracyGroupLabel="Decyzja i Wiedza"
-      textGroupLabel="Jakosc Tresci Uzasadnienia"
+      textGroupLabel="Jakość Treści Uzasadnienia"
     />
   );
 }

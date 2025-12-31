@@ -218,7 +218,6 @@ class TestMultiUserUpload:
             .document("all")
             .get()
         )
-        initial_data = all_doc_initial.to_dict()
 
         # User 2 uploads model_a with 2025 exams
         uploader2 = Uploader(firestore_client, user2_same_model_path, COLLECTION_ID)
