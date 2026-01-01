@@ -11,6 +11,7 @@ from src.benchmark_framework.utils.response_parser import extract_json_field
 EXACT_DATE_DICT: dict[int, str] = {
     2025: "17 marca 2025",
     2024: "29 marca 2024",
+    2023: "23 marca 2024",
 }
 
 
