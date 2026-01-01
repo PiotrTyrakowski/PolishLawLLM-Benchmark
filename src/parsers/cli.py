@@ -30,6 +30,12 @@ def parse(
     output_path: Path = typer.Argument(
         Path("data/tasks/exams"), help="Path to the output directory for JSONL files"
     ),
+    year: str = typer.Option(
+        None,
+        "--year",
+        "-y",
+        help="Process only exams from a specific year (e.g., 2024)",
+    ),
 ):
     """
     Parse Polish law exam PDFs into structured JSONL format.
@@ -54,6 +60,16 @@ def parse(
     if not exams:
         console.print("[yellow]No exam files found in directory[/yellow]")
         raise typer.Exit(code=1)
+
+    # Filter by year if specified
+    if year:
+        if year not in exams:
+            console.print(
+                f"[red]Error: Year '{year}' not found in discovered exams. Available years: {', '.join(sorted(exams.keys()))}[/red]"
+            )
+            raise typer.Exit(code=1)
+        exams = {year: exams[year]}
+        console.print(f"[cyan]Filtering to year: {year}[/cyan]")
 
     total_exams = sum(len(exam_types) for exam_types in exams.values())
     console.print(
