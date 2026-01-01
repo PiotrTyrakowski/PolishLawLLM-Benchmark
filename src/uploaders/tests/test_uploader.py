@@ -15,10 +15,12 @@ def assert_metrics_equal(actual: dict, expected: dict, tolerance: float = 0.001)
             assert metric_type in actual, f"Missing {metric_type} in actual"
             for key, expected_value in expected[metric_type].items():
                 actual_value = actual[metric_type].get(key)
-                assert actual_value is not None, f"Missing {metric_type}.{key} in actual"
-                assert abs(actual_value - expected_value) < tolerance, (
-                    f"{metric_type}.{key}: expected {expected_value}, got {actual_value}"
-                )
+                assert (
+                    actual_value is not None
+                ), f"Missing {metric_type}.{key} in actual"
+                assert (
+                    abs(actual_value - expected_value) < tolerance
+                ), f"{metric_type}.{key}: expected {expected_value}, got {actual_value}"
 
 
 class TestUploadCreatesDocuments:
@@ -59,7 +61,9 @@ class TestUploadCreatesDocuments:
         assert "accuracy_metrics" in data
         assert "text_metrics" in data
 
-    def test_upload_creates_all_aggregate_document(self, firestore_client, user1_data_path):
+    def test_upload_creates_all_aggregate_document(
+        self, firestore_client, user1_data_path
+    ):
         """Test that uploading creates the 'all' aggregate document."""
         uploader = Uploader(firestore_client, user1_data_path, COLLECTION_ID)
         uploader.upload()
@@ -82,7 +86,9 @@ class TestUploadCreatesDocuments:
 class TestMetricsCalculation:
     """Tests that metrics are calculated correctly."""
 
-    def test_accuracy_metrics_calculated_correctly(self, firestore_client, user1_data_path):
+    def test_accuracy_metrics_calculated_correctly(
+        self, firestore_client, user1_data_path
+    ):
         """Test that accuracy metrics are calculated correctly from JSONL data."""
         uploader = Uploader(firestore_client, user1_data_path, COLLECTION_ID)
         uploader.upload()
@@ -99,8 +105,20 @@ class TestMetricsCalculation:
         expected = ExpectedMetrics.USER1_MODEL_A
 
         # Check accuracy metrics
-        assert abs(data["accuracy_metrics"]["answer"] - expected["accuracy_metrics"]["answer"]) < 0.001
-        assert abs(data["accuracy_metrics"]["legal_basis"] - expected["accuracy_metrics"]["legal_basis"]) < 0.001
+        assert (
+            abs(
+                data["accuracy_metrics"]["answer"]
+                - expected["accuracy_metrics"]["answer"]
+            )
+            < 0.001
+        )
+        assert (
+            abs(
+                data["accuracy_metrics"]["legal_basis"]
+                - expected["accuracy_metrics"]["legal_basis"]
+            )
+            < 0.001
+        )
 
     def test_text_metrics_averaged_correctly(self, firestore_client, user1_data_path):
         """Test that text metrics are averaged correctly from JSONL data."""
@@ -119,10 +137,20 @@ class TestMetricsCalculation:
         expected = ExpectedMetrics.USER1_MODEL_A
 
         # Check text metrics
-        assert abs(data["text_metrics"]["exact_match"] - expected["text_metrics"]["exact_match"]) < 0.001
-        assert abs(data["text_metrics"]["bleu"] - expected["text_metrics"]["bleu"]) < 0.001
+        assert (
+            abs(
+                data["text_metrics"]["exact_match"]
+                - expected["text_metrics"]["exact_match"]
+            )
+            < 0.001
+        )
+        assert (
+            abs(data["text_metrics"]["bleu"] - expected["text_metrics"]["bleu"]) < 0.001
+        )
 
-    def test_all_aggregate_averages_multiple_exams(self, firestore_client, multi_exam_path):
+    def test_all_aggregate_averages_multiple_exams(
+        self, firestore_client, multi_exam_path
+    ):
         """Test that 'all' aggregate correctly averages multiple exam documents."""
         uploader = Uploader(firestore_client, multi_exam_path, COLLECTION_ID)
         uploader.upload()
@@ -153,7 +181,9 @@ class TestMultiUserUpload:
         uploader1.upload()
 
         # User 2 uploads model_b
-        uploader2 = Uploader(firestore_client, user2_different_model_path, COLLECTION_ID)
+        uploader2 = Uploader(
+            firestore_client, user2_different_model_path, COLLECTION_ID
+        )
         uploader2.upload()
 
         # Verify both models exist
@@ -239,19 +269,26 @@ class TestMultiUserUpload:
 
         # 2024: accuracy.answer = 2/3, 2025: accuracy.answer = 0.0
         # Expected average: (2/3 + 0) / 2 = 1/3
-        expected_combined_answer = (2/3 + 0.0) / 2
-        assert abs(updated_data["accuracy_metrics"]["answer"] - expected_combined_answer) < 0.001
+        expected_combined_answer = (2 / 3 + 0.0) / 2
+        assert (
+            abs(updated_data["accuracy_metrics"]["answer"] - expected_combined_answer)
+            < 0.001
+        )
 
         # 2024: bleu = 0.6, 2025: bleu = 0.2
         # Expected average: (0.6 + 0.2) / 2 = 0.4
         expected_combined_bleu = (0.6 + 0.2) / 2
-        assert abs(updated_data["text_metrics"]["bleu"] - expected_combined_bleu) < 0.001
+        assert (
+            abs(updated_data["text_metrics"]["bleu"] - expected_combined_bleu) < 0.001
+        )
 
 
 class TestJudgments:
     """Tests for judgment document handling."""
 
-    def test_upload_creates_judgment_document(self, firestore_client, with_judgments_path):
+    def test_upload_creates_judgment_document(
+        self, firestore_client, with_judgments_path
+    ):
         """Test that judgments are uploaded correctly."""
         uploader = Uploader(firestore_client, with_judgments_path, COLLECTION_ID)
         uploader.upload()
@@ -292,7 +329,9 @@ class TestJudgments:
         )
         assert judgment_doc.exists, "Judgment document should exist"
 
-    def test_upload_with_both_exams_and_judgments(self, firestore_client, with_judgments_path):
+    def test_upload_with_both_exams_and_judgments(
+        self, firestore_client, with_judgments_path
+    ):
         """Test that both exams and judgments are uploaded for the same model."""
         uploader = Uploader(firestore_client, with_judgments_path, COLLECTION_ID)
         uploader.upload()
@@ -353,10 +392,12 @@ class TestAverageMetricsStatic:
 
     def test_average_metrics_single_doc(self):
         """Test that single doc returns same values."""
-        docs = [{
-            "accuracy_metrics": {"answer": 0.8, "legal_basis": 0.6},
-            "text_metrics": {"bleu": 0.7, "exact_match": 0.5}
-        }]
+        docs = [
+            {
+                "accuracy_metrics": {"answer": 0.8, "legal_basis": 0.6},
+                "text_metrics": {"bleu": 0.7, "exact_match": 0.5},
+            }
+        ]
         result = Uploader._average_metrics(docs)
 
         assert abs(result["accuracy_metrics"]["answer"] - 0.8) < 0.001
@@ -369,11 +410,11 @@ class TestAverageMetricsStatic:
         docs = [
             {
                 "accuracy_metrics": {"answer": 1.0, "legal_basis": 1.0},
-                "text_metrics": {"bleu": 0.8}
+                "text_metrics": {"bleu": 0.8},
             },
             {
                 "accuracy_metrics": {"answer": 0.0, "legal_basis": 0.0},
-                "text_metrics": {"bleu": 0.2}
+                "text_metrics": {"bleu": 0.2},
             },
         ]
         result = Uploader._average_metrics(docs)
@@ -387,11 +428,11 @@ class TestAverageMetricsStatic:
         docs = [
             {
                 "accuracy_metrics": {"answer": 1.0},
-                "text_metrics": {"bleu": 0.8, "rouge": 0.9}
+                "text_metrics": {"bleu": 0.8, "rouge": 0.9},
             },
             {
                 "accuracy_metrics": {"answer": 0.5, "legal_basis": 0.5},
-                "text_metrics": {"bleu": 0.4}
+                "text_metrics": {"bleu": 0.4},
             },
         ]
         result = Uploader._average_metrics(docs)

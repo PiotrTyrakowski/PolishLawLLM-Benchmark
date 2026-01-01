@@ -42,6 +42,50 @@ ARTICLES_TO_SKIP: ArticleSkipConfig = {
             ArticleFilter(article="183", paragraph="1^3"),
             ArticleFilter(article="183", paragraph="1^4"),
         ],
+    },
+    2024: {
+        "kc": [
+            ArticleFilter(article="385^5", paragraph="2"),
+            ArticleFilter(article="720^6"),
+        ],
+        "kk": [
+            ArticleFilter(article="115", paragraph="13", point="10"),
+            ArticleFilter(article="144a"),
+            ArticleFilter(article="144b"),
+            ArticleFilter(article="218a", point="2"),
+            ArticleFilter(article="10", paragraph="2"),
+            ArticleFilter(article="197", paragraph="1"),
+            ArticleFilter(article="197", paragraph="1a"),
+            ArticleFilter(article="197", paragraph="2"),
+            ArticleFilter(article="198"),
+        ],
+        "kpc": [
+            ArticleFilter(article="833", paragraph="6"),
+        ],
+        "kpk": [
+            ArticleFilter(article="218", paragraph="1"),
+            ArticleFilter(article="237", paragraph="5"),
+            ArticleFilter(article="78a"),
+            ArticleFilter(article="81", paragraph="1"),
+            ArticleFilter(article="88", paragraph="1"),
+            ArticleFilter(article="263", paragraph="8"),
+            ArticleFilter(article="300", paragraph="1"),
+            ArticleFilter(article="388b", paragraph="1"),
+            ArticleFilter(article="388b", paragraph="3"),
+            ArticleFilter(article="607l", paragraph="3a"),
+        ],
+        "krio": [
+            ArticleFilter(article="99"),
+            ArticleFilter(article="99^1"),
+            ArticleFilter(article="99^2"),
+            ArticleFilter(article="99^2a"),
+            ArticleFilter(article="99^3"),
+            ArticleFilter(article="183", paragraph="1"),
+            ArticleFilter(article="183", paragraph="1^1"),
+            ArticleFilter(article="183", paragraph="1^2"),
+            ArticleFilter(article="183", paragraph="1^3"),
+            ArticleFilter(article="183", paragraph="1^4"),
+        ],
         "kw": [ArticleFilter(article="82b")],
     },
 }
@@ -59,7 +103,20 @@ START_PAGE = {
         "krio": 3,
         "ksh": 3,
         "kw": 3,
-    }
+    },
+    2024: {
+        "kc": 3,
+        "kk": 2,
+        "kks": 2,
+        "kp": 9,
+        "kpa": 2,
+        "kpc": 6,
+        "kpk": 3,
+        "kpsw": 2,
+        "krio": 3,
+        "ksh": 3,
+        "kw": 2,
+    },
 }
 
 

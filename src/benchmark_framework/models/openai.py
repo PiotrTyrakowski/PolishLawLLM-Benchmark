@@ -41,5 +41,5 @@ class OpenAIModel(BaseModel):
     def get_default_runner_config(self):
         """
         Returns default rate limiting configuration for OpenAI models.
-         """
+        """
         return RunnerConfig(requests_per_minute=50)
