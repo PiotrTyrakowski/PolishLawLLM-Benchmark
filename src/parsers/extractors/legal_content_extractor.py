@@ -23,6 +23,7 @@ class LegalContentExtractor(BaseExtractor):
             r"(?:TYTUŁ\s+[IVXLCDM]+)|"  # Title heading OR
             r"(?:DZIAŁ\s+[IVXLCDM]+)|"  # Section heading OR
             r"(?:Rozdział\s+[IVXLCDM\d]+)|"  # Chapter heading OR
+            r"(?:Oddział\s+[IVXLCDM\d]+)|"  # Chapter heading OR
             r"$"  # End of document
             r")"
         )
