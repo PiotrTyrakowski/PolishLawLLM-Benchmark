@@ -35,9 +35,10 @@ class LegalContentExtractor(BaseExtractor):
     @staticmethod
     def _get_raw_paragraph(article_text: str, paragraph_number: str) -> str:
         """Get specific paragraph from article."""
+        safe_paragraph_number = re.escape(paragraph_number)
         paragraph_pattern = (
             rf"^(?:\s{{{PARAGRAPH_INDENT_SPACES}}}\s*)?"
-            rf"§\s+{paragraph_number}\.\s+"
+            rf"§\s+{safe_paragraph_number}\.\s+"
             rf"(.+?)"
             rf"(?=^\s{{{PARAGRAPH_INDENT_SPACES}}}\s*§\s+{RegexPatterns.ENTITY_ID}\.|\Z)"
         )
@@ -72,7 +73,8 @@ class LegalContentExtractor(BaseExtractor):
             else article_text
         )
 
-        point_pattern = rf"(?:^|\s){point_number}\)\s+(.+?)(?=(?:^|\n)\s*{RegexPatterns.ENTITY_ID}\)|\Z)"
+        safe_point_number = re.escape(point_number)
+        point_pattern = rf"(?:^|\s){safe_point_number}\)\s+(.+?)(?=(?:^|\n)\s*{RegexPatterns.ENTITY_ID}\)|\Z)"
 
         match = re.search(point_pattern, text, re.MULTILINE | re.DOTALL)
         if not match:

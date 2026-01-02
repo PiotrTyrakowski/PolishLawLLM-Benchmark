@@ -61,6 +61,15 @@ def extractor():
                 "code_abbreviation": "k.k.",
             },
         ),
+        (
+            "art. 75^1 § 1^1 pkt 2^1 k.c.",
+            {
+                "article_number": "75^1",
+                "paragraph_number": "1^1",
+                "point_number": "2^1",
+                "code_abbreviation": "k.c.",
+            },
+        ),
         # Complex code abbreviation (k.r. i o.)
         (
             "art. 10 § 1 k.r. i o.",
