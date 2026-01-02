@@ -16,6 +16,11 @@ ArticleSkipConfig = Dict[int, Dict[str, List[ArticleFilter]]]
 
 ARTICLES_TO_SKIP: ArticleSkipConfig = {
     2025: {
+        "kc": [
+            ArticleFilter(article="709^2"),
+            ArticleFilter(article="709^11"),
+            ArticleFilter(article="709^13", paragraph="2"),
+        ],
         "kks": [
             ArticleFilter(article="31", paragraph="6"),
             ArticleFilter(article="53", paragraph="30d"),
@@ -29,7 +34,11 @@ ARTICLES_TO_SKIP: ArticleSkipConfig = {
             ArticleFilter(article="479^57", point="2"),
             ArticleFilter(article="479^58", paragraph="1"),
         ],
-        "kpsw": [ArticleFilter(article="96", paragraph="1a", point="2")],
+        "kpsw": [
+            ArticleFilter(article="39", point="4"),
+            ArticleFilter(article="48a"),
+            ArticleFilter(article="49", point="2"),
+        ],
         "krio": [
             ArticleFilter(article="99"),
             ArticleFilter(article="99^1"),
@@ -1835,7 +1844,7 @@ ARTICLES_TO_SKIP: ArticleSkipConfig = {
 
 START_PAGE = {
     2025: {
-        "kc": 3,
+        "kc": 2,
         "kk": 2,
         "kks": 4,
         "kp": 4,
@@ -1845,7 +1854,7 @@ START_PAGE = {
         "kpsw": 2,
         "krio": 3,
         "ksh": 3,
-        "kw": 3,
+        "kw": 2,
     },
     2024: {
         "kc": 3,
