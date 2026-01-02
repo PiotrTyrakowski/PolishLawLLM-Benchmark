@@ -33,7 +33,7 @@ class LegalContentExtractor(BaseExtractor):
         return articles
 
     @staticmethod
-    def get_paragraph(article_text: str, paragraph_number: str) -> str:
+    def _get_raw_paragraph(article_text: str, paragraph_number: str) -> str:
         """Get specific paragraph from article."""
         paragraph_pattern = (
             rf"^(?:\s{{{PARAGRAPH_INDENT_SPACES}}}\s*)?"
@@ -46,7 +46,18 @@ class LegalContentExtractor(BaseExtractor):
         if not match:
             raise ValueError(f"Paragraph {paragraph_number} not found in the article")
 
-        return TextFormatter.format_extracted_text(match.group(1))
+        return match.group(1)
+
+    @staticmethod
+    def get_paragraph(
+        article_text: str,
+        paragraph_number: str,
+    ) -> str:
+        """Get specific paragraph from article."""
+        raw_paragraph = LegalContentExtractor._get_raw_paragraph(
+            article_text, paragraph_number
+        )
+        return TextFormatter.format_extracted_text(raw_paragraph)
 
     @staticmethod
     def get_point(
@@ -56,12 +67,12 @@ class LegalContentExtractor(BaseExtractor):
     ) -> str:
         """Get specific point from article or paragraph."""
         text = (
-            LegalContentExtractor.get_paragraph(article_text, paragraph_number)
+            LegalContentExtractor._get_raw_paragraph(article_text, paragraph_number)
             if paragraph_number
             else article_text
         )
 
-        point_pattern = rf"(?:^|\s){point_number}\)\s+(.+?)(?=(?:^|\s){RegexPatterns.ENTITY_ID}\)|\Z)"
+        point_pattern = rf"(?:^|\s){point_number}\)\s+(.+?)(?=(?:^|\n)\s*{RegexPatterns.ENTITY_ID}\)|\Z)"
 
         match = re.search(point_pattern, text, re.MULTILINE | re.DOTALL)
         if not match:
