@@ -36,9 +36,10 @@ class BaseMetric(ABC):
             yield self(pred, ref)
 
     def get_normalized_words(self, text: str) -> list[str]:
-        """Remove all punctuation from text and return list of words."""
         # Create translation table to remove all punctuation
-        translator = str.maketrans("", "", string.punctuation)
+        chars_to_remove = string.punctuation.replace("^", "")
+        translator = str.maketrans("", "", chars_to_remove)
+
         # Remove punctuation and split into words
         cleaned_text = text.translate(translator)
         return cleaned_text.strip().lower().split()

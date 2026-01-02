@@ -1,7 +1,7 @@
 import pytest
 from pathlib import Path
 
-from uploaders.main import Uploader
+from src.uploaders.main import Uploader
 from .conftest import ExpectedMetrics
 
 

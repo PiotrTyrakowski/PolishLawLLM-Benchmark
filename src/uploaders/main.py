@@ -3,8 +3,8 @@ import logging
 from pathlib import Path
 from typing import Dict, List
 
-from benchmark_framework.calculate_stats import calculate_stats
-from firebase.types import (
+from src.benchmark_framework.calculate_stats import calculate_stats
+from src.firebase.types import (
     ModelDocument,
     FirebaseCollection,
     ExamDocument,

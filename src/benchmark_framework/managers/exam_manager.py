@@ -74,7 +74,7 @@ Każde zadanie wejściowe zawiera treść pytania oraz trzy opcje: A, B, C. Dok�
 Odpowiedź musi być WYŁĄCZNIE w formacie JSON (bez żadnego innego tekstu przed/po).
 
 WYMÓG DOT. PODSTAWY PRAWNEJ:
-legal_basis - pełne oznaczenie przepisu (np. „art. 415 § 1 k.c.”).
+legal_basis - pełne oznaczenie przepisu (np. „art. 415 § 1 k.c.”, jeżeli numer artykułu, paragrafu lub punktu zawiera indeks górny, to indeks ten musi być zapisany poprzedzając go znakiem ^, np. "art. 139^1 § 1^1 k.p.c.").
 legal_basis_content - dosłowna treść cytowanego paragrafu/punktu lub artykułu.
 WAŻNE: Jeśli podstawą odpowiedzi jest konkretny paragraf lub punkt artykułu, podaj WYŁĄCZNIE treść tego paragrafu/punktu, a nie całego artykułu, np. jeśli podstawa prawna to. „art. 32 pkt 1 k.k.”, to legal_basis_content powinno zawierać wyłącznie treść punktu 1 tego artykułu („grzywna;”). W przypadku jednak gdy podstawą prawną jest konkretny artykuł, przytocz jego pełną treść.
 
