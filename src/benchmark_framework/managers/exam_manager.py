@@ -18,6 +18,7 @@ EXACT_DATE_DICT: dict[int, str] = {
     2019: "9 kwietnia 2019",
     2018: "11 kwietnia 2018",
     2017: "4 kwietnia 2017",
+    2016: "9 marca 2016",
 }
 
 
