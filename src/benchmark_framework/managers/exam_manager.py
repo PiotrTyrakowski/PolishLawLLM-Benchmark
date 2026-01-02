@@ -13,6 +13,7 @@ EXACT_DATE_DICT: dict[int, str] = {
     2024: "29 marca 2024",
     2023: "23 marca 2024",
     2022: "16 marca 2022",
+    2021: "25 marca 2021",
 }
 
 
