@@ -9,15 +9,7 @@ class PdfTableReader(BasePdfReader):
     """Reader that flattens PDF tables into text for Answer parsing."""
 
     def read(self, pdf_path: Path, start_page: int = 1) -> str:
-        text = self._extract_text(pdf_path, start_page)
-
-        # Log extracted text to debug folder
-        debug_dir = Path("debug")
-        debug_dir.mkdir(exist_ok=True)
-        debug_file = debug_dir / f"{pdf_path.stem}.txt"
-        debug_file.write_text(text, encoding="utf-8")
-
-        return text
+        return self._extract_text(pdf_path, start_page)
 
     def _extract_text(
         self, pdf_path: Path, start_page: int = 1, min_char_size: float = 9.0
