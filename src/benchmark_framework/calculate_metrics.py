@@ -20,7 +20,7 @@ def find_jsonl_files(directory: Path) -> List[Path]:
     return list(directory.rglob("*.jsonl"))
 
 
-def process_entry(entry: Dict[str, Any], corpuses_path: Path) -> Dict[str, Any]:
+def process_entry(entry: Dict[str, Any], metrics: List[BaseMetric]) -> Dict[str, Any]:
     """
     Process a single entry and calculate metrics.
     """
@@ -36,13 +36,6 @@ def process_entry(entry: Dict[str, Any], corpuses_path: Path) -> Dict[str, Any]:
         legal_basis = entry["legal_basis"]
         exact_match = ExactMatchMetric()
         accuracy_metrics["legal_basis"] = exact_match(model_legal_basis, legal_basis)
-
-    metrics: List[BaseMetric] = [
-        ExactMatchMetric(),
-        RougeNMetric(ngrams_importances=[1, 1, 1]),
-        TFIDFRougeNMetric(corpuses_dir=corpuses_path, ngrams_importances=[1, 1, 1]),
-        RougeWMetric(alpha=1.2, beta=1.0),
-    ]
 
     text_metrics = {}
     if (
@@ -126,8 +119,18 @@ def calculate_metrics(
             )
             continue
 
+        # Initialize metrics once per file
+        first_entry_year = entries[0].get("year", "") if entries else ""
+        corpuses_path = Path(corpuses_dir) / str(first_entry_year)
+        metrics: List[BaseMetric] = [
+            ExactMatchMetric(),
+            RougeNMetric(ngrams_importances=[1, 1, 1]),
+            TFIDFRougeNMetric(corpuses_dir=corpuses_path, ngrams_importances=[1, 1, 1]),
+            RougeWMetric(alpha=1.2, beta=1.0),
+        ]
+
         processed_entries = [
-            process_entry(entry, Path(corpuses_dir) / str(entry.get("year", "")))
+            process_entry(entry, metrics)
             for entry in tqdm(entries, desc=str(relative_path), unit="entries")
         ]
 

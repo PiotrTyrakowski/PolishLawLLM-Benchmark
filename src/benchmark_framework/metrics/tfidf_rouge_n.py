@@ -24,6 +24,11 @@ class TFIDFRougeNMetric(BaseMetric):
             document_frequency = Counter()
             with open(file, "r") as f:
                 data = json.load(f)
+
+            # Skip empty corpus files
+            if not data:
+                continue
+
             for article_number, article_text in data.items():
                 tokens = {
                     token.lower()
