@@ -5,24 +5,11 @@ import re
 
 from src.parsers.pdf_readers.base_pdf_reader import BasePdfReader
 
-DEBUG_LOG = True
-
-
 class PdfLegalTextReader(BasePdfReader):
     """Specialized reader for Legal Code PDFs."""
 
     def read(self, pdf_path: Path, start_page: int = 1) -> str:
-        text = self._extract_text(pdf_path, start_page)
-
-        # Save debug text file
-        if DEBUG_LOG:
-            debug_dir = Path("debug")
-            debug_dir.mkdir(exist_ok=True)
-            debug_file = debug_dir / f"{pdf_path.stem}.txt"
-            with open(debug_file, "w", encoding="utf-8") as f:
-                f.write(text)
-
-        return text
+        return self._extract_text(pdf_path, start_page)
 
     def _extract_text(
         self, pdf_path: Path, start_page: int = 1, min_char_size: float = 9.0

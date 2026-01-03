@@ -1,19 +1,16 @@
 import re
 
-from benchmark_framework.models.anthropic import AnthropicModel
-from benchmark_framework.models.openai import OpenAIModel
+from src.benchmark_framework.models.anthropic import AnthropicModel
+from src.benchmark_framework.models.openai import OpenAIModel
 from src.benchmark_framework.models.base_model import BaseModel
-from src.benchmark_framework.models.bielik import BielikModel
 from src.benchmark_framework.models.gemini import GeminiModel
-from src.benchmark_framework.models.local_model import LocalModel
 from src.benchmark_framework.configs.model_config import ModelConfig
 from src.benchmark_framework.models.nvidia_model import NvidiaModel
 from src.benchmark_framework.models.nvidia_nim_model import NvidiaNimModel
 
 MODEL_REGISTRY = {
     "gemini": GeminiModel,
-    "speakleash": LocalModel,
-    "bielik": BielikModel,
+    "speakleash": NvidiaModel,
     "deepseek": NvidiaModel,
     "meta": NvidiaModel,
     "gpt": OpenAIModel,

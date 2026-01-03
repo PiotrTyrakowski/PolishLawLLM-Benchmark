@@ -1,141 +1,131 @@
 # Polish Law LLM Benchmark
 
-A comprehensive benchmark framework for evaluating Large Language Models (LLMs) on Polish legal tasks. This project provides tools to test various LLMs against real Polish legal bar exam questions and court judgment analysis tasks.
+A benchmark framework for evaluating Large Language Models on Polish legal tasks, including bar exam questions and court judgment analysis.
 
-## 🚀 Quick Start
+## Project Structure
 
-### Prerequisites
+```
+PolishLawLLM-Benchmark/
+├── src/
+│   ├── benchmark_framework/    # LLM benchmarking framework
+│   ├── parsers/                # PDF parsing for exam data extraction
+│   ├── uploaders/              # Upload results to Firebase
+│   └── common/                 # Shared utilities and domain models
+├── data/
+│   ├── pdfs/                   # Source PDF files (exams, legal codes)
+│   ├── corpuses/               # Extracted legal code articles (JSON)
+│   ├── tasks/                  # Benchmark tasks (JSONL)
+│   └── results/                # Benchmark results
+└── frontend/                   # Results visualization dashboard
+```
 
-- Python 3.8+
-- API keys for the LLM services you want to test
+## Quick Start
 
 ### Installation
 
-1. **Clone the repository:**
-   ```bash
-   git clone <repository-url>
-   cd PolishLawLLM-Benchmark
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Set up environment variables:**
-   ```bash
-   # For Google Gemini models
-   export GEMINI_API_KEY="your_gemini_api_key_here"
-   
-   # For NVIDIA models (Bielik, DeepSeek, Meta, CYFRAGOVPL)
-   export NVIDIA_API_KEY="your_nvidia_api_key_here"
-   ```
-
-### Basic Usage
-
-Run a benchmark using the command-line interface:
-
 ```bash
-python -m src.benchmark_framework.cli <model_name> <task_type> [OPTIONS]
-```
-
-**Examples:**
-```bash
-# Run on legal exams dataset with Gemini
-python -m src.benchmark_framework.cli gemini-2.5-flash exams
-
-# Run with Google Search enabled (Gemini only)
-python -m src.benchmark_framework.cli gemini-2.5-pro exams --google-search
-
-# Run for a specific year
-python -m src.benchmark_framework.cli gemini-2.5-flash exams --year 2024
-```
-
-## 🤖 Supported Models
-
-| Model Prefix | Provider | Description |
-|--------------|----------|-------------|
-| `gemini-*` | Google | Google Gemini models (e.g., `gemini-2.5-flash`, `gemini-2.5-pro`) |
-| `bielik-*` | NVIDIA | Polish Bielik 11B model via NVIDIA API |
-| `speakleash/*` | Local | Local model inference using HuggingFace Transformers |
-| `deepseek/*` | NVIDIA | DeepSeek models via NVIDIA API |
-| `meta/*` | NVIDIA | Meta LLaMA models via NVIDIA API |
-| `CYFRAGOVPL/*` | NVIDIA NIM | Polish government LLM models via NVIDIA NIM |
-
-## 📊 Task types
-
-### Legal Exams (`exams`)
-Polish legal bar exam questions from multiple exam types:
-- **Adwokacki/Radcowy** - Bar attorney and legal counsel exams
-- **Komorniczy** - Bailiff exams  
-- **Notarialny** - Notary exams
-
-Each question includes:
-- Question text with 3 answer options (A, B, C)
-- Correct answer
-- Legal basis reference (article, paragraph, point)
-- Legal basis content (exact text of the law)
-
-### Court Judgments (`judgments`)
-Tasks involving analysis of masked court judgment reasoning to identify the applicable legal provisions.
-
-## 📈 Evaluation Metrics
-
-| Metric            | Description                                                  |
-|-------------------|--------------------------------------------------------------|
-| **Exact Match**   | Accuracy for answer selection (A, B, C)                      |
-| **BLEU**          | Standard BLEU metric                                         |
-| **Weighted BLEU** | TF-IDF weighted BLEU score for legal basis content evaluation |
-
-## 📝 Data Format
-
-### Exam Questions (JSONL)
-```json
-{
-  "id": 1,
-  "question": "Zgodnie z Kodeksem karnym, czyn zabroniony uważa się za...",
-  "choices": {
-    "A": "sprawca działał lub zaniechał działania...",
-    "B": "ujawniono czyn zabroniony,",
-    "C": "zatrzymano sprawcę czynu zabronionego."
-  },
-  "answer": "A",
-  "legal_basis": "art. 6 § 2 k.k.",
-  "legal_basis_content": "Czyn zabroniony uważa się za popełniony w miejscu...",
-  "exam_type": "adwokacki_radcowy",
-  "year": 2024
-}
-```
-
-### Model Response Format (JSON)
-```json
-{
-  "reasoning": "Brief analysis of each option",
-  "answer": "A",
-  "legal_basis": "Art. 123 § 2 k.k.",
-  "legal_basis_content": "Exact text of the cited legal provision"
-}
-```
-
-## 🔧 Parsing Exam PDFs
-
-The project includes tools to extract exam data from official PDF files:
-
-```bash
-python -m src.parsers.cli <path-to-pdfs-directory>
-```
-
-See [src/parsers/README.md](src/parsers/README.md) for detailed instructions.
-
-## 🛠️ Development
-
-```bash
-# Install development dependencies
+git clone <repository-url>
+cd PolishLawLLM-Benchmark
 pip install -r requirements.txt
+```
 
-# Run code formatting
-black src/
+### Environment Variables
 
+```bash
+export GOOGLE_API_KEY="..."      # For Gemini models
+export OPENAI_API_KEY="..."      # For GPT models
+export ANTHROPIC_API_KEY="..."   # For Claude models
+export NVIDIA_API_KEY="..."      # For NVIDIA-hosted models
+```
+
+### Run a Benchmark
+
+```bash
+python -m src.benchmark_framework.cli gemini-2.0-flash exams
+```
+
+---
+
+## Modules
+
+### Benchmark Framework
+
+Run LLM evaluations, calculate metrics, and aggregate statistics.
+
+```bash
+# Run benchmark
+python -m src.benchmark_framework.cli <model-name> <task-type>
+
+# Calculate metrics on results
+python -m src.benchmark_framework.calculate_metrics <input-dir> <output-dir>
+
+# Get aggregate statistics
+python -m src.benchmark_framework.calculate_stats <file-path>
+```
+
+**Supported models:** Gemini, GPT, Claude, NVIDIA (Bielik, DeepSeek, LLaMA, PLLuM)
+
+📖 **[Detailed documentation →](src/benchmark_framework/README.md)**
+
+---
+
+### PDF Parsers
+
+Extract exam questions and legal code articles from PDF files.
+
+```bash
+# Generate legal code corpuses
+python -m src.parsers.corpuses.setup_corpuses <pdf-dir> <output-dir> <year>
+
+# Parse exam PDFs
+python -m src.parsers.cli <pdfs-dir> <corpuses-dir> <output-dir>
+```
+
+📖 **[Detailed documentation →](src/parsers/README.md)**
+
+---
+
+### Uploaders
+
+Upload benchmark results to Firebase for visualization in the frontend dashboard.
+
+```bash
+python -m src.uploaders.cli <results-dir>
+```
+
+📖 **[Detailed documentation →](src/uploaders/Readme.md)**
+
+---
+
+### Frontend
+
+Next.js web dashboard for visualizing benchmark results stored in Firebase.
+
+```bash
+cd frontend
+bun install
+bun run dev
+```
+
+📖 **[Detailed documentation →](frontend/README.md)**
+
+---
+
+## Task Types
+
+| Task | Description |
+|------|-------------|
+| `exams` | Polish legal bar exam questions (adwokacki, radcowy, komorniczy, notarialny) |
+| `judgments` | Court judgment analysis tasks |
+
+---
+
+## Development
+
+```bash
 # Run tests
 python -m pytest src/
+
+# Code formatting
+black src/
 ```

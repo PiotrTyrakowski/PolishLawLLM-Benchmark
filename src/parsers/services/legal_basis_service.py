@@ -77,15 +77,6 @@ class LegalBasisService:
         point_num = legal_reference.point
         code_abbr = legal_reference.code
 
-        if (
-            (article_num and "^" in article_num)
-            or (paragraph_num and "^" in paragraph_num)
-            or (point_num and "^" in point_num)
-        ):
-            raise ValueError(
-                f"Warning: Superscript detected in article number {legal_basis}. Skipping extraction."
-            )
-
         if not article_num or not code_abbr:
             raise ValueError(f"Invalid legal basis: {legal_basis}")
 

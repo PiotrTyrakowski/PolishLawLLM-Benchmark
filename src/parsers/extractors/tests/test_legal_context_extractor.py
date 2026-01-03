@@ -204,6 +204,13 @@ def load_corpus(code: str) -> dict:
             "Tytuł wykonawczy wystawiony przeciwko osobie pozostającej w związku małżeńskim stanowi podstawę do zajęcia nieruchomości wchodzącej w skład majątku wspólnego. Dalsze czynności egzekucyjne dopuszczalne są na podstawie tytułu wykonawczego wystawionego przeciwko obojgu małżonkom.",
             "kpc",
         ),
+        (
+            "133",
+            "2^1",
+            None,
+            "Pisma procesowe lub orzeczenia dla przedsiębiorcy wpisanego do Centralnej Ewidencji i Informacji o Działalności Gospodarczej doręcza się na adres do doręczeń udostępniony w tej ewidencji, chyba że przedsiębiorca wskazał inny adres do doręczeń.",
+            "kpc",
+        ),
     ],
 )
 def test_extract_legal_content(

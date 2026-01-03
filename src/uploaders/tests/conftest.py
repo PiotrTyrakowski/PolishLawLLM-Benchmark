@@ -119,13 +119,13 @@ class ExpectedMetrics:
     # user1_upload/model_a - 2024 adwokacki_radcowy
     USER1_MODEL_A = {
         "accuracy_metrics": {
-            "answer": 2/3,  # 0.6667
-            "legal_basis": 1/3,  # 0.3333
+            "answer": 2 / 3,  # 0.6667
+            "legal_basis": 1 / 3,  # 0.3333
         },
         "text_metrics": {
             "exact_match": 0.5,  # (1.0 + 0.5 + 0.0) / 3
             "bleu": 0.6,  # (0.9 + 0.6 + 0.3) / 3
-        }
+        },
     }
 
     # user2_different_model/model_b - 2025 notarialny
@@ -137,7 +137,7 @@ class ExpectedMetrics:
         "text_metrics": {
             "exact_match": 1.0,
             "bleu": 1.0,
-        }
+        },
     }
 
     # user2_same_model/model_a - 2025 notarialny
@@ -149,7 +149,7 @@ class ExpectedMetrics:
         "text_metrics": {
             "exact_match": 0.0,
             "bleu": 0.2,
-        }
+        },
     }
 
     # multi_exam/model_multi "all" aggregate
@@ -161,7 +161,7 @@ class ExpectedMetrics:
         "text_metrics": {
             "exact_match": 0.5,  # (0.8 + 0.5 + 0.2) / 3
             "bleu": 0.5,  # (0.8 + 0.5 + 0.2) / 3
-        }
+        },
     }
 
     # with_judgments/model_with_judgments - judgments (no "answer" key for judgments)
@@ -172,7 +172,7 @@ class ExpectedMetrics:
         "text_metrics": {
             "exact_match": 0.5,  # (1.0 + 0.0) / 2
             "bleu": 0.7,  # (0.9 + 0.5) / 2
-        }
+        },
     }
 
     # judgments_only/model_judgments_only - judgments only
@@ -183,5 +183,5 @@ class ExpectedMetrics:
         "text_metrics": {
             "exact_match": 1.0,  # (1.0 + 1.0) / 2
             "bleu": 1.0,  # (1.0 + 1.0) / 2
-        }
+        },
     }

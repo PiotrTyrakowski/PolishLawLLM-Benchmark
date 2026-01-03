@@ -10,6 +10,15 @@ from src.benchmark_framework.utils.response_parser import extract_json_field
 
 EXACT_DATE_DICT: dict[int, str] = {
     2025: "17 marca 2025",
+    2024: "29 marca 2024",
+    2023: "23 marca 2023",
+    2022: "16 marca 2022",
+    2021: "25 marca 2021",
+    2020: "10 kwietnia 2020",
+    2019: "9 kwietnia 2019",
+    2018: "11 kwietnia 2018",
+    2017: "4 kwietnia 2017",
+    2016: "9 marca 2016",
 }
 
 
@@ -65,7 +74,7 @@ Każde zadanie wejściowe zawiera treść pytania oraz trzy opcje: A, B, C. Dok�
 Odpowiedź musi być WYŁĄCZNIE w formacie JSON (bez żadnego innego tekstu przed/po).
 
 WYMÓG DOT. PODSTAWY PRAWNEJ:
-legal_basis - pełne oznaczenie przepisu (np. „art. 415 § 1 k.c.”).
+legal_basis - pełne oznaczenie przepisu (np. „art. 415 § 1 k.c.”, jeżeli numer artykułu, paragrafu lub punktu zawiera indeks górny, to indeks ten musi być zapisany poprzedzając go znakiem ^, np. "art. 139^1 § 1^1 k.p.c.").
 legal_basis_content - dosłowna treść cytowanego paragrafu/punktu lub artykułu.
 WAŻNE: Jeśli podstawą odpowiedzi jest konkretny paragraf lub punkt artykułu, podaj WYŁĄCZNIE treść tego paragrafu/punktu, a nie całego artykułu, np. jeśli podstawa prawna to. „art. 32 pkt 1 k.k.”, to legal_basis_content powinno zawierać wyłącznie treść punktu 1 tego artykułu („grzywna;”). W przypadku jednak gdy podstawą prawną jest konkretny artykuł, przytocz jego pełną treść.
 
