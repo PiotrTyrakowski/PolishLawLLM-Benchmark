@@ -8,8 +8,8 @@ from src.constants import ENCODING
 
 class JudgmentResult(TypedDict):
     id: int
-    year: int
     judgment_link: str
+    date: str
     legal_basis: str
     legal_basis_content: str
 
@@ -32,12 +32,14 @@ class Judgment(Task):
         self,
         id,
         judgment_link,
+        date,
         masked_justification_text,
         legal_basis,
         legal_basis_content,
     ):
         super().__init__(id=id)
         self.judgment_link = judgment_link
+        self.date = date
         self.masked_justification_text = masked_justification_text
         self.legal_basis = legal_basis
         self.legal_basis_content = legal_basis_content
@@ -51,6 +53,7 @@ class Judgment(Task):
         return cls(
             data["id"],
             data["judgment_link"],
+            data["date"],
             masked_text,
             data["legal_basis"],
             data["legal_basis_content"],
@@ -62,10 +65,6 @@ class Judgment(Task):
         Returns the masked justification text that needs to be analyzed.
         """
         return self.masked_justification_text
-
-    def get_year(self) -> int:
-        # TODO: implement year extraction if needed
-        return 2025
 
 
 def load_judgments(jsonl_path: Path) -> list["Judgment"]:

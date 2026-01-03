@@ -31,7 +31,7 @@ class BenchmarkRunner:
                 if runner_config.requests_per_minute is not None:
                     rate_limit_wait(runner_config.requests_per_minute)
 
-                system_prompt = self.manager.get_system_prompt(year=task.get_year())
+                system_prompt = self.manager.get_system_prompt(task)
 
                 try:
                     resp = self.model.generate_response(

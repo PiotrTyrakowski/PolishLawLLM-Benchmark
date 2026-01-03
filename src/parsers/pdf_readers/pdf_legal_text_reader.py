@@ -5,6 +5,7 @@ import re
 
 from src.parsers.pdf_readers.base_pdf_reader import BasePdfReader
 
+
 class PdfLegalTextReader(BasePdfReader):
     """Specialized reader for Legal Code PDFs."""
 

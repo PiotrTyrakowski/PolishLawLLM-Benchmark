@@ -86,9 +86,6 @@ class ExamQuestion(Task):
             prompt += f"{key}) {val}\n"
         return prompt
 
-    def get_year(self) -> int:
-        return self.year
-
 
 @dataclass
 class Exam:
