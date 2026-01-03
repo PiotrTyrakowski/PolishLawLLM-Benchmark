@@ -1,6 +1,6 @@
 import argparse
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, List
 from collections import defaultdict
 
 from src.common.file_operations import FileOperations
@@ -68,6 +68,48 @@ def calculate_stats(file_path: Path) -> Dict[str, Any]:
     }
 
 
+def aggregate_results(results_list: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """
+    Calculates the average of metrics across multiple result dictionaries.
+    """
+    if not results_list:
+        return {}
+
+    count = len(results_list)
+
+    # Accumulators
+    acc_answer_sum = 0.0
+    acc_legal_basis_sum = 0.0
+    malformed_sum = 0.0
+    text_metrics_sums = defaultdict(float)
+
+    for res in results_list:
+        acc_answer_sum += res["accuracy_metrics"].get("answer", 0.0)
+        acc_legal_basis_sum += res["accuracy_metrics"].get("legal_basis", 0.0)
+        malformed_sum += res.get("malformed_response_rate", 0.0)
+
+        for k, v in res.get("text_metrics", {}).items():
+            text_metrics_sums[k] += v
+
+    # Average out
+    avg_accuracy = {
+        "answer": acc_answer_sum / count,
+        "legal_basis": acc_legal_basis_sum / count,
+    }
+
+    avg_malformed = malformed_sum / count
+
+    avg_text_metrics = {}
+    for k, total_val in text_metrics_sums.items():
+        avg_text_metrics[k] = total_val / count
+
+    return {
+        "accuracy_metrics": avg_accuracy,
+        "text_metrics": avg_text_metrics,
+        "malformed_response_rate": avg_malformed,
+    }
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Calculate statistics from a JSONL file with benchmark results."
@@ -75,26 +117,59 @@ if __name__ == "__main__":
     parser.add_argument(
         "file_path",
         type=Path,
-        help="Path to the JSONL file containing benchmark results.",
+        help="Path to the JSONL file or directory containing benchmark results.",
     )
     args = parser.parse_args()
 
-    file_path: Path = args.file_path
+    input_path: Path = args.file_path
+    target_files: List[Path] = []
 
-    if not file_path.exists():
-        print(f"Error: File '{file_path}' not found.")
+    if not input_path.exists():
+        print(f"Error: Path '{input_path}' not found.")
         exit(1)
 
-    results = calculate_stats(file_path)
+    if input_path.is_dir():
+        target_files = list(input_path.rglob("*.jsonl"))
+        if not target_files:
+            print(f"No .jsonl files found in directory '{input_path}'.")
+            exit(0)
+        print(f"Found {len(target_files)} files. Processing...")
+    elif input_path.is_file():
+        target_files = [input_path]
+    else:
+        print(
+            f"Error: '{input_path}' is a directory. Use --all to process all nested .jsonl files."
+        )
+        exit(1)
+
+    # 2. Call calculate_stats for each file
+    all_results = []
+    for file in target_files:
+        try:
+            res = calculate_stats(file)
+            all_results.append(res)
+        except Exception as e:
+            print(f"Warning: Failed to process {file}. Error: {e}")
+
+    if not all_results:
+        print("No valid results computed.")
+        exit(1)
+
+    if len(all_results) == 1:
+        final_results = all_results[0]
+    else:
+        final_results = aggregate_results(all_results)
 
     print()
     print("=== Results ===")
     print("Accuracy Metrics:")
-    print(f"  Answer accuracy: {results['accuracy_metrics']['answer']:.4f}")
-    print(f"  Legal basis accuracy: {results['accuracy_metrics']['legal_basis']:.4f}")
+    print(f"  Answer accuracy: {final_results['accuracy_metrics']['answer']:.4f}")
+    print(
+        f"  Legal basis accuracy: {final_results['accuracy_metrics']['legal_basis']:.4f}"
+    )
     print()
     print("Text Metrics:")
-    for metric_name, metric_value in sorted(results["text_metrics"].items()):
+    for metric_name, metric_value in sorted(final_results["text_metrics"].items()):
         print(f"  {metric_name}: {metric_value:.4f}")
     print()
-    print(f"Malformed Response Rate: {results['malformed_response_rate']:.4f}")
+    print(f"Malformed Response Rate: {final_results['malformed_response_rate']:.4f}")
