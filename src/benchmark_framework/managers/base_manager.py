@@ -84,5 +84,5 @@ class BaseManager(ABC):
             self._processed_cache[output_path] = set()
         self._processed_cache[output_path].add(str(task.id))
 
-    def get_system_prompt(self, year: int) -> str:
+    def get_system_prompt(self, task: Task) -> str:
         return ""

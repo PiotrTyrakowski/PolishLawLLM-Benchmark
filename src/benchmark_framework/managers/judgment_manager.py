@@ -18,7 +18,8 @@ class JudgmentManager(BaseManager):
         super().__init__(model, "judgments", tasks_path, year)
 
     def get_output_path(self, task: Judgment, results_dir: Path) -> Path:
-        return results_dir / self.model.model_name / self.task_type / "all.jsonl"
+        model_name = self.model.model_name.replace("/", "-")
+        return results_dir / model_name / self.task_type / "all.jsonl"
 
     def get_result(self, judgment: Judgment, model_response: str) -> JudgmentResult:
         model_legal_basis = extract_json_field(model_response, "legal_basis")
@@ -28,8 +29,8 @@ class JudgmentManager(BaseManager):
 
         result: JudgmentResult = {
             "id": judgment.id,
-            "year": judgment.get_year(),
             "judgment_link": judgment.judgment_link,
+            "date": judgment.date,
             "legal_basis": judgment.legal_basis,
             "legal_basis_content": judgment.legal_basis_content,
             "model_name": self.model.model_name,
@@ -40,7 +41,7 @@ class JudgmentManager(BaseManager):
         }
         return result
 
-    def get_system_prompt(self, year: int) -> str:
+    def get_system_prompt(self, task: Judgment) -> str:
         return (
             "Jesteś ekspertem w polskim prawie, specjalizującym się w analizie uzasadnień orzeczeń sądowych.\n"
             "Twoje zadanie polega na analizie zamaskowanego tekstu uzasadnienia wyroku i wskazaniu kluczowego przepisu prawa, do którego odnosi się orzeczenie.\n\n"
@@ -69,5 +70,5 @@ class JudgmentManager(BaseManager):
             "  WAŻNE: Podaj TYLKO treść wskazanego artykułu, bez innych fragmentów aktów prawnych\n"
             "# WAŻNE UWAGI\n"
             "- Zwróć TYLKO poprawny JSON - bez markdown, bez dodatkowego tekstu\n"
-            f"- Zwróć poprawne dane na dzień 20 września {year} roku."
+            f"- Zwróć poprawne dane na dzień {task.date}."
         )

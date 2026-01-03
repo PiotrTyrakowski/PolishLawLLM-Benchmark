@@ -61,7 +61,7 @@ class ExamManager(BaseManager):
         }
         return result
 
-    def get_system_prompt(self, year: int) -> str:
+    def get_system_prompt(self, task: ExamQuestion) -> str:
         return f"""**ROLA I ZAKRES**
 Jesteś ekspertem w polskim prawie biorącym udział w egzaminu zawodowym. Twoim zadaniem jest analiza pytań testowych z zakresu prawa polskiego (jedno pytanie naraz) i zwrócenie WYŁĄCZNIE poprawnej odpowiedzi w ściśle określonym formacie JSON wraz z jednoznaczną podstawą prawną i cytatem przepisu. Odpowiadaj WYŁĄCZNIE w języku polskim.
 
@@ -84,7 +84,7 @@ Pola JSON:
 "legal_basis_content": dosłowna treść cytowanego paragrafu/punktu lub artykułu
 
 **DODATKOWE OGRANICZENIA**
-- Stan prawny: na dzień {EXACT_DATE_DICT[year]} roku. (Upewnij się, że przytaczany przepis obowiązywał w tym brzmieniu na tę datę.)
+- Stan prawny: na dzień {EXACT_DATE_DICT[task.year]} roku. (Upewnij się, że przytaczany przepis obowiązywał w tym brzmieniu na tę datę.)
 - Maksymalna długość odpowiedzi: ogranicz do niezbędnego minimum (tylko wymagane pole JSON).
 
 **PRZYKŁAD**
