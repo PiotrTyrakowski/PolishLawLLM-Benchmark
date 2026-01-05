@@ -120,7 +120,7 @@ def calculate_metrics(
             continue
 
         # Initialize metrics once per file
-        first_entry_year = entries[0].get("year", "") if entries else ""
+        first_entry_year = entries[0].get("year", "2025")
         corpuses_path = Path(corpuses_dir) / str(first_entry_year)
         metrics: List[BaseMetric] = [
             ExactMatchMetric(),

@@ -19,6 +19,7 @@ class TFIDFRougeNMetric(BaseMetric):
 
     def build_idf_lookup(self, corpuses_dir: Path):
         self.idf_lookup = {}
+        assert corpuses_dir.exists()
         for file in corpuses_dir.glob("*.json"):
             data = {}
             document_frequency = Counter()
@@ -110,9 +111,7 @@ class TFIDFRougeNMetric(BaseMetric):
         for token in set(ref_tokens):
             assert len(token) > 0
             tf = ref_tokens.count(token) / len(ref_tokens)
-            idf = idf_dict.get(token)
-            if idf is None:
-                raise ValueError(f"Token '{token}' not found in {code_abbr} IDF lookup")
+            idf = idf_dict.get(token, 0)
             weights[token] = tf * idf
 
         return weights
