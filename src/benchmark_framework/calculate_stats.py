@@ -65,10 +65,10 @@ def calculate_stats(file_path: Path) -> Dict[str, Any]:
         "accuracy_metrics": {"answer": accuracy, "legal_basis": legal_basis},
         "text_metrics": avg_text_metrics,
         "malformed_response_rate": malformed_response_rate,
+        "questions_count": total_count
     }
 
 
-# TODO: fix this
 def aggregate_results(results_list: List[Dict[str, Any]]) -> Dict[str, Any]:
     """
     Calculates the average of metrics across multiple result dictionaries.
@@ -76,33 +76,38 @@ def aggregate_results(results_list: List[Dict[str, Any]]) -> Dict[str, Any]:
     if not results_list:
         return {}
 
-    count = len(results_list)
-
     # Accumulators
-    acc_answer_sum = 0.0
-    acc_legal_basis_sum = 0.0
+    correct_answers_sum = 0.0
+    correct_legal_basis_sum = 0.0
     malformed_sum = 0.0
+    total_questions_count = 0
     text_metrics_sums = defaultdict(float)
 
     for res in results_list:
-        acc_answer_sum += res["accuracy_metrics"].get("answer", 0.0)
-        acc_legal_basis_sum += res["accuracy_metrics"].get("legal_basis", 0.0)
-        malformed_sum += res.get("malformed_response_rate", 0.0)
+        questions_count = res.get("questions_count")
+        if questions_count is None:
+            continue
+
+        total_questions_count += questions_count
+        correct_answers_sum += res["accuracy_metrics"].get("answer", 0.0) * questions_count
+        correct_legal_basis_sum += res["accuracy_metrics"].get("legal_basis", 0.0) * questions_count
+        malformed_sum += res.get("malformed_response_rate", 0.0) * questions_count
 
         for k, v in res.get("text_metrics", {}).items():
-            text_metrics_sums[k] += v
+            text_metrics_sums[k] += v * questions_count
+
+    if total_questions_count == 0:
+        raise ValueError("Total questions count is zero; cannot aggregate results.")
 
     # Average out
     avg_accuracy = {
-        "answer": acc_answer_sum / count,
-        "legal_basis": acc_legal_basis_sum / count,
+        "answer": correct_answers_sum / total_questions_count,
+        "legal_basis": correct_legal_basis_sum / total_questions_count,
     }
-
-    avg_malformed = malformed_sum / count
-
+    avg_malformed = malformed_sum / total_questions_count
     avg_text_metrics = {}
     for k, total_val in text_metrics_sums.items():
-        avg_text_metrics[k] = total_val / count
+        avg_text_metrics[k] = total_val / total_questions_count
 
     return {
         "accuracy_metrics": avg_accuracy,
@@ -143,7 +148,7 @@ if __name__ == "__main__":
         )
         exit(1)
 
-    # 2. Call calculate_stats for each file
+    # Call calculate_stats for each file
     all_results = []
     for file in target_files:
         try:
