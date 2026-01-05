@@ -68,6 +68,7 @@ def calculate_stats(file_path: Path) -> Dict[str, Any]:
     }
 
 
+# TODO: fix this
 def aggregate_results(results_list: List[Dict[str, Any]]) -> Dict[str, Any]:
     """
     Calculates the average of metrics across multiple result dictionaries.

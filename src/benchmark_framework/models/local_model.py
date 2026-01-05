@@ -1,5 +1,6 @@
 from src.benchmark_framework.models.base_model import BaseModel
 from src.benchmark_framework.configs.model_config import ModelConfig
+from src.constants import MAX_NEW_TOKENS
 
 
 class LocalModel(BaseModel):

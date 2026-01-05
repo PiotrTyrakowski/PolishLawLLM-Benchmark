@@ -38,4 +38,4 @@ class GeminiModel(BaseModel):
         return config
 
     def get_default_runner_config(self):
-        return RunnerConfig(requests_per_minute=5, daily_limit=50)
+        return RunnerConfig(requests_per_minute=100)
