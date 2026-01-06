@@ -6,8 +6,8 @@ import typer
 from rich.console import Console
 from rich.logging import RichHandler
 
-from firebase.main import firestore_db
-from uploaders.main import Uploader
+from src.firebase.main import firestore_db
+from src.uploaders.main import Uploader
 
 DATA_PATH: Final[Path] = Path(__file__).resolve().parents[2] / "data"
 DEFAULT_PATH: Final[Path] = DATA_PATH / "results_with_metrics"

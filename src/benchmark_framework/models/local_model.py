@@ -51,25 +51,3 @@ class LocalModel(BaseModel):
 
         assert isinstance(response, str), "generated_text should be of type str"
         return response
-
-    def generate_batch_response(
-        self, system_prompt: str, prompts: list[str], batch_size: int
-    ) -> list[str]:
-        chat_batch = []
-        for prompt in prompts:
-            messages = [
-                {"role": "system", "content": system_prompt.strip()},
-                {"role": "user", "content": prompt.strip()},
-            ]
-            chat_batch.append(messages)
-
-        outputs = self.pipe(
-            chat_batch,
-            batch_size=batch_size,
-            return_full_text=False,
-            max_new_tokens=MAX_NEW_TOKENS,
-            do_sample=False,
-        )
-
-        responses = [output[0]["generated_text"].strip() for output in outputs]
-        return responses
