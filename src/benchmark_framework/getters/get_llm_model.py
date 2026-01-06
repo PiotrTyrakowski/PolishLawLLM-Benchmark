@@ -7,6 +7,7 @@ from src.benchmark_framework.models.gemini import GeminiModel
 from src.benchmark_framework.configs.model_config import ModelConfig
 from src.benchmark_framework.models.nvidia_model import NvidiaModel
 from src.benchmark_framework.models.nvidia_nim_model import NvidiaNimModel
+from src.benchmark_framework.models.open_router import OpenRouterModel
 
 MODEL_REGISTRY = {
     "gemini": GeminiModel,
@@ -16,6 +17,10 @@ MODEL_REGISTRY = {
     "gpt": OpenAIModel,
     "claude": AnthropicModel,
     "CYFRAGOVPL": NvidiaNimModel,
+    "perplexity": OpenRouterModel, # https://openrouter.ai/perplexity/sonar-pro-search
+    "qwen": OpenRouterModel, # https://openrouter.ai/qwen/qwen3-max
+    "x-ai": OpenRouterModel, # https://openrouter.ai/x-ai/grok-4
+    "z-ai": OpenRouterModel, # https://openrouter.ai/z-ai/glm-4.7
     "moonshotai": NvidiaModel,
     "mistralai": NvidiaModel,
 }
