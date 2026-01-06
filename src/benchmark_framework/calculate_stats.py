@@ -147,9 +147,7 @@ if __name__ == "__main__":
     elif input_path.is_file():
         target_files = [input_path]
     else:
-        print(
-            f"Error: '{input_path}' is a directory. Use --all to process all nested .jsonl files."
-        )
+        print(f"Error: incorrect input path '{input_path}'.")
         exit(1)
 
     # Call calculate_stats for each file
