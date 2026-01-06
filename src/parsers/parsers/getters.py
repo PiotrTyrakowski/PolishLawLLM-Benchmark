@@ -9,21 +9,21 @@ from src.parsers.pdf_readers.pdf_text_reader import PdfTextReader
 from src.parsers.pdf_readers.pdf_table_reader import PdfTableReader
 
 
-def get_questions_parser(file_path: Path) -> Parser:
+def get_questions_parser(file_path: Path, start_page: int = 2) -> Parser:
     return Parser(
         file_path=file_path,
         extractor=QuestionExtractor(),
         pdf_reader=PdfTextReader(),
-        start_page=2,
+        start_page=start_page,
     )
 
 
-def get_answers_parser(file_path: Path) -> Parser:
+def get_answers_parser(file_path: Path, start_page: int = 1) -> Parser:
     return Parser(
         file_path=file_path,
         extractor=AnswerExtractor(),
         pdf_reader=PdfTableReader(),
-        start_page=1,
+        start_page=start_page,
     )
 
 

@@ -28,8 +28,3 @@ class BaseModel(ABC):
         prompt: str,
     ) -> str:
         pass
-
-    def generate_batch_response(
-        self, system_prompt: str, prompts: list[str], batch_size: int
-    ) -> list[str]:
-        return [self.generate_response(system_prompt, prompt) for prompt in prompts]

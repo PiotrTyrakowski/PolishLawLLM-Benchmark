@@ -13,17 +13,6 @@ class PdfTextReader(BasePdfReader):
     def extract_text(
         self, pdf_path: Path, start_page: int = 1, min_char_size: float = 9.0
     ) -> str:
-        """
-        Extract text from PDF starting from specified page.
-
-        Args:
-            pdf_path: Path to PDF file
-            start_page: Page number to start extraction (1-indexed)
-            min_char_size: Minimum character size to include
-
-        Returns:
-            Extracted text
-        """
         text_parts = []
 
         with pdfplumber.open(pdf_path) as pdf:

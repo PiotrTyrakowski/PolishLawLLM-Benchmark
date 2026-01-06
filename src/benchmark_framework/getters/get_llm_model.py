@@ -17,6 +17,7 @@ MODEL_REGISTRY = {
     "claude": AnthropicModel,
     "CYFRAGOVPL": NvidiaNimModel,
     "moonshotai": NvidiaModel,
+    "mistralai": NvidiaModel,
 }
 
 
