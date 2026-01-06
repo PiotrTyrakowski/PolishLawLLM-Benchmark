@@ -41,9 +41,6 @@ class JudgmentManager(BaseManager):
         }
         return result
 
-    def is_task_processed(self, task: Judgment, results_dir: Path) -> bool:
-        return False
-
     def get_system_prompt(self, task: Judgment) -> str:
         return f"""**ROLA I ZAKRES**
         Jesteś ekspertem w polskim prawie, specjalizującym się w analizie orzecznictwa sądowego. Twoim zadaniem jest analiza zamaskowanego tekstu uzasadnienia wyroku i zwrócenie numeru zamaskowanego artykułu oraz jego treści w określonym formacie. Odpowiadaj WYŁĄCZNIE w języku polskim.
