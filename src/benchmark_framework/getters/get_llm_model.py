@@ -16,6 +16,7 @@ MODEL_REGISTRY = {
     "gpt": OpenAIModel,
     "claude": AnthropicModel,
     "CYFRAGOVPL": NvidiaNimModel,
+    "moonshotai": NvidiaModel,
 }
 
 

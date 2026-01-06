@@ -65,7 +65,7 @@ def calculate_stats(file_path: Path) -> Dict[str, Any]:
         "accuracy_metrics": {"answer": accuracy, "legal_basis": legal_basis},
         "text_metrics": avg_text_metrics,
         "malformed_response_rate": malformed_response_rate,
-        "questions_count": total_count
+        "questions_count": total_count,
     }
 
 
@@ -89,8 +89,12 @@ def aggregate_results(results_list: List[Dict[str, Any]]) -> Dict[str, Any]:
             continue
 
         total_questions_count += questions_count
-        correct_answers_sum += res["accuracy_metrics"].get("answer", 0.0) * questions_count
-        correct_legal_basis_sum += res["accuracy_metrics"].get("legal_basis", 0.0) * questions_count
+        correct_answers_sum += (
+            res["accuracy_metrics"].get("answer", 0.0) * questions_count
+        )
+        correct_legal_basis_sum += (
+            res["accuracy_metrics"].get("legal_basis", 0.0) * questions_count
+        )
         malformed_sum += res.get("malformed_response_rate", 0.0) * questions_count
 
         for k, v in res.get("text_metrics", {}).items():
