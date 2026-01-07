@@ -41,7 +41,7 @@ class BaseMetric(ABC):
         translator = str.maketrans("", "", chars_to_remove)
 
         # Remove punctuation and split into words
-        cleaned_text = text.translate(translator)
+        cleaned_text = text.replace("\n", " ").translate(translator)
         return cleaned_text.strip().lower().split()
 
     @abstractmethod
