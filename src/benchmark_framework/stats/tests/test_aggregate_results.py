@@ -9,7 +9,7 @@ class TestAggregateResults:
     def test_empty_results_list_returns_empty_dict(self):
         """Test that an empty results list returns an empty dictionary."""
         result = aggregate_results([])
-        
+
         assert result == {}
 
     def test_single_result_aggregation(self):
@@ -22,9 +22,9 @@ class TestAggregateResults:
                 "questions_count": 10,
             }
         ]
-        
+
         result = aggregate_results(results)
-        
+
         assert result["accuracy_metrics"]["answer"] == pytest.approx(0.8)
         assert result["accuracy_metrics"]["legal_basis"] == pytest.approx(0.6)
         assert result["text_metrics"]["rouge_1"] == pytest.approx(0.7)
@@ -46,9 +46,9 @@ class TestAggregateResults:
                 "questions_count": 5,  # Weight: 10
             },
         ]
-        
+
         result = aggregate_results(results)
-        
+
         assert result["accuracy_metrics"]["answer"] == pytest.approx(2.0 / 3.0)
         assert result["accuracy_metrics"]["legal_basis"] == pytest.approx(2.0 / 3.0)
         assert result["text_metrics"]["rouge_1"] == pytest.approx(2.0 / 3.0)
@@ -70,9 +70,9 @@ class TestAggregateResults:
                 "questions_count": 20,  # 20% weight
             },
         ]
-        
+
         result = aggregate_results(results)
-        
+
         # Weighted average: (1.0 * 80 + 0.0 * 20) / 100 = 0.8
         assert result["accuracy_metrics"]["answer"] == pytest.approx(0.8)
         # (0.8 * 80 + 0.0 * 20) / 100 = 0.64
@@ -96,7 +96,7 @@ class TestAggregateResults:
                 "questions_count": 0,  # Should be skipped
             },
         ]
-        
+
         result = aggregate_results(results)
 
         assert result["accuracy_metrics"]["answer"] == 0.8
@@ -108,7 +108,7 @@ class TestAggregateResults:
             {"accuracy_metrics": {"answer": 0.5}, "questions_count": 0},
             {"accuracy_metrics": {"answer": 0.5}, "questions_count": 0},
         ]
-        
+
         with pytest.raises(ValueError, match="Total questions count is zero"):
             aggregate_results(results)
 
@@ -128,9 +128,9 @@ class TestAggregateResults:
                 "questions_count": 10,
             },
         ]
-        
+
         result = aggregate_results(results)
-        
+
         # rouge_1: (0.8 * 10 + 0.4 * 10) / 20 = 0.6
         assert result["text_metrics"]["rouge_1"] == pytest.approx(0.6)
         # rouge_2: (0 * 10 + 0.5 * 10) / 20 = 0.25 (only in second result)

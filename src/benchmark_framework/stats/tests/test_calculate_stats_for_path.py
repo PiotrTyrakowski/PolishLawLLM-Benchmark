@@ -18,9 +18,9 @@ class TestCalculateStatsForPath:
             }
         ]
         file_path = create_temp_jsonl(entries, tmp_path)
-        
+
         result = calculate_stats_for_path(file_path)
-        
+
         assert result["accuracy_metrics"]["answer"] == 1.0
         assert result["questions_count"] == 1
 
@@ -35,9 +35,9 @@ class TestCalculateStatsForPath:
             }
         ]
         create_temp_jsonl(entries, tmp_path)
-        
+
         result = calculate_stats_for_path(tmp_path)
-        
+
         assert result["accuracy_metrics"]["answer"] == 1.0
         assert result["accuracy_metrics"]["legal_basis"] == 0.0
 
@@ -53,7 +53,7 @@ class TestCalculateStatsForPath:
             }
         ]
         create_temp_jsonl(entries1, tmp_path, "file1.jsonl")
-        
+
         # Second file
         entries2 = [
             {
@@ -64,16 +64,16 @@ class TestCalculateStatsForPath:
             }
         ]
         create_temp_jsonl(entries2, tmp_path, "file2.jsonl")
-        
+
         result = calculate_stats_for_path(tmp_path)
-        
+
         assert result["accuracy_metrics"]["answer"] == pytest.approx(0.5)
 
     def test_directory_with_nested_files(self, tmp_path):
         """Test that nested JSONL files are found recursively."""
         nested_dir = tmp_path / "nested" / "deep"
         nested_dir.mkdir(parents=True)
-        
+
         entries = [
             {
                 "accuracy_metrics": {"answer": 1.0, "legal_basis": 1.0},
@@ -93,9 +93,9 @@ class TestCalculateStatsForPath:
             }
         ]
         create_temp_jsonl(entries2, tmp_path, "file2.jsonl")
-        
+
         result = calculate_stats_for_path(tmp_path)
-        
+
         assert result["accuracy_metrics"]["answer"] == 0.5
 
     def test_raises_error_for_empty_directory(self, tmp_path):
@@ -106,7 +106,7 @@ class TestCalculateStatsForPath:
     def test_raises_error_for_invalid_path(self, tmp_path):
         """Test that ValueError is raised for non-existent path."""
         non_existent = tmp_path / "does_not_exist"
-        
+
         with pytest.raises(ValueError, match="Invalid path"):
             calculate_stats_for_path(non_existent)
 
@@ -116,6 +116,6 @@ class TestCalculateStatsForPath:
         file_path = tmp_path / "invalid.jsonl"
         with open(file_path, "w") as f:
             f.write("not valid json\n")
-        
+
         with pytest.raises(ValueError, match="No valid results computed"):
             calculate_stats_for_path(tmp_path)

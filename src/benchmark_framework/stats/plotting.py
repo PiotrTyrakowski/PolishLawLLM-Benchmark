@@ -6,7 +6,7 @@ from src.benchmark_framework.stats.calculate_stats import collect_yearly_stats
 
 
 def plot_accuracy_over_years(
-        base_path: Path, model_name: str, output_dir: Optional[Path] = None
+    base_path: Path, model_name: str, output_dir: Optional[Path] = None
 ):
     yearly_stats = collect_yearly_stats(base_path)
 
@@ -55,9 +55,7 @@ def plot_accuracy_over_years(
     _save_plot(output_dir / output_filename)
 
 
-def plot_text_metrics_over_years(
-        base_path: Path, model_name: str, output_dir: Path
-):
+def plot_text_metrics_over_years(base_path: Path, model_name: str, output_dir: Path):
     yearly_stats = collect_yearly_stats(base_path)
 
     years = sorted(yearly_stats.keys(), key=int)

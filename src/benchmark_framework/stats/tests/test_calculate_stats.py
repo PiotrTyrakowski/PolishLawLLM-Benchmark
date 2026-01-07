@@ -10,9 +10,9 @@ class TestCalculateStats:
     def test_empty_dataset_returns_zero_stats(self, tmp_path):
         """Test that an empty dataset returns zero values."""
         file_path = create_temp_jsonl([], tmp_path)
-        
+
         result = calculate_stats(file_path)
-        
+
         assert result["accuracy_metrics"]["answer"] == 0.0
         assert result["accuracy_metrics"]["legal_basis"] == 0.0
         assert result["text_metrics"] == {}
@@ -36,9 +36,9 @@ class TestCalculateStats:
             },
         ]
         file_path = create_temp_jsonl(entries, tmp_path)
-        
+
         result = calculate_stats(file_path)
-        
+
         assert result["accuracy_metrics"]["answer"] == 1.0
         assert result["accuracy_metrics"]["legal_basis"] == 1.0
         assert result["malformed_response_rate"] == 0.0
@@ -61,9 +61,9 @@ class TestCalculateStats:
             },
         ]
         file_path = create_temp_jsonl(entries, tmp_path)
-        
+
         result = calculate_stats(file_path)
-        
+
         assert result["accuracy_metrics"]["answer"] == 0.0
         assert result["accuracy_metrics"]["legal_basis"] == 0.0
         assert result["malformed_response_rate"] == 0.0
@@ -86,9 +86,9 @@ class TestCalculateStats:
             },
         ]
         file_path = create_temp_jsonl(entries, tmp_path)
-        
+
         result = calculate_stats(file_path)
-        
+
         assert result["accuracy_metrics"]["answer"] == 0.5
         assert result["accuracy_metrics"]["legal_basis"] == 0.5
         assert result["questions_count"] == 2
@@ -104,9 +104,9 @@ class TestCalculateStats:
             },
         ]
         file_path = create_temp_jsonl(entries, tmp_path)
-        
+
         result = calculate_stats(file_path)
-        
+
         assert result["malformed_response_rate"] == 1.0
 
     def test_malformed_response_whitespace_only(self, tmp_path):
@@ -120,9 +120,9 @@ class TestCalculateStats:
             },
         ]
         file_path = create_temp_jsonl(entries, tmp_path)
-        
+
         result = calculate_stats(file_path)
-        
+
         assert result["malformed_response_rate"] == 1.0
 
     def test_malformed_response_missing_key(self, tmp_path):
@@ -136,9 +136,9 @@ class TestCalculateStats:
             },
         ]
         file_path = create_temp_jsonl(entries, tmp_path)
-        
+
         result = calculate_stats(file_path)
-        
+
         assert result["malformed_response_rate"] == 1.0
 
     def test_text_metrics_averaging(self, tmp_path):
@@ -160,9 +160,9 @@ class TestCalculateStats:
             },
         ]
         file_path = create_temp_jsonl(entries, tmp_path)
-        
+
         result = calculate_stats(file_path)
-        
+
         assert result["text_metrics"]["rouge_1"] == pytest.approx(0.6)
         assert result["text_metrics"]["rouge_2"] == pytest.approx(0.4)
 
@@ -177,8 +177,8 @@ class TestCalculateStats:
             },
         ]
         file_path = create_temp_jsonl(entries, tmp_path)
-        
+
         result = calculate_stats(file_path)
-        
+
         assert result["accuracy_metrics"]["answer"] == 0.0
         assert result["accuracy_metrics"]["legal_basis"] == 0.0
