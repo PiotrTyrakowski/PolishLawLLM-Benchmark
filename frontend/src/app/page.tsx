@@ -4,6 +4,9 @@ import HeroSection from '@/components/sections/HeroSection';
 import ExamsSection from '@/components/sections/ExamsSection';
 import JudgmentsSection from '@/components/sections/JudgmentsSection';
 
+// Revalidate data every 600 seconds (ISR)
+export const revalidate = 600;
+
 export default function Home() {
   return (
     <div className="bg-gray-50 text-gray-800 antialiased min-h-screen flex flex-col">
