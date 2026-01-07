@@ -81,6 +81,10 @@ def plot(
     """
     Create plots of metrics over years. If no flags are specified, both accuracy and text metrics plots will be generated.
     """
+    if model_name is None:
+        typer.secho(f"Model name is required", fg=typer.colors.RED, err=True)
+        raise typer.Exit(1)
+
     # If neither flag is set, plot both
     if not accuracy and not text_metrics:
         accuracy = True

@@ -25,7 +25,7 @@ def plot_accuracy_over_years(
         marker="o",
         linestyle="-",
         linewidth=2,
-        label="Answer Accuracy",
+        label="Dokładność odpowiedzi",
     )
     plt.plot(
         years,
@@ -33,7 +33,7 @@ def plot_accuracy_over_years(
         marker="o",
         linestyle="--",
         linewidth=2,
-        label="Legal Basis Accuracy",
+        label="Dokładność oznaczenia podstawy prawnej",
     )
     plt.plot(
         years,
@@ -41,12 +41,12 @@ def plot_accuracy_over_years(
         marker="o",
         linestyle=":",
         linewidth=2,
-        label="Exact Match Accuracy",
+        label="Dokładność treści przepisu",
     )
 
-    plt.title(f"{model_name} - Accuracy Over Years")
-    plt.xlabel("Year")
-    plt.ylabel("Accuracy")
+    plt.title(f"{model_name} - Dokładność na przestrzeni lat")
+    plt.xlabel("Rok")
+    plt.ylabel("Wartość metryki")
     plt.ylim(0, 1.05)
     plt.grid(True, linestyle=":", alpha=0.6)
     plt.legend()
@@ -60,32 +60,43 @@ def plot_text_metrics_over_years(base_path: Path, model_name: str, output_dir: P
 
     years = sorted(yearly_stats.keys(), key=int)
 
-    # Collect all unique text metrics
-    all_metrics = set()
-    for stats in yearly_stats.values():
-        all_metrics.update(stats["text_metrics"].keys())
-
-    if not all_metrics:
-        print("No text metrics found to plot.")
-        return
-
-    # Prepare data for each metric
-    metrics_data = {}
-    for metric in sorted(all_metrics):
-        metrics_data[metric] = [
-            yearly_stats[y]["text_metrics"].get(metric, 0.0) for y in years
-        ]
+    answer_acc = [yearly_stats[y]["text_metrics"]["rouge_w"] for y in years]
+    legal_acc = [yearly_stats[y]["text_metrics"]["rouge_n_f1"] for y in years]
+    exact_match = [yearly_stats[y]["text_metrics"]["rouge_n_tfidf"] for y in years]
 
     # Create plot
-    plt.figure(figsize=(12, 7))
-    for metric, values in metrics_data.items():
-        plt.plot(years, values, marker="o", linewidth=2, label=metric)
+    plt.figure(figsize=(10, 6))
+    plt.plot(
+        years,
+        answer_acc,
+        marker="o",
+        linestyle="-",
+        linewidth=2,
+        label="ROUGE-W F1",
+    )
+    plt.plot(
+        years,
+        legal_acc,
+        marker="o",
+        linestyle="--",
+        linewidth=2,
+        label="ROUGE-N F1",
+    )
+    plt.plot(
+        years,
+        exact_match,
+        marker="o",
+        linestyle=":",
+        linewidth=2,
+        label="ROUGE-N TF-IDF recall",
+    )
 
-    plt.title(f"{model_name} - Text Metrics Over Years")
-    plt.xlabel("Year")
-    plt.ylabel("Metric Value")
+    plt.title(f"{model_name} - Metryki tekstowe na przestrzeni lat")
+    plt.xlabel("Rok")
+    plt.ylabel("Wartość metryki")
+    plt.ylim(0, 1.05)
     plt.grid(True, linestyle=":", alpha=0.6)
-    plt.legend(bbox_to_anchor=(1.05, 1), loc="upper left")
+    plt.legend()
 
     output_filename = f"text_metrics_over_years_{model_name}.png"
     _save_plot(output_dir / output_filename)
