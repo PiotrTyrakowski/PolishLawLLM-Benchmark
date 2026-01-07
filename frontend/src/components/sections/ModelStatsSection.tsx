@@ -56,6 +56,43 @@ export default function ModelStatsSection({ data }: ModelStatsSectionProps) {
 
   return (
     <div className="space-y-12">
+      {/* Judgments Section */}
+      {judgments && (
+        <section>
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+              <span className="bg-indigo-100 text-indigo-700 p-1.5 rounded-md">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                </svg>
+              </span>
+              Interpretacja Orzecznictwa
+            </h2>
+            <p className="text-sm text-slate-500 mt-2">
+              Zdolność do identyfikacji zamaskowanych przepisów w treści uzasadnień sądowych.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {judgmentAccKeys.map((key, idx) => (
+              <StatCard
+                key={`acc-${key}`}
+                label={getMetricLabel(key)}
+                value={judgments.accuracyMetrics[key] ?? 0}
+                color={idx === 0 ? 'text-indigo-600' : undefined}
+              />
+            ))}
+            {judgmentTextKeys.map((key) => (
+              <StatCard
+                key={`text-${key}`}
+                label={getMetricLabel(key)}
+                value={judgments.textMetrics[key] ?? 0}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Exams Section */}
       <section>
         <div className="mb-6">
@@ -177,43 +214,6 @@ export default function ModelStatsSection({ data }: ModelStatsSectionProps) {
           </div>
         )}
       </section>
-
-      {/* Judgments Section */}
-      {judgments && (
-        <section>
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-              <span className="bg-indigo-100 text-indigo-700 p-1.5 rounded-md">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-                </svg>
-              </span>
-              Interpretacja Orzecznictwa
-            </h2>
-            <p className="text-sm text-slate-500 mt-2">
-              Zdolność do identyfikacji zamaskowanych przepisów w treści uzasadnień sądowych.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {judgmentAccKeys.map((key, idx) => (
-              <StatCard
-                key={`acc-${key}`}
-                label={getMetricLabel(key)}
-                value={judgments.accuracyMetrics[key] ?? 0}
-                color={idx === 0 ? 'text-indigo-600' : undefined}
-              />
-            ))}
-            {judgmentTextKeys.map((key) => (
-              <StatCard
-                key={`text-${key}`}
-                label={getMetricLabel(key)}
-                value={judgments.textMetrics[key] ?? 0}
-              />
-            ))}
-          </div>
-        </section>
-      )}
     </div>
   );
 }

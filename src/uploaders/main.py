@@ -68,6 +68,7 @@ class Uploader:
                 "text_metrics": averaged["text_metrics"],
                 "type": "all",
                 "year": "all",
+                "questions_count": averaged["questions_count"],
             },
         )
 
@@ -76,28 +77,40 @@ class Uploader:
         logger.info(f"Created 'all' aggregate document for model {model_id}")
 
     @staticmethod
-    def _average_metrics(docs: List[Dict]) -> Dict[str, Dict]:
-        """Averages accuracy_metrics and text_metrics across documents dynamically."""
+    def _average_metrics(docs: List[Dict]) -> Dict:
+        """Weighted average of accuracy_metrics and text_metrics by questions_count."""
         if not docs:
-            return {"accuracy_metrics": {}, "text_metrics": {}}
+            return {"accuracy_metrics": {}, "text_metrics": {}, "questions_count": 0}
 
-        accuracy_sums: Dict[str, List] = {}
-        text_sums: Dict[str, List] = {}
+        total_questions = 0
+        accuracy_weighted_sums: Dict[str, float] = {}
+        text_weighted_sums: Dict[str, float] = {}
 
         for doc in docs:
+            if "questions_count" not in doc:
+                raise ValueError("Document missing required 'questions_count' field")
+            count = doc["questions_count"]
+            total_questions += count
+
             for key, value in doc.get("accuracy_metrics", {}).items():
-                if key not in accuracy_sums:
-                    accuracy_sums[key] = []
-                accuracy_sums[key].append(value)
+                accuracy_weighted_sums[key] = (
+                    accuracy_weighted_sums.get(key, 0) + value * count
+                )
 
             for key, value in doc.get("text_metrics", {}).items():
-                if key not in text_sums:
-                    text_sums[key] = []
-                text_sums[key].append(value)
+                text_weighted_sums[key] = text_weighted_sums.get(key, 0) + value * count
+
+        if total_questions == 0:
+            return {"accuracy_metrics": {}, "text_metrics": {}, "questions_count": 0}
 
         return {
-            "accuracy_metrics": {k: sum(v) / len(v) for k, v in accuracy_sums.items()},
-            "text_metrics": {k: sum(v) / len(v) for k, v in text_sums.items()},
+            "accuracy_metrics": {
+                k: v / total_questions for k, v in accuracy_weighted_sums.items()
+            },
+            "text_metrics": {
+                k: v / total_questions for k, v in text_weighted_sums.items()
+            },
+            "questions_count": total_questions,
         }
 
     def _build_tree(self) -> None:
@@ -220,6 +233,7 @@ class Uploader:
                 "text_metrics": stats["text_metrics"],
                 "type": exam_type,
                 "year": year,
+                "questions_count": stats["questions_count"],
             },
         )
 

@@ -10,8 +10,8 @@ export default function Home() {
       <Header />
       <HeroSection />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16 flex-1">
-        <ExamsSection />
         <JudgmentsSection />
+        <ExamsSection />
       </main>
       <Footer />
     </div>

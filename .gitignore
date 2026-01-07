@@ -43,3 +43,6 @@ polishlawllm-benchmark-firebase-adminsdk-fbsvc-e3c923bf3f.json
 
 # debug
 debug/
+
+firebase-debug.log
+firestore-debug.log
