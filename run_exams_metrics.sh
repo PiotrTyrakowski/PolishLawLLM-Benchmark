@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script to calculate metrics and stats for exams on models that have exams folders
-# Models with exams: perplexity-sonar, perplexity-sonar-pro-search, x-ai-grok-4.1-fast
+# Models with exams: claude-opus-4-5, claude-sonnet-4-5, CYFRAGOVPL-PLLuM-12B-chat, CYFRAGOVPL-PLLuM-12B-instruct, deepseek-ai-deepseek-v3.2, gemini-3-flash-preview, gpt-5.2, meta-llama-3.1-405b-instruct, mistralai-mistral-large-3-675b-instruct-2512, moonshotai-kimi-k2-thinking, perplexity-sonar, speakleash-bielik-11b-v2.6-instruct, x-ai-grok-4.1-fast
 
 set -e  # Exit on error
 
@@ -12,8 +12,18 @@ CORPUSES_DIR="data/corpuses"
 
 # Models with exams folders
 MODELS=(
+    "claude-opus-4-5"
+    "claude-sonnet-4-5"
+    "CYFRAGOVPL-PLLuM-12B-chat"
+    "CYFRAGOVPL-PLLuM-12B-instruct"
+    "deepseek-ai-deepseek-v3.2"
+    "gemini-3-flash-preview"
+    "gpt-5.2"
+    "meta-llama-3.1-405b-instruct"
+    "mistralai-mistral-large-3-675b-instruct-2512"
+    "moonshotai-kimi-k2-thinking"
     "perplexity-sonar"
-    "perplexity-sonar-pro-search"
+    "speakleash-bielik-11b-v2.6-instruct"
     "x-ai-grok-4.1-fast"
 )
 

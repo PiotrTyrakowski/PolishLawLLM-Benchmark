@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script to calculate metrics and stats for judgments on models that have judgments folders
-# Models with judgments: claude-opus-4-5, claude-sonnet-4-5, perplexity-sonar, x-ai-grok-4.1-fast
+# Models with judgments: claude-opus-4-5, claude-sonnet-4-5, CYFRAGOVPL-PLLuM-12B-chat, CYFRAGOVPL-PLLuM-12B-instruct, deepseek-ai-deepseek-v3.2, gemini-3-flash-preview, gpt-5.2, meta-llama-3.1-405b-instruct, mistralai-mistral-large-3-675b-instruct-2512, moonshotai-kimi-k2-thinking, perplexity-sonar, speakleash-bielik-11b-v2.6-instruct, x-ai-grok-4.1-fast
 
 set -e  # Exit on error
 
@@ -14,7 +14,16 @@ CORPUSES_DIR="data/corpuses"
 MODELS=(
     "claude-opus-4-5"
     "claude-sonnet-4-5"
+    "CYFRAGOVPL-PLLuM-12B-chat"
+    "CYFRAGOVPL-PLLuM-12B-instruct"
+    "deepseek-ai-deepseek-v3.2"
+    "gemini-3-flash-preview"
+    "gpt-5.2"
+    "meta-llama-3.1-405b-instruct"
+    "mistralai-mistral-large-3-675b-instruct-2512"
+    "moonshotai-kimi-k2-thinking"
     "perplexity-sonar"
+    "speakleash-bielik-11b-v2.6-instruct"
     "x-ai-grok-4.1-fast"
 )
 
