@@ -16,12 +16,6 @@ interface ModelPageProps {
   }>;
 }
 
-export async function generateStaticParams() {
-  const examsData = await getExamsData();
-  const modelIds = [...new Set(examsData.map((e) => e.model.id))];
-  return modelIds.map((modelId) => ({ modelId }));
-}
-
 async function ModelContent({ modelId }: { modelId: string }) {
   // Fetch model data and all results in parallel
   const [modelData, allExams, allJudgments] = await Promise.all([
