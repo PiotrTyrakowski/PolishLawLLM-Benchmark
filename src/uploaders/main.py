@@ -241,6 +241,8 @@ class Uploader:
     def _create_judgment_document(jsonl_path: Path) -> JudgmentDocument:
         """Creates a JudgmentDocument instance from a given JSONL file."""
         stats = calculate_stats(jsonl_path)
+        # Remove 'answer' from stats["accuracy_metrics"], if present
+        stats["accuracy_metrics"].pop("answer", None)
 
         return JudgmentDocument(
             id="all",
