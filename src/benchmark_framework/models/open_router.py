@@ -43,4 +43,4 @@ class OpenRouterModel(BaseModel):
         """
         Returns default rate limiting configuration for OpenRouter models.
         """
-        return RunnerConfig(requests_per_minute=50)
+        return RunnerConfig()
