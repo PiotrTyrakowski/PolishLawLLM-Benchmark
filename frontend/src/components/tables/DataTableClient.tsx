@@ -4,6 +4,8 @@ import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import type { ModelSummary } from '@/lib/types';
 import { getMetricLabel, formatMetricValue, extractMetricKeys } from '@/lib/metricConfig';
+import { getMetricDescription } from '@/lib/metricDescriptions';
+import Tooltip from '@/components/ui/Tooltip';
 
 interface DataItem {
   model: ModelSummary;
@@ -113,8 +115,11 @@ export default function DataTableClient({
                     }`}
                     onClick={() => handleSort(key)}
                   >
-                    {getMetricLabel(key)}
-                    {effectiveSortKey === key && (sortAsc ? ' ↑' : ' ↓')}
+                    <span className="inline-flex items-center gap-1.5">
+                      {getMetricLabel(key)}
+                      {effectiveSortKey === key && (sortAsc ? ' ↑' : ' ↓')}
+                      <Tooltip content={getMetricDescription(key)} />
+                    </span>
                   </th>
                 ))}
                 {textKeys.map((key, idx) => (
@@ -126,8 +131,11 @@ export default function DataTableClient({
                     }`}
                     onClick={() => handleSort(key)}
                   >
-                    {getMetricLabel(key)}
-                    {effectiveSortKey === key && (sortAsc ? ' ↑' : ' ↓')}
+                    <span className="inline-flex items-center gap-1.5">
+                      {getMetricLabel(key)}
+                      {effectiveSortKey === key && (sortAsc ? ' ↑' : ' ↓')}
+                      <Tooltip content={getMetricDescription(key)} />
+                    </span>
                   </th>
                 ))}
               </tr>
