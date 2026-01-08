@@ -3,6 +3,8 @@
 import { useMemo } from 'react';
 import type { ModelDetail } from '@/lib/types';
 import { getMetricLabel, formatMetricValue, extractMetricKeys } from '@/lib/metricConfig';
+import { getMetricDescription } from '@/lib/metricDescriptions';
+import Tooltip from '@/components/ui/Tooltip';
 
 interface ModelStatsSectionProps {
   data: ModelDetail;
@@ -17,10 +19,13 @@ function ProgressBar({ value, max = 1, color = 'bg-indigo-600' }: { value: numbe
   );
 }
 
-function StatCard({ label, value, color = 'text-slate-900' }: { label: string; value: number; color?: string }) {
+function StatCard({ label, value, color = 'text-slate-900', metricKey }: { label: string; value: number; color?: string; metricKey?: string }) {
   return (
     <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-      <div className="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-1">{label}</div>
+      <div className="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-1 flex items-center gap-1.5">
+        {label}
+        {metricKey && <Tooltip content={getMetricDescription(metricKey)} />}
+      </div>
       <div className={`text-2xl font-bold ${color}`}>
         {formatMetricValue(value)}
       </div>
@@ -80,6 +85,7 @@ export default function ModelStatsSection({ data }: ModelStatsSectionProps) {
                 label={getMetricLabel(key)}
                 value={judgments.accuracyMetrics[key] ?? 0}
                 color={idx === 0 ? 'text-indigo-600' : undefined}
+                metricKey={key}
               />
             ))}
             {judgmentTextKeys.map((key) => (
@@ -87,6 +93,7 @@ export default function ModelStatsSection({ data }: ModelStatsSectionProps) {
                 key={`text-${key}`}
                 label={getMetricLabel(key)}
                 value={judgments.textMetrics[key] ?? 0}
+                metricKey={key}
               />
             ))}
           </div>
@@ -117,6 +124,7 @@ export default function ModelStatsSection({ data }: ModelStatsSectionProps) {
               label={getMetricLabel(key)}
               value={examsOverall.accuracyMetrics[key] ?? 0}
               color={idx === 0 ? 'text-indigo-600' : undefined}
+              metricKey={key}
             />
           ))}
           {examTextKeys.map((key) => (
@@ -124,6 +132,7 @@ export default function ModelStatsSection({ data }: ModelStatsSectionProps) {
               key={`text-${key}`}
               label={getMetricLabel(key)}
               value={examsOverall.textMetrics[key] ?? 0}
+              metricKey={key}
             />
           ))}
         </div>
@@ -152,7 +161,10 @@ export default function ModelStatsSection({ data }: ModelStatsSectionProps) {
                           idx === 0 ? 'text-indigo-900 bg-indigo-50/30 border-l border-slate-200' : 'text-slate-500'
                         }`}
                       >
-                        {getMetricLabel(key)}
+                        <span className="inline-flex items-center gap-1.5">
+                          {getMetricLabel(key)}
+                          <Tooltip content={getMetricDescription(key)} />
+                        </span>
                       </th>
                     ))}
                     {examTextKeys.map((key, idx) => (
@@ -163,7 +175,10 @@ export default function ModelStatsSection({ data }: ModelStatsSectionProps) {
                           idx === 0 ? 'border-l border-slate-200' : ''
                         }`}
                       >
-                        {getMetricLabel(key)}
+                        <span className="inline-flex items-center gap-1.5">
+                          {getMetricLabel(key)}
+                          <Tooltip content={getMetricDescription(key)} />
+                        </span>
                       </th>
                     ))}
                   </tr>
