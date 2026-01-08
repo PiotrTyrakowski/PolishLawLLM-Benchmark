@@ -189,8 +189,7 @@ export default function AboutPage() {
                 Rozszerzenie klasycznej metryki ROUGE-L, które premiuje ciągłe sekwencje
                 dopasowań. Wykorzystuje funkcję ważącą f(k) = k<sup>α</sup>, gdzie parametr α
                 kontroluje stopień premiowania ciągłości. W naszym benchmarku przyjęliśmy
-                wartość α = 1.2, zgodnie z oryginalną pracą Chin-Yew Lin&apos;a (ROUGE: A Package
-                for Automatic Evaluation of Summaries, 2004). Dzięki temu teksty zawierające
+                wartość α = 1.2. Dzięki temu teksty zawierające
                 długie, spójne fragmenty zgodne z referencją otrzymują wyższe oceny.
               </p>
 
