@@ -10,16 +10,13 @@ import {
   getJudgmentsData,
 } from '@/lib/data/dataProvider';
 
+// Revalidate data every 600 seconds (ISR)
+export const revalidate = 600;
+
 interface ModelPageProps {
   params: Promise<{
     modelId: string;
   }>;
-}
-
-export async function generateStaticParams() {
-  const examsData = await getExamsData();
-  const modelIds = [...new Set(examsData.map((e) => e.model.id))];
-  return modelIds.map((modelId) => ({ modelId }));
 }
 
 async function ModelContent({ modelId }: { modelId: string }) {

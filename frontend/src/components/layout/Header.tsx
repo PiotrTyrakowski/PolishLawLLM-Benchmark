@@ -1,11 +1,12 @@
-import { Gavel } from '@phosphor-icons/react/dist/ssr';
+import Link from 'next/link';
+import { Gavel, Info } from '@phosphor-icons/react/dist/ssr';
 
 export default function Header() {
   return (
     <nav className="sticky top-0 z-50 bg-white/90 border-b border-slate-200 shadow-sm backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3">
             <div className="w-9 h-9 bg-gradient-to-br from-indigo-900 to-slate-800 rounded-lg flex items-center justify-center text-white shadow-md">
               <Gavel size={20} weight="fill" />
             </div>
@@ -17,6 +18,15 @@ export default function Header() {
                 Benchmark Prawniczy
               </span>
             </div>
+          </Link>
+          <div className="flex items-center">
+            <Link
+              href="/about"
+              className="flex items-center gap-1.5 text-sm text-slate-600 hover:text-indigo-600 transition-colors font-medium"
+            >
+              <Info size={18} weight="duotone" />
+              O benchmarku
+            </Link>
           </div>
         </div>
       </div>

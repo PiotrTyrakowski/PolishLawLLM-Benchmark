@@ -17,10 +17,10 @@ MODEL_REGISTRY = {
     "gpt": OpenAIModel,
     "claude": AnthropicModel,
     "CYFRAGOVPL": NvidiaNimModel,
-    "perplexity": OpenRouterModel,  # https://openrouter.ai/perplexity/sonar-pro-search
-    "qwen": OpenRouterModel,  # https://openrouter.ai/qwen/qwen3-max
-    "x-ai": OpenRouterModel,  # https://openrouter.ai/x-ai/grok-4
-    "z-ai": OpenRouterModel,  # https://openrouter.ai/z-ai/glm-4.7
+    "perplexity": OpenRouterModel, # https://openrouter.ai/perplexity/sonar-pro-search
+    "qwen": OpenRouterModel, # https://openrouter.ai/qwen/qwen3-max
+    "x": OpenRouterModel, # https://openrouter.ai/x-ai/grok-4 (x-ai -> x)
+    "z": OpenRouterModel, # https://openrouter.ai/z-ai/glm-4.7 (z-ai -> z)
     "moonshotai": NvidiaModel,
     "mistralai": OpenRouterModel,
     "nvidia": NvidiaModel,

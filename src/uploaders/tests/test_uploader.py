@@ -235,7 +235,7 @@ class TestMultiUserUpload:
     def test_upload_same_model_different_exams_updates_all_aggregate(
         self, firestore_client, user1_data_path, user2_same_model_path
     ):
-        """Test that 'all' aggregate is recalculated after second upload."""
+        """Test that 'all' aggregate is recalculated after second upload with weighted averaging."""
         # User 1 uploads model_a with 2024 exams
         uploader1 = Uploader(firestore_client, user1_data_path, COLLECTION_ID)
         uploader1.upload()
@@ -253,7 +253,7 @@ class TestMultiUserUpload:
         uploader2 = Uploader(firestore_client, user2_same_model_path, COLLECTION_ID)
         uploader2.upload()
 
-        # Check updated "all" metrics (should now average both exams)
+        # Check updated "all" metrics (should now be weighted average of both exams)
         all_doc_updated = (
             firestore_client.collection(COLLECTION_ID)
             .document("model_a")
@@ -263,24 +263,26 @@ class TestMultiUserUpload:
         )
         updated_data = all_doc_updated.to_dict()
 
-        # The "all" metrics should be different after second upload
-        # Initial: only 2024 exam metrics
-        # Updated: average of 2024 and 2025 exam metrics
-
-        # 2024: accuracy.answer = 2/3, 2025: accuracy.answer = 0.0
-        # Expected average: (2/3 + 0) / 2 = 1/3
-        expected_combined_answer = (2 / 3 + 0.0) / 2
+        # The "all" metrics should be weighted average after second upload
+        # 2024: 3 questions, accuracy.answer = 2/3
+        # 2025: 2 questions, accuracy.answer = 0.0
+        # Weighted average: (2/3 * 3 + 0 * 2) / 5 = 2/5 = 0.4
+        expected_combined_answer = (2 / 3 * 3 + 0.0 * 2) / 5
         assert (
             abs(updated_data["accuracy_metrics"]["answer"] - expected_combined_answer)
             < 0.001
         )
 
-        # 2024: bleu = 0.6, 2025: bleu = 0.2
-        # Expected average: (0.6 + 0.2) / 2 = 0.4
-        expected_combined_bleu = (0.6 + 0.2) / 2
+        # 2024: 3 questions, bleu = 0.6
+        # 2025: 2 questions, bleu = 0.2
+        # Weighted average: (0.6 * 3 + 0.2 * 2) / 5 = 2.2/5 = 0.44
+        expected_combined_bleu = (0.6 * 3 + 0.2 * 2) / 5
         assert (
             abs(updated_data["text_metrics"]["bleu"] - expected_combined_bleu) < 0.001
         )
+
+        # Check questions_count is sum of both exams
+        assert updated_data["questions_count"] == 5
 
 
 class TestJudgments:
@@ -386,9 +388,9 @@ class TestAverageMetricsStatic:
     """Tests for the static _average_metrics method."""
 
     def test_average_metrics_empty_list(self):
-        """Test that empty list returns empty dicts."""
+        """Test that empty list returns empty dicts with zero questions_count."""
         result = Uploader._average_metrics([])
-        assert result == {"accuracy_metrics": {}, "text_metrics": {}}
+        assert result == {"accuracy_metrics": {}, "text_metrics": {}, "questions_count": 0}
 
     def test_average_metrics_single_doc(self):
         """Test that single doc returns same values."""
@@ -396,6 +398,7 @@ class TestAverageMetricsStatic:
             {
                 "accuracy_metrics": {"answer": 0.8, "legal_basis": 0.6},
                 "text_metrics": {"bleu": 0.7, "exact_match": 0.5},
+                "questions_count": 10,
             }
         ]
         result = Uploader._average_metrics(docs)
@@ -404,17 +407,20 @@ class TestAverageMetricsStatic:
         assert abs(result["accuracy_metrics"]["legal_basis"] - 0.6) < 0.001
         assert abs(result["text_metrics"]["bleu"] - 0.7) < 0.001
         assert abs(result["text_metrics"]["exact_match"] - 0.5) < 0.001
+        assert result["questions_count"] == 10
 
     def test_average_metrics_multiple_docs(self):
-        """Test that multiple docs are averaged correctly."""
+        """Test that multiple docs with equal weights are averaged correctly."""
         docs = [
             {
                 "accuracy_metrics": {"answer": 1.0, "legal_basis": 1.0},
                 "text_metrics": {"bleu": 0.8},
+                "questions_count": 1,
             },
             {
                 "accuracy_metrics": {"answer": 0.0, "legal_basis": 0.0},
                 "text_metrics": {"bleu": 0.2},
+                "questions_count": 1,
             },
         ]
         result = Uploader._average_metrics(docs)
@@ -422,26 +428,66 @@ class TestAverageMetricsStatic:
         assert abs(result["accuracy_metrics"]["answer"] - 0.5) < 0.001
         assert abs(result["accuracy_metrics"]["legal_basis"] - 0.5) < 0.001
         assert abs(result["text_metrics"]["bleu"] - 0.5) < 0.001
+        assert result["questions_count"] == 2
 
     def test_average_metrics_dynamic_keys(self):
-        """Test that varying metric keys are handled correctly."""
+        """Test that varying metric keys are handled correctly with weighted averaging."""
         docs = [
             {
                 "accuracy_metrics": {"answer": 1.0},
                 "text_metrics": {"bleu": 0.8, "rouge": 0.9},
+                "questions_count": 1,
             },
             {
                 "accuracy_metrics": {"answer": 0.5, "legal_basis": 0.5},
                 "text_metrics": {"bleu": 0.4},
+                "questions_count": 1,
             },
         ]
         result = Uploader._average_metrics(docs)
 
-        # "answer" appears in both docs
+        # "answer" appears in both docs: (1.0 * 1 + 0.5 * 1) / 2 = 0.75
         assert abs(result["accuracy_metrics"]["answer"] - 0.75) < 0.001
-        # "legal_basis" only in second doc
-        assert abs(result["accuracy_metrics"]["legal_basis"] - 0.5) < 0.001
-        # "bleu" appears in both docs
+        # "legal_basis" only in second doc: 0.5 * 1 / 2 = 0.25
+        assert abs(result["accuracy_metrics"]["legal_basis"] - 0.25) < 0.001
+        # "bleu" appears in both docs: (0.8 * 1 + 0.4 * 1) / 2 = 0.6
         assert abs(result["text_metrics"]["bleu"] - 0.6) < 0.001
-        # "rouge" only in first doc
-        assert abs(result["text_metrics"]["rouge"] - 0.9) < 0.001
+        # "rouge" only in first doc: 0.9 * 1 / 2 = 0.45
+        assert abs(result["text_metrics"]["rouge"] - 0.45) < 0.001
+        # Total questions_count
+        assert result["questions_count"] == 2
+
+    def test_average_metrics_weighted_by_questions_count(self):
+        """Test that metrics are weighted by questions_count."""
+        docs = [
+            {
+                "accuracy_metrics": {"answer": 1.0, "legal_basis": 1.0},
+                "text_metrics": {"bleu": 0.8},
+                "questions_count": 80,  # 80 questions
+            },
+            {
+                "accuracy_metrics": {"answer": 0.0, "legal_basis": 0.0},
+                "text_metrics": {"bleu": 0.0},
+                "questions_count": 20,  # 20 questions
+            },
+        ]
+        result = Uploader._average_metrics(docs)
+
+        # Weighted average: (1.0 * 80 + 0.0 * 20) / 100 = 0.8
+        assert abs(result["accuracy_metrics"]["answer"] - 0.8) < 0.001
+        assert abs(result["accuracy_metrics"]["legal_basis"] - 0.8) < 0.001
+        # (0.8 * 80 + 0.0 * 20) / 100 = 0.64
+        assert abs(result["text_metrics"]["bleu"] - 0.64) < 0.001
+        assert result["questions_count"] == 100
+
+    def test_average_metrics_missing_questions_count_raises_error(self):
+        """Test that missing questions_count raises ValueError."""
+        docs = [
+            {
+                "accuracy_metrics": {"answer": 1.0},
+                "text_metrics": {"bleu": 1.0},
+                # No questions_count - should raise error
+            },
+        ]
+        with pytest.raises(ValueError, match="questions_count"):
+            Uploader._average_metrics(docs)
