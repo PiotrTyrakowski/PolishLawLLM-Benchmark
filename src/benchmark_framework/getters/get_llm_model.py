@@ -22,7 +22,8 @@ MODEL_REGISTRY = {
     "x-ai": OpenRouterModel,  # https://openrouter.ai/x-ai/grok-4
     "z-ai": OpenRouterModel,  # https://openrouter.ai/z-ai/glm-4.7
     "moonshotai": NvidiaModel,
-    "mistralai": NvidiaModel,
+    "mistralai": OpenRouterModel,
+    "nvidia": NvidiaModel,
 }
 
 
