@@ -3,29 +3,19 @@
 # Script to calculate metrics and stats for judgments on models that have judgments folders
 # Models with judgments: claude-opus-4-5, claude-sonnet-4-5, CYFRAGOVPL-PLLuM-12B-chat, CYFRAGOVPL-PLLuM-12B-instruct, deepseek-ai-deepseek-v3.2, gemini-3-flash-preview, gpt-5.2, meta-llama-3.1-405b-instruct, mistralai-mistral-large-3-675b-instruct-2512, moonshotai-kimi-k2-thinking, perplexity-sonar, speakleash-bielik-11b-v2.6-instruct, x-ai-grok-4.1-fast
 
-set -e  # Exit on error
-
 # Base directories
 RESULTS_DIR="data/results"
 METRICS_DIR="data/results_with_metrics"
 CORPUSES_DIR="data/corpuses"
 
-# Models with judgments folders
-MODELS=(
-    "claude-opus-4-5"
-    "claude-sonnet-4-5"
-    "CYFRAGOVPL-PLLuM-12B-chat"
-    "CYFRAGOVPL-PLLuM-12B-instruct"
-    "deepseek-ai-deepseek-v3.2"
-    "gemini-3-flash-preview"
-    "gpt-5.2"
-    "meta-llama-3.1-405b-instruct"
-    "mistralai-mistral-large-3-675b-instruct-2512"
-    "moonshotai-kimi-k2-thinking"
-    "perplexity-sonar"
-    "speakleash-bielik-11b-v2.6-instruct"
-    "x-ai-grok-4.1-fast"
-)
+# Get all model folders from results directory
+MODELS=()
+for dir in "$RESULTS_DIR"/*/; do
+    if [ -d "$dir" ]; then
+        model=$(basename "$dir")
+        MODELS+=("$model")
+    fi
+done
 
 echo "=========================================="
 echo "Running metrics and stats for judgments"
@@ -81,7 +71,7 @@ for model in "${MODELS[@]}"; do
     echo "  Directory: $metrics_dir"
     
     # Run calculate_stats
-    python -m src.benchmark_framework.calculate_stats "$metrics_dir"
+    python -m src.benchmark_framework.stats.cli stats "$metrics_dir"
     
     echo ""
     echo "  ✓ Completed stats for $model"
