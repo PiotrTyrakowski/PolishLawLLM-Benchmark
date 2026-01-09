@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Script to update legal_basis and legal_basis_content fields in judgment result files
 by reading the correct values from task files.
@@ -62,7 +61,9 @@ def update_result_file(result_file: Path, task_data: dict) -> tuple[int, int]:
 
 
 def main():
-    base_dir = Path(__file__).parent / "data"
+    # Get repository root (parent of scripts directory)
+    repo_root = Path(__file__).parent.parent
+    base_dir = repo_root / "data"
     tasks_dir = base_dir / "tasks" / "judgments"
     results_dir = base_dir / "results"
 

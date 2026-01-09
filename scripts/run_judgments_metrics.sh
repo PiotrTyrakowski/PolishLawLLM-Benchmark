@@ -1,7 +1,10 @@
 #!/bin/bash
 
-# Script to calculate metrics and stats for exams on models that have exams folders
-# Models with exams: claude-opus-4-5, claude-sonnet-4-5, CYFRAGOVPL-PLLuM-12B-chat, CYFRAGOVPL-PLLuM-12B-instruct, deepseek-ai-deepseek-v3.2, gemini-3-flash-preview, gpt-5.2, meta-llama-3.1-405b-instruct, mistralai-mistral-large-3-675b-instruct-2512, moonshotai-kimi-k2-thinking, perplexity-sonar, speakleash-bielik-11b-v2.6-instruct, x-ai-grok-4.1-fast
+# Script to calculate metrics and stats for judgments on models that have judgments folders
+# Models with judgments: claude-opus-4-5, claude-sonnet-4-5, CYFRAGOVPL-PLLuM-12B-chat, CYFRAGOVPL-PLLuM-12B-instruct, deepseek-ai-deepseek-v3.2, gemini-3-flash-preview, gpt-5.2, meta-llama-3.1-405b-instruct, mistralai-mistral-large-3-675b-instruct-2512, moonshotai-kimi-k2-thinking, perplexity-sonar, speakleash-bielik-11b-v2.6-instruct, x-ai-grok-4.1-fast
+
+# Navigate to repository root (parent of scripts directory)
+cd "$(dirname "$0")/.." || exit 1
 
 # Base directories
 RESULTS_DIR="data/results"
@@ -18,7 +21,7 @@ for dir in "$RESULTS_DIR"/*/; do
 done
 
 echo "=========================================="
-echo "Running metrics and stats for exams"
+echo "Running metrics and stats for judgments"
 echo "=========================================="
 echo ""
 
@@ -27,8 +30,8 @@ echo "Step 1: Calculating metrics..."
 echo ""
 
 for model in "${MODELS[@]}"; do
-    input_dir="${RESULTS_DIR}/${model}/exams"
-    output_dir="${METRICS_DIR}/${model}/exams"
+    input_dir="${RESULTS_DIR}/${model}/judgments"
+    output_dir="${METRICS_DIR}/${model}/judgments"
 
     if [ ! -d "$input_dir" ]; then
         echo "Warning: Input directory '$input_dir' does not exist. Skipping $model."
@@ -60,7 +63,7 @@ echo ""
 
 # Step 2: Calculate stats for each model
 for model in "${MODELS[@]}"; do
-    metrics_dir="${METRICS_DIR}/${model}/exams"
+    metrics_dir="${METRICS_DIR}/${model}/judgments"
 
     if [ ! -d "$metrics_dir" ]; then
         echo "Warning: Metrics directory '$metrics_dir' does not exist. Skipping stats for $model."
@@ -71,7 +74,7 @@ for model in "${MODELS[@]}"; do
     echo "  Directory: $metrics_dir"
 
     # Run calculate_stats
-    python -m src.benchmark_framework.calculate_stats "$metrics_dir"
+    python -m src.benchmark_framework.stats.cli stats "$metrics_dir"
 
     echo ""
     echo "  Completed stats for $model"
