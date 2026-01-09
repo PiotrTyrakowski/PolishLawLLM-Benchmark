@@ -24,6 +24,7 @@ MODEL_REGISTRY = {
     "moonshotai": NvidiaModel,
     "mistralai": OpenRouterModel,
     "nvidia": NvidiaModel,
+    "google": OpenRouterModel
 }
 
 
