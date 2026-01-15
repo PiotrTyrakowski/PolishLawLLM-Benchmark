@@ -190,3 +190,20 @@ def calculate_exam_stats_for_all_models(input_path: Path) -> Dict[str, Dict[str,
             print(f"Warning: Failed to process model '{model_name}'. Error: {e}")
 
     return all_model_stats
+
+def get_model_aggregated_stats(input_path: Path) -> Dict[str, Any]:
+    if not input_path.is_dir():
+        raise ValueError(f"Path '{input_path}' is not a directory.")
+
+    model_dirs = [d for d in input_path.iterdir() if d.is_dir()]
+    all_model_stats = {}
+
+    for model_dir in model_dirs:
+        model_name = model_dir.name
+        try:
+            model_stats = calculate_stats_for_path(model_dir / "exams")
+            all_model_stats[model_name] = model_stats
+        except Exception as e:
+            print(f"Warning: Failed to process model '{model_name}'. Error: {e}")
+
+    return all_model_stats

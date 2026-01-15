@@ -17,3 +17,4 @@ pydantic
 firebase-admin
 rich
 matplotlib
+pandas

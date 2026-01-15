@@ -1,8 +1,57 @@
 from pathlib import Path
-from typing import Optional
+import pandas as pd
 import matplotlib.pyplot as plt
 
-from src.benchmark_framework.stats.calculate_stats import collect_yearly_stats
+from src.benchmark_framework.stats.config import MODEL_CONFIG
+
+
+def plot_metric_for_model_parameters(models_metrics: dict, metric_parent: str, metric_name: str, title: str, output_dir: Path):
+    data = []
+
+    for model_name, metrics in models_metrics.items():
+        if model_name in MODEL_CONFIG:
+            model_config = MODEL_CONFIG[model_name]
+            marker_style = f"${model_config.shortcut}$"
+            data.append({
+                'Model': model_name,
+                'Metric': metrics[metric_parent][metric_name],
+                'Parameters': model_config.parameters,
+                'Marker': marker_style,
+            })
+
+    df = pd.DataFrame(data)
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    for marker, group in df.groupby('Marker'):
+        label_text = group['Model'].iloc[0]
+        ax.scatter(
+            group['Parameters'],
+            group['Metric'],
+            marker=marker,
+            s=150,
+            label=label_text,
+            alpha=0.8
+        )
+
+    ax.set_title(title, fontsize=14, pad=20)
+    ax.set_xlabel("Liczba parametrów (w miliardach)")
+    ax.set_ylabel("Wartość metryki")
+    ax.grid(True, linestyle='--', alpha=0.6)
+
+    ax.legend(title="Model Family")
+
+    ax.legend(
+        bbox_to_anchor=(1.02, 1),  # X=1.02 (just right of plot), Y=1 (top aligned)
+        loc='upper left',  # Anchor the top-left corner of the legend to that point
+        borderaxespad=0  # Remove extra padding between anchor and legend
+    )
+
+    plt.savefig(
+    output_dir / f"{metric_name}_vs_parameters.png",
+        dpi=300,
+        bbox_inches='tight',  # IMPORTANT: Prevents cutting off the legends/labels
+        transparent=False
+    )
 
 def plot_metric_over_years(models_metrics_over_years: dict, metric_parent: str, metric_name: str, title: str, output_dir: Path):
     metric_for_model = {}
