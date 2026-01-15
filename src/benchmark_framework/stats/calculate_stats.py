@@ -58,6 +58,7 @@ def calculate_stats(file_path: Path) -> Dict[str, Any]:
         "questions_count": total_count,
     }
 
+
 def aggregate_results(results_list: List[Dict[str, Any]]) -> Dict[str, Any]:
     """
     Calculates average of metrics across multiple result dictionaries.
@@ -105,6 +106,7 @@ def aggregate_results(results_list: List[Dict[str, Any]]) -> Dict[str, Any]:
         "text_metrics": avg_text_metrics,
         "malformed_response_rate": avg_malformed,
     }
+
 
 def collect_yearly_stats(base_path: Path) -> Dict[str, Dict[str, Any]]:
     """
@@ -170,7 +172,10 @@ def calculate_stats_for_path(input_path: Path) -> Dict[str, Any]:
 
     return all_results[0] if len(all_results) == 1 else aggregate_results(all_results)
 
-def calculate_exam_stats_for_all_models(input_path: Path) -> Dict[str, Dict[str, Dict[str, Any]]]:
+
+def calculate_exam_stats_for_all_models(
+    input_path: Path,
+) -> Dict[str, Dict[str, Dict[str, Any]]]:
     if not input_path.is_dir():
         raise ValueError(f"Path '{input_path}' is not a directory.")
 
@@ -190,6 +195,7 @@ def calculate_exam_stats_for_all_models(input_path: Path) -> Dict[str, Dict[str,
             print(f"Warning: Failed to process model '{model_name}'. Error: {e}")
 
     return all_model_stats
+
 
 def get_model_aggregated_stats(input_path: Path) -> Dict[str, Any]:
     if not input_path.is_dir():

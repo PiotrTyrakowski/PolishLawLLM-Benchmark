@@ -36,14 +36,16 @@ class HFEndpointModel(BaseModel):
         tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         messages = [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": prompt}
+            {"role": "user", "content": prompt},
         ]
-        full_input = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+        full_input = tokenizer.apply_chat_template(
+            messages, tokenize=False, add_generation_prompt=True
+        )
 
         headers = {
             "Accept": "application/json",
             "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         }
 
         payload = {
@@ -51,14 +53,10 @@ class HFEndpointModel(BaseModel):
             "parameters": {
                 "max_new_tokens": MAX_NEW_TOKENS,
                 "return_full_text": False,
-            }
+            },
         }
 
-        response = requests.post(
-            self.endpoint_url,
-            headers=headers,
-            json=payload
-        )
+        response = requests.post(self.endpoint_url, headers=headers, json=payload)
 
         # Raise an error if the request failed (e.g., 400, 500)
         response.raise_for_status()
@@ -66,7 +64,11 @@ class HFEndpointModel(BaseModel):
 
         print(f"HF Endpoint response: {response}")
 
-        if isinstance(output, list) and len(output) > 0 and "generated_text" in output[0]:
+        if (
+            isinstance(output, list)
+            and len(output) > 0
+            and "generated_text" in output[0]
+        ):
             return output[0]["generated_text"]
         elif isinstance(output, dict) and "generated_text" in output:
             return output["generated_text"]

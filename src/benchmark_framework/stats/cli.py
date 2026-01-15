@@ -4,11 +4,13 @@ import typer
 from typing_extensions import Annotated
 
 from src.benchmark_framework.stats.calculate_stats import calculate_stats_for_path
-from src.benchmark_framework.stats.calculate_stats import calculate_exam_stats_for_all_models
+from src.benchmark_framework.stats.calculate_stats import (
+    calculate_exam_stats_for_all_models,
+)
 from src.benchmark_framework.stats.calculate_stats import get_model_aggregated_stats
 from src.benchmark_framework.stats.plotting import (
     plot_metric_over_years,
-    plot_metric_for_model_parameters
+    plot_metric_for_model_parameters,
 )
 from src.benchmark_framework.stats.utils import print_stats
 
@@ -37,6 +39,7 @@ def stats(
     except Exception as e:
         typer.secho(f"Error: {e}", fg=typer.colors.RED, err=True)
         raise typer.Exit(1)
+
 
 @app.command()
 def plot(
@@ -68,25 +71,98 @@ def plot(
     output_dir.mkdir(parents=True, exist_ok=True)
     if parameters:
         model_stats = get_model_aggregated_stats(input_path)
-        plot_metric_for_model_parameters(model_stats, "accuracy_metrics", "answer", "Dokładność odpowiedzi vs liczba parametrów modeli", output_dir)
-        plot_metric_for_model_parameters(model_stats, "accuracy_metrics", "legal_basis", "Dokładność oznaczenia przepisu prawnego vs liczba parametrów modeli", output_dir)
-        plot_metric_for_model_parameters(model_stats, "text_metrics", "exact_match", "Dokładność treści przepisu prawnego vs liczba parametrów modeli", output_dir)
-        plot_metric_for_model_parameters(model_stats, "text_metrics", "rouge_n_f1", "ROUGE-N F1 vs liczba parametrów modeli", output_dir)
-        plot_metric_for_model_parameters(model_stats, "text_metrics", "rouge_w", "ROUGE-W F1 vs liczba parametrów modeli", output_dir)
-        plot_metric_for_model_parameters(model_stats, "text_metrics", "rouge_n_tfidf", "Czułość ROUGE-N TF-IDFvs liczba parametrów modeli", output_dir)
+        plot_metric_for_model_parameters(
+            model_stats,
+            "accuracy_metrics",
+            "answer",
+            "Dokładność odpowiedzi vs liczba parametrów modeli",
+            output_dir,
+        )
+        plot_metric_for_model_parameters(
+            model_stats,
+            "accuracy_metrics",
+            "legal_basis",
+            "Dokładność oznaczenia przepisu prawnego vs liczba parametrów modeli",
+            output_dir,
+        )
+        plot_metric_for_model_parameters(
+            model_stats,
+            "text_metrics",
+            "exact_match",
+            "Dokładność treści przepisu prawnego vs liczba parametrów modeli",
+            output_dir,
+        )
+        plot_metric_for_model_parameters(
+            model_stats,
+            "text_metrics",
+            "rouge_n_f1",
+            "ROUGE-N F1 vs liczba parametrów modeli",
+            output_dir,
+        )
+        plot_metric_for_model_parameters(
+            model_stats,
+            "text_metrics",
+            "rouge_w",
+            "ROUGE-W F1 vs liczba parametrów modeli",
+            output_dir,
+        )
+        plot_metric_for_model_parameters(
+            model_stats,
+            "text_metrics",
+            "rouge_n_tfidf",
+            "Czułość ROUGE-N TF-IDFvs liczba parametrów modeli",
+            output_dir,
+        )
         return
 
     try:
         model_stats = calculate_exam_stats_for_all_models(input_path)
-        plot_metric_over_years(model_stats, "accuracy_metrics", "answer", "Dokładność odpowiedzi - wyniki na przestrzeni lat", output_dir)
-        plot_metric_over_years(model_stats, "accuracy_metrics", "legal_basis", "Dokładność oznaczenia przepisu prawnego - wyniki na przestrzeni lat", output_dir)
-        plot_metric_over_years(model_stats, "text_metrics", "exact_match", "Dokładność treści przepisu prawnego - wyniki na przestrzeni lat", output_dir)
-        plot_metric_over_years(model_stats, "text_metrics", "rouge_n_f1", "ROUGE-N F1 - wyniki na przestrzeni lat", output_dir)
-        plot_metric_over_years(model_stats, "text_metrics", "rouge_w", "ROUGE-W F1 - wyniki na przestrzeni lat", output_dir)
-        plot_metric_over_years(model_stats, "text_metrics", "rouge_n_tfidf", "Czułość ROUGE-N TF-IDF - wyniki na przestrzeni lat", output_dir)
+        plot_metric_over_years(
+            model_stats,
+            "accuracy_metrics",
+            "answer",
+            "Dokładność odpowiedzi - wyniki na przestrzeni lat",
+            output_dir,
+        )
+        plot_metric_over_years(
+            model_stats,
+            "accuracy_metrics",
+            "legal_basis",
+            "Dokładność oznaczenia przepisu prawnego - wyniki na przestrzeni lat",
+            output_dir,
+        )
+        plot_metric_over_years(
+            model_stats,
+            "text_metrics",
+            "exact_match",
+            "Dokładność treści przepisu prawnego - wyniki na przestrzeni lat",
+            output_dir,
+        )
+        plot_metric_over_years(
+            model_stats,
+            "text_metrics",
+            "rouge_n_f1",
+            "ROUGE-N F1 - wyniki na przestrzeni lat",
+            output_dir,
+        )
+        plot_metric_over_years(
+            model_stats,
+            "text_metrics",
+            "rouge_w",
+            "ROUGE-W F1 - wyniki na przestrzeni lat",
+            output_dir,
+        )
+        plot_metric_over_years(
+            model_stats,
+            "text_metrics",
+            "rouge_n_tfidf",
+            "Czułość ROUGE-N TF-IDF - wyniki na przestrzeni lat",
+            output_dir,
+        )
     except Exception as e:
         typer.secho(f"Error: {e}", fg=typer.colors.RED, err=True)
         raise typer.Exit(1)
+
 
 if __name__ == "__main__":
     app()
