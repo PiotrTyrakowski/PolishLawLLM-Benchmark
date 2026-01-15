@@ -1,6 +1,8 @@
 import os
 import requests
 
+from transformers import AutoTokenizer
+
 from src.constants import MAX_NEW_TOKENS
 from src.benchmark_framework.configs.runner_config import RunnerConfig
 from src.benchmark_framework.models.base_model import BaseModel
@@ -21,6 +23,7 @@ class HFEndpointModel(BaseModel):
 
         self.api_key = os.getenv("HF_TOKEN")
         self.endpoint_url = os.getenv("HF_ENDPOINT_URL")
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
 
         if not self.api_key:
             raise ValueError("HF_TOKEN environment variable must be set")
@@ -31,14 +34,11 @@ class HFEndpointModel(BaseModel):
         """
         Generate a response from the HF Endpoint model using requests.
         """
-        from transformers import AutoTokenizer
-
-        tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": prompt},
         ]
-        full_input = tokenizer.apply_chat_template(
+        full_input = self.tokenizer.apply_chat_template(
             messages, tokenize=False, add_generation_prompt=True
         )
 
