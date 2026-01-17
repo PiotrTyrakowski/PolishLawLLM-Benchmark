@@ -1,6 +1,7 @@
 from pathlib import Path
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 
 from src.benchmark_framework.stats.config import MODEL_CONFIG
 
@@ -37,6 +38,8 @@ def plot_metric_for_model_parameters(models_metrics: dict, metric_parent: str, m
     ax.set_xlabel("Liczba parametrów (w miliardach)")
     ax.set_ylabel("Wartość metryki")
     ax.grid(True, linestyle='--', alpha=0.6)
+    ax.set_xscale('log')
+    ax.xaxis.set_major_formatter(ticker.ScalarFormatter())
 
     ax.legend(title="Model Family")
 
