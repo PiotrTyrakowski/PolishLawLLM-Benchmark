@@ -86,7 +86,6 @@ def plot_metric_over_years(models_metrics_over_years: dict, metric_parent: str, 
     plt.title(title, y=1.15)
     plt.xlabel("Rok")
     plt.ylabel("Wartość metryki")
-    plt.ylim(0, 1.05)
     plt.grid(True, linestyle=":", alpha=0.6)
     plt.legend(loc='lower center', bbox_to_anchor=(0.5, 1.02), ncol=3, fontsize=8)
     
