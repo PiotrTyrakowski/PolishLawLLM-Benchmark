@@ -57,12 +57,8 @@ class HFEndpointModel(BaseModel):
         }
 
         response = requests.post(self.endpoint_url, headers=headers, json=payload)
-
-        # Raise an error if the request failed (e.g., 400, 500)
         response.raise_for_status()
         output = response.json()
-
-        print(f"HF Endpoint response: {response}")
 
         if (
             isinstance(output, list)
@@ -76,7 +72,4 @@ class HFEndpointModel(BaseModel):
             return str(output)
 
     def get_default_runner_config(self):
-        """
-        Returns default rate limiting for the dedicated endpoint.
-        """
         return RunnerConfig()
