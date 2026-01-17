@@ -390,7 +390,11 @@ class TestAverageMetricsStatic:
     def test_average_metrics_empty_list(self):
         """Test that empty list returns empty dicts with zero questions_count."""
         result = Uploader._average_metrics([])
-        assert result == {"accuracy_metrics": {}, "text_metrics": {}, "questions_count": 0}
+        assert result == {
+            "accuracy_metrics": {},
+            "text_metrics": {},
+            "questions_count": 0,
+        }
 
     def test_average_metrics_single_doc(self):
         """Test that single doc returns same values."""
