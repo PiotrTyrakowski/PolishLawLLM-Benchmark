@@ -6,8 +6,11 @@ export function getMetricLabel(key: string): string {
     .join(' ');
 }
 
-export function formatMetricValue(value: number): string {
-  return value.toFixed(2);
+export function formatMetricValue(value: number, metricKey?: string): string {
+  if (metricKey && metricKey.toLowerCase().includes('rouge')) {
+    return value.toFixed(2);
+  }
+  return `${(value * 100).toFixed(0)}%`;
 }
 
 // Extract all unique metric keys from data array

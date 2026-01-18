@@ -173,7 +173,7 @@ export default function DataTableClient({
                           : 'text-gray-600'
                       }`}
                     >
-                      {formatMetricValue(item.accuracyMetrics[key] ?? 0)}
+                      {formatMetricValue(item.accuracyMetrics[key] ?? 0, key)}
                     </td>
                   ))}
                   {textKeys.map((key, idx) => (
@@ -183,7 +183,7 @@ export default function DataTableClient({
                         idx === 0 ? 'border-l-2 border-l-gray-200' : ''
                       } text-gray-600`}
                     >
-                      {formatMetricValue(item.textMetrics[key] ?? 0)}
+                      {formatMetricValue(item.textMetrics[key] ?? 0, key)}
                     </td>
                   ))}
                 </tr>

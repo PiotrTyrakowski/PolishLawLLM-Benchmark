@@ -27,7 +27,7 @@ function StatCard({ label, value, color = 'text-slate-900', metricKey }: { label
         {metricKey && <Tooltip content={getMetricDescription(metricKey)} />}
       </div>
       <div className={`text-2xl font-bold ${color}`}>
-        {formatMetricValue(value)}
+        {formatMetricValue(value, metricKey)}
       </div>
       <ProgressBar value={value} />
     </div>
@@ -201,13 +201,13 @@ export default function ModelStatsSection({ data }: ModelStatsSectionProps) {
                         >
                           {idx === 0 ? (
                             <>
-                              <div className="font-bold text-slate-900">{formatMetricValue(item.accuracyMetrics[key] ?? 0)}</div>
+                              <div className="font-bold text-slate-900">{formatMetricValue(item.accuracyMetrics[key] ?? 0, key)}</div>
                               <div className="w-full bg-slate-200 rounded-full h-1 mt-1.5 overflow-hidden">
                                 <div className={`${accentColor} h-1 rounded-full`} style={{ width: `${Math.min((item.accuracyMetrics[key] ?? 0) * 100, 100)}%` }} />
                               </div>
                             </>
                           ) : (
-                            <span className="text-slate-600">{formatMetricValue(item.accuracyMetrics[key] ?? 0)}</span>
+                            <span className="text-slate-600">{formatMetricValue(item.accuracyMetrics[key] ?? 0, key)}</span>
                           )}
                         </td>
                       ))}
@@ -218,7 +218,7 @@ export default function ModelStatsSection({ data }: ModelStatsSectionProps) {
                             idx === 0 ? 'border-l border-slate-200' : ''
                           }`}
                         >
-                          {formatMetricValue(item.textMetrics[key] ?? 0)}
+                          {formatMetricValue(item.textMetrics[key] ?? 0, key)}
                         </td>
                       ))}
                     </tr>
