@@ -6,7 +6,7 @@ from src.benchmark_framework.models.base_model import BaseModel
 from src.benchmark_framework.models.gemini import GeminiModel
 from src.benchmark_framework.configs.model_config import ModelConfig
 from src.benchmark_framework.models.nvidia_model import NvidiaModel
-from src.benchmark_framework.models.nvidia_nim_model import NvidiaNimModel
+from src.benchmark_framework.models.hfe_model import HFEndpointModel
 from src.benchmark_framework.models.open_router import OpenRouterModel
 
 MODEL_REGISTRY = {
@@ -16,14 +16,15 @@ MODEL_REGISTRY = {
     "meta": NvidiaModel,
     "gpt": OpenAIModel,
     "claude": AnthropicModel,
-    "CYFRAGOVPL": NvidiaNimModel,
-    "perplexity": OpenRouterModel, # https://openrouter.ai/perplexity/sonar-pro-search
-    "qwen": OpenRouterModel, # https://openrouter.ai/qwen/qwen3-max
-    "x": OpenRouterModel, # https://openrouter.ai/x-ai/grok-4 (x-ai -> x)
-    "z": OpenRouterModel, # https://openrouter.ai/z-ai/glm-4.7 (z-ai -> z)
+    "CYFRAGOVPL": HFEndpointModel,
+    "perplexity": OpenRouterModel,  # https://openrouter.ai/perplexity/sonar-pro-search
+    "qwen": OpenRouterModel,  # https://openrouter.ai/qwen/qwen3-max
+    "x": OpenRouterModel,  # https://openrouter.ai/x-ai/grok-4 (x-ai -> x)
+    "z": OpenRouterModel,  # https://openrouter.ai/z-ai/glm-4.7 (z-ai -> z)
     "moonshotai": NvidiaModel,
     "mistralai": OpenRouterModel,
     "nvidia": NvidiaModel,
+    "google": OpenRouterModel,
 }
 
 
