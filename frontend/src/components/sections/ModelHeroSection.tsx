@@ -22,27 +22,6 @@ export default function ModelHeroSection({
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="mb-4 sm:mb-6">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-slate-500 hover:text-indigo-600 transition-colors"
-          >
-            <svg
-              className="w-3.5 h-3.5 sm:w-4 sm:h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-            Powrót do rankingu
-          </Link>
-        </div>
 
         <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6">
           <div className="flex-1">
