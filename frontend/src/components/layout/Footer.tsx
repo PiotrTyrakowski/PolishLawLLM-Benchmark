@@ -20,7 +20,7 @@ export default function Footer() {
             <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
               <li>
                 <Link href="/" className="hover:text-white transition-colors">
-                  Ranking modeli
+                  Strona główna
                 </Link>
               </li>
               <li>

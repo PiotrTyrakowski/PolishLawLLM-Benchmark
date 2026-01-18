@@ -12,21 +12,7 @@ export default function AboutPage() {
   return (
     <div className="bg-gray-50 text-gray-800 antialiased min-h-screen flex flex-col overflow-x-hidden">
       <Header />
-
-      {/* Hero */}
-      <div className="bg-white border-b border-gray-200 py-8 sm:py-12">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-slate-500 hover:text-indigo-600 transition-colors mb-4 sm:mb-6"
-          >
-            <ArrowLeft size={14} className="sm:hidden" weight="bold" />
-            <ArrowLeft size={16} className="hidden sm:block" weight="bold" />
-            Powrót do rankingu
-          </Link>
-
-        </div>
-      </div>
+      <div className="h-14 sm:h-16" /> {/* Spacer for fixed header */}
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex-1">
         <div className="space-y-10 sm:space-y-16">
