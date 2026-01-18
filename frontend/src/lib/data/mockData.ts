@@ -7,168 +7,127 @@ import type {
 
 // Mock model summaries
 const mockModels: Record<string, ModelSummary> = {
-  'gpt-4o': { id: 'gpt-4o', name: 'GPT-4o', isPolish: false, config: {} },
-  'claude-3-5-sonnet': { id: 'claude-3-5-sonnet', name: 'Claude 3.5 Sonnet', isPolish: false, config: {} },
-  'llama-3-70b': { id: 'llama-3-70b', name: 'Llama-3-70B', isPolish: false, config: {} },
-  'bielik-11b-v2': { id: 'bielik-11b-v2', name: 'Bielik-11B-v2', isPolish: true, config: {} },
-  'gpt-4-turbo': { id: 'gpt-4-turbo', name: 'GPT-4-Turbo', isPolish: false, config: {} },
-  'claude-3-opus': { id: 'claude-3-opus', name: 'Claude 3 Opus', isPolish: false, config: {} },
+  'model_1': { id: 'model_1', name: 'Model 1', isPolish: false, config: {} },
+  'model_2': { id: 'model_2', name: 'Model 2', isPolish: true, config: {} },
+  'model_3': { id: 'model_3', name: 'Model 3', isPolish: false, config: {} },
 };
 
 export const mockExamsData: AggregatedModelExams[] = [
   {
-    model: mockModels['gpt-4o'],
-    accuracyMetrics: { answer: 0.892, identification: 0.82 },
-    textMetrics: { exact_match: 0.654, bleu: 0.82, weighted_bleu: 0.85 },
+    model: mockModels['model_1'],
+    accuracyMetrics: { answer: 0.92, legal_basis: 0.85 },
+    textMetrics: { exact_match: 0.72, rouge_n_f1: 0.88, rouge_n_tfidf: 0.91, rouge_w: 0.86 },
   },
   {
-    model: mockModels['claude-3-5-sonnet'],
-    accuracyMetrics: { answer: 0.875, identification: 0.795 },
-    textMetrics: { exact_match: 0.631, bleu: 0.79, weighted_bleu: 0.83 },
+    model: mockModels['model_2'],
+    accuracyMetrics: { answer: 0.78, legal_basis: 0.71 },
+    textMetrics: { exact_match: 0.58, rouge_n_f1: 0.74, rouge_n_tfidf: 0.79, rouge_w: 0.72 },
   },
   {
-    model: mockModels['llama-3-70b'],
-    accuracyMetrics: { answer: 0.81, identification: 0.65 },
-    textMetrics: { exact_match: 0.452, bleu: 0.68, weighted_bleu: 0.71 },
-  },
-  {
-    model: mockModels['bielik-11b-v2'],
-    accuracyMetrics: { answer: 0.745, identification: 0.68 },
-    textMetrics: { exact_match: 0.41, bleu: 0.55, weighted_bleu: 0.62 },
+    model: mockModels['model_3'],
+    accuracyMetrics: { answer: 0.85, legal_basis: 0.79 },
+    textMetrics: { exact_match: 0.65, rouge_n_f1: 0.82, rouge_n_tfidf: 0.85, rouge_w: 0.80 },
   },
 ];
 
 export const mockJudgmentsData: AggregatedModelJudgments[] = [
   {
-    model: mockModels['gpt-4-turbo'],
-    accuracyMetrics: { retrieval: 0.924 },
-    textMetrics: { exact_match: 0.624, bleu: 0.76, weighted_bleu: 0.78 },
+    model: mockModels['model_1'],
+    accuracyMetrics: { legal_basis: 0.88 },
+    textMetrics: { exact_match: 0.70, rouge_n_f1: 0.85, rouge_n_tfidf: 0.89, rouge_w: 0.84 },
   },
   {
-    model: mockModels['claude-3-opus'],
-    accuracyMetrics: { retrieval: 0.901 },
-    textMetrics: { exact_match: 0.601, bleu: 0.72, weighted_bleu: 0.75 },
+    model: mockModels['model_2'],
+    accuracyMetrics: { legal_basis: 0.74 },
+    textMetrics: { exact_match: 0.55, rouge_n_f1: 0.71, rouge_n_tfidf: 0.76, rouge_w: 0.69 },
   },
   {
-    model: mockModels['bielik-11b-v2'],
-    accuracyMetrics: { retrieval: 0.785 },
-    textMetrics: { exact_match: 0.45, bleu: 0.51, weighted_bleu: 0.55 },
+    model: mockModels['model_3'],
+    accuracyMetrics: { legal_basis: 0.81 },
+    textMetrics: { exact_match: 0.62, rouge_n_f1: 0.79, rouge_n_tfidf: 0.83, rouge_w: 0.77 },
   },
 ];
 
 export const mockModelDetails: Record<string, ModelDetail> = {
-  'gpt-4o': {
-    profile: mockModels['gpt-4o'],
+  'model_1': {
+    profile: mockModels['model_1'],
     exams: [
       {
-        examType: 'Radcowski',
-        year: 2024,
-        accuracyMetrics: { answer: 0.912, identification: 0.845 },
-        textMetrics: { exact_match: 0.682, bleu: 0.84, weighted_bleu: 0.87 },
+        examType: 'all',
+        year: 0,
+        accuracyMetrics: { answer: 0.92, legal_basis: 0.85 },
+        textMetrics: { exact_match: 0.72, rouge_n_f1: 0.88, rouge_n_tfidf: 0.91, rouge_w: 0.86 },
       },
       {
-        examType: 'Radcowski',
-        year: 2023,
-        accuracyMetrics: { answer: 0.878, identification: 0.801 },
-        textMetrics: { exact_match: 0.625, bleu: 0.80, weighted_bleu: 0.83 },
+        examType: 'adwokacki_radcowy',
+        year: 2025,
+        accuracyMetrics: { answer: 0.94, legal_basis: 0.87 },
+        textMetrics: { exact_match: 0.75, rouge_n_f1: 0.90, rouge_n_tfidf: 0.93, rouge_w: 0.88 },
       },
       {
-        examType: 'Adwokacki',
+        examType: 'adwokacki_radcowy',
         year: 2024,
-        accuracyMetrics: { answer: 0.905, identification: 0.832 },
-        textMetrics: { exact_match: 0.668, bleu: 0.83, weighted_bleu: 0.86 },
+        accuracyMetrics: { answer: 0.90, legal_basis: 0.83 },
+        textMetrics: { exact_match: 0.69, rouge_n_f1: 0.86, rouge_n_tfidf: 0.89, rouge_w: 0.84 },
       },
     ],
     judgments: {
-      accuracyMetrics: { retrieval: 0.918 },
-      textMetrics: { exact_match: 0.615, bleu: 0.75, weighted_bleu: 0.77 },
+      accuracyMetrics: { legal_basis: 0.88 },
+      textMetrics: { exact_match: 0.70, rouge_n_f1: 0.85, rouge_n_tfidf: 0.89, rouge_w: 0.84 },
     },
   },
-  'claude-3-5-sonnet': {
-    profile: mockModels['claude-3-5-sonnet'],
+  'model_2': {
+    profile: mockModels['model_2'],
     exams: [
       {
-        examType: 'Radcowski',
-        year: 2024,
-        accuracyMetrics: { answer: 0.891, identification: 0.812 },
-        textMetrics: { exact_match: 0.654, bleu: 0.81, weighted_bleu: 0.85 },
+        examType: 'all',
+        year: 0,
+        accuracyMetrics: { answer: 0.78, legal_basis: 0.71 },
+        textMetrics: { exact_match: 0.58, rouge_n_f1: 0.74, rouge_n_tfidf: 0.79, rouge_w: 0.72 },
       },
       {
-        examType: 'Radcowski',
-        year: 2023,
-        accuracyMetrics: { answer: 0.856, identification: 0.778 },
-        textMetrics: { exact_match: 0.608, bleu: 0.77, weighted_bleu: 0.81 },
+        examType: 'adwokacki_radcowy',
+        year: 2025,
+        accuracyMetrics: { answer: 0.80, legal_basis: 0.73 },
+        textMetrics: { exact_match: 0.60, rouge_n_f1: 0.76, rouge_n_tfidf: 0.81, rouge_w: 0.74 },
+      },
+      {
+        examType: 'notarialny',
+        year: 2025,
+        accuracyMetrics: { answer: 0.76, legal_basis: 0.69 },
+        textMetrics: { exact_match: 0.56, rouge_n_f1: 0.72, rouge_n_tfidf: 0.77, rouge_w: 0.70 },
       },
     ],
     judgments: {
-      accuracyMetrics: { retrieval: 0.895 },
-      textMetrics: { exact_match: 0.598, bleu: 0.71, weighted_bleu: 0.74 },
+      accuracyMetrics: { legal_basis: 0.74 },
+      textMetrics: { exact_match: 0.55, rouge_n_f1: 0.71, rouge_n_tfidf: 0.76, rouge_w: 0.69 },
     },
   },
-  'llama-3-70b': {
-    profile: mockModels['llama-3-70b'],
+  'model_3': {
+    profile: mockModels['model_3'],
     exams: [
       {
-        examType: 'Radcowski',
-        year: 2024,
-        accuracyMetrics: { answer: 0.825, identification: 0.668 },
-        textMetrics: { exact_match: 0.471, bleu: 0.70, weighted_bleu: 0.73 },
+        examType: 'all',
+        year: 0,
+        accuracyMetrics: { answer: 0.85, legal_basis: 0.79 },
+        textMetrics: { exact_match: 0.65, rouge_n_f1: 0.82, rouge_n_tfidf: 0.85, rouge_w: 0.80 },
+      },
+      {
+        examType: 'adwokacki_radcowy',
+        year: 2025,
+        accuracyMetrics: { answer: 0.87, legal_basis: 0.81 },
+        textMetrics: { exact_match: 0.67, rouge_n_f1: 0.84, rouge_n_tfidf: 0.87, rouge_w: 0.82 },
+      },
+      {
+        examType: 'komorniczy',
+        year: 2025,
+        accuracyMetrics: { answer: 0.83, legal_basis: 0.77 },
+        textMetrics: { exact_match: 0.63, rouge_n_f1: 0.80, rouge_n_tfidf: 0.83, rouge_w: 0.78 },
       },
     ],
     judgments: {
-      accuracyMetrics: { retrieval: 0.824 },
-      textMetrics: { exact_match: 0.521, bleu: 0.62, weighted_bleu: 0.65 },
-    },
-  },
-  'bielik-11b-v2': {
-    profile: mockModels['bielik-11b-v2'],
-    exams: [
-      {
-        examType: 'Radcowski',
-        year: 2024,
-        accuracyMetrics: { answer: 0.762, identification: 0.701 },
-        textMetrics: { exact_match: 0.435, bleu: 0.58, weighted_bleu: 0.65 },
-      },
-      {
-        examType: 'Radcowski',
-        year: 2023,
-        accuracyMetrics: { answer: 0.728, identification: 0.659 },
-        textMetrics: { exact_match: 0.385, bleu: 0.52, weighted_bleu: 0.59 },
-      },
-    ],
-    judgments: {
-      accuracyMetrics: { retrieval: 0.785 },
-      textMetrics: { exact_match: 0.45, bleu: 0.51, weighted_bleu: 0.55 },
-    },
-  },
-  'gpt-4-turbo': {
-    profile: mockModels['gpt-4-turbo'],
-    exams: [
-      {
-        examType: 'Radcowski',
-        year: 2024,
-        accuracyMetrics: { answer: 0.898, identification: 0.822 },
-        textMetrics: { exact_match: 0.665, bleu: 0.82, weighted_bleu: 0.85 },
-      },
-    ],
-    judgments: {
-      accuracyMetrics: { retrieval: 0.924 },
-      textMetrics: { exact_match: 0.624, bleu: 0.76, weighted_bleu: 0.78 },
-    },
-  },
-  'claude-3-opus': {
-    profile: mockModels['claude-3-opus'],
-    exams: [
-      {
-        examType: 'Radcowski',
-        year: 2024,
-        accuracyMetrics: { answer: 0.885, identification: 0.80 },
-        textMetrics: { exact_match: 0.642, bleu: 0.79, weighted_bleu: 0.83 },
-      },
-    ],
-    judgments: {
-      accuracyMetrics: { retrieval: 0.901 },
-      textMetrics: { exact_match: 0.601, bleu: 0.72, weighted_bleu: 0.75 },
+      accuracyMetrics: { legal_basis: 0.81 },
+      textMetrics: { exact_match: 0.62, rouge_n_f1: 0.79, rouge_n_tfidf: 0.83, rouge_w: 0.77 },
     },
   },
 };
