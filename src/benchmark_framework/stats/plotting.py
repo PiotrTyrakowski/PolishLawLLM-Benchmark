@@ -1,105 +1,113 @@
 from pathlib import Path
-from typing import Optional
+import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 
-from src.benchmark_framework.stats.calculate_stats import collect_yearly_stats
+from src.benchmark_framework.stats.config import MODEL_CONFIG
 
 
-def plot_accuracy_over_years(
-    base_path: Path, model_name: str, output_dir: Optional[Path] = None
+def plot_metric_for_model_parameters(
+    models_metrics: dict,
+    metric_parent: str,
+    metric_name: str,
+    title: str,
+    output_dir: Path,
 ):
-    yearly_stats = collect_yearly_stats(base_path)
+    data = []
 
-    years = sorted(yearly_stats.keys(), key=int)
-    answer_acc = [yearly_stats[y]["accuracy_metrics"]["answer"] for y in years]
-    legal_acc = [yearly_stats[y]["accuracy_metrics"]["legal_basis"] for y in years]
-    exact_match = [
-        yearly_stats[y]["text_metrics"].get("exact_match", 0.0) for y in years
-    ]
+    for model_name, metrics in models_metrics.items():
+        if model_name in MODEL_CONFIG:
+            model_config = MODEL_CONFIG[model_name]
+            marker_style = f"${model_config.shortcut}$"
+            data.append(
+                {
+                    "Model": model_name,
+                    "Metric": metrics[metric_parent][metric_name],
+                    "Parameters": model_config.parameters,
+                    "Marker": marker_style,
+                }
+            )
 
-    # Create plot
-    plt.figure(figsize=(10, 6))
-    plt.plot(
-        years,
-        answer_acc,
-        marker="o",
-        linestyle="-",
-        linewidth=2,
-        label="Dokładność odpowiedzi",
-    )
-    plt.plot(
-        years,
-        legal_acc,
-        marker="o",
-        linestyle="--",
-        linewidth=2,
-        label="Dokładność oznaczenia podstawy prawnej",
-    )
-    plt.plot(
-        years,
-        exact_match,
-        marker="o",
-        linestyle=":",
-        linewidth=2,
-        label="Dokładność treści przepisu",
+    df = pd.DataFrame(data)
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    for marker, group in df.groupby("Marker"):
+        label_text = group["Model"].iloc[0]
+        ax.scatter(
+            group["Parameters"],
+            group["Metric"],
+            marker=marker,
+            s=150,
+            label=label_text,
+            alpha=0.8,
+        )
+
+    ax.set_title(title, fontsize=14, pad=20)
+    ax.set_xlabel("Liczba parametrów (w miliardach)")
+    ax.set_ylabel("Wartość metryki")
+    ax.grid(True, linestyle="--", alpha=0.6)
+    ax.set_xscale("log")
+    ax.xaxis.set_major_formatter(ticker.ScalarFormatter())
+
+    ax.legend(
+        bbox_to_anchor=(1.02, 1),  # X=1.02 (just right of plot), Y=1 (top aligned)
+        loc="upper left",  # Anchor the top-left corner of the legend to that point
+        borderaxespad=0,  # Remove extra padding between anchor and legend
     )
 
-    plt.title(f"{model_name} - Dokładność na przestrzeni lat")
+    plt.savefig(
+        output_dir / f"{metric_name}_vs_parameters.png",
+        dpi=300,
+        bbox_inches="tight",  # IMPORTANT: Prevents cutting off the legends/labels
+        transparent=False,
+    )
+    plt.close(fig)
+
+
+def plot_metric_over_years(
+    models_metrics_over_years: dict,
+    metric_parent: str,
+    metric_name: str,
+    title: str,
+    output_dir: Path,
+):
+    metric_for_model = {}
+    years = []
+    for model_name, yearly_stats in models_metrics_over_years.items():
+        if len(years) == 0:
+            years = sorted(yearly_stats.keys(), key=int)
+        assert years == sorted(
+            yearly_stats.keys(), key=int
+        ), "Years mismatch between models"
+        metric_values = [yearly_stats[y][metric_parent][metric_name] for y in years]
+        metric_for_model[model_name] = metric_values
+
+    # Create plot with all models
+    plt.figure(figsize=(12, 7))
+
+    markers = ["o", "s", "^", "D", "v", "p", "h", "*"]
+    linestyles = ["-"]
+
+    for idx, (model_name, metric_values) in enumerate(metric_for_model.items()):
+        plt.plot(
+            years,
+            metric_values,
+            marker=markers[idx % len(markers)],
+            linestyle=linestyles[idx % len(linestyles)],
+            linewidth=2,
+            markersize=6,
+            label=model_name,
+        )
+
+    plt.title(title, y=1.15)
     plt.xlabel("Rok")
     plt.ylabel("Wartość metryki")
-    plt.ylim(0, 1.05)
     plt.grid(True, linestyle=":", alpha=0.6)
-    plt.legend()
+    plt.legend(loc="lower center", bbox_to_anchor=(0.5, 1.02), ncol=3, fontsize=8)
 
-    output_filename = f"accuracy_over_years_{model_name}.png"
+    output_filename = f"{metric_name}_over_years.png"
     _save_plot(output_dir / output_filename)
-
-
-def plot_text_metrics_over_years(base_path: Path, model_name: str, output_dir: Path):
-    yearly_stats = collect_yearly_stats(base_path)
-
-    years = sorted(yearly_stats.keys(), key=int)
-
-    answer_acc = [yearly_stats[y]["text_metrics"]["rouge_w"] for y in years]
-    legal_acc = [yearly_stats[y]["text_metrics"]["rouge_n_f1"] for y in years]
-    exact_match = [yearly_stats[y]["text_metrics"]["rouge_n_tfidf"] for y in years]
-
-    # Create plot
-    plt.figure(figsize=(10, 6))
-    plt.plot(
-        years,
-        answer_acc,
-        marker="o",
-        linestyle="-",
-        linewidth=2,
-        label="ROUGE-W F1",
-    )
-    plt.plot(
-        years,
-        legal_acc,
-        marker="o",
-        linestyle="--",
-        linewidth=2,
-        label="ROUGE-N F1",
-    )
-    plt.plot(
-        years,
-        exact_match,
-        marker="o",
-        linestyle=":",
-        linewidth=2,
-        label="ROUGE-N TF-IDF recall",
-    )
-
-    plt.title(f"{model_name} - Metryki tekstowe na przestrzeni lat")
-    plt.xlabel("Rok")
-    plt.ylabel("Wartość metryki")
-    plt.ylim(0, 1.05)
-    plt.grid(True, linestyle=":", alpha=0.6)
-    plt.legend()
-
-    output_filename = f"text_metrics_over_years_{model_name}.png"
-    _save_plot(output_dir / output_filename)
+    print(f"Saved plot to {output_dir / output_filename}")
 
 
 def _save_plot(output_path: Path) -> Path:

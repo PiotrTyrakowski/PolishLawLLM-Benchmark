@@ -36,12 +36,15 @@ export GOOGLE_API_KEY="..."      # For Gemini models
 export OPENAI_API_KEY="..."      # For GPT models
 export ANTHROPIC_API_KEY="..."   # For Claude models
 export NVIDIA_API_KEY="..."      # For NVIDIA-hosted models
+export OPENROUTER_API_KEY="..."  # For OpenRouter-hosted models
+export HF_TOKEN="..."            # For models hosted using Hugging Face Inference Endpoints
+export HF_ENDPOINT_URL="..."     # Custom endpoint URL for Hugging Face Inference Endpoints
 ```
 
-### Run a Benchmark
+### Run the tests
 
 ```bash
-python -m src.benchmark_framework.cli gemini-2.0-flash exams
+python -m src.benchmark_framework.cli gpt-5.2 exams
 ```
 
 ---
@@ -60,16 +63,14 @@ python -m src.benchmark_framework.cli <model-name> <task-type>
 python -m src.benchmark_framework.calculate_metrics <input-dir> <output-dir>
 
 # Get aggregate statistics
-python -m src.benchmark_framework.calculate_stats <file-path>
+python -m src.benchmark_framework.stats.cli stats <file-path>
 ```
-
-**Supported models:** Gemini, GPT, Claude, NVIDIA (Bielik, DeepSeek, LLaMA, PLLuM)
 
 📖 **[Detailed documentation →](src/benchmark_framework/README.md)**
 
 ---
 
-### PDF Parsers
+### Parsers
 
 Extract exam questions and legal code articles from PDF files.
 

@@ -1,5 +1,4 @@
 import pytest
-from pathlib import Path
 
 from src.benchmark_framework.stats.calculate_stats import collect_yearly_stats
 from src.benchmark_framework.stats.tests.conftest import create_temp_jsonl
