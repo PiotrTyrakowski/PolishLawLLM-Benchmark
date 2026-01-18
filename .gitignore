@@ -22,8 +22,7 @@ changes.txt
 helpful.txt
 
 # data
-data/
-data_old/
+/data/
 
 # helpers
 metryki_pomoc

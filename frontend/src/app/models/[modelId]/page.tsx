@@ -20,7 +20,6 @@ interface ModelPageProps {
 }
 
 async function ModelContent({ modelId }: { modelId: string }) {
-  // Fetch model data and all results in parallel
   const [modelData, allExams, allJudgments] = await Promise.all([
     getModelData(modelId),
     getExamsData(),
@@ -31,7 +30,6 @@ async function ModelContent({ modelId }: { modelId: string }) {
     notFound();
   }
 
-  // Calculate exams rank: data is already aggregated per model, just sort by first accuracy metric
   const sortedExams = [...allExams].sort((a, b) => {
     const aKey = Object.keys(a.accuracyMetrics)[0];
     const bKey = Object.keys(b.accuracyMetrics)[0];
@@ -42,7 +40,6 @@ async function ModelContent({ modelId }: { modelId: string }) {
   const examsRank =
     sortedExams.findIndex((e) => e.model.id === modelId) + 1 || 1;
 
-  // Calculate judgments rank: sort by first accuracy metric
   const sortedJudgments = [...allJudgments].sort((a, b) => {
     const aKey = Object.keys(a.accuracyMetrics)[0];
     const bKey = Object.keys(b.accuracyMetrics)[0];

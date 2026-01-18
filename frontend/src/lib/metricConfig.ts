@@ -1,13 +1,23 @@
 // Get display label for a metric key - dynamically converts snake_case to Title Case
 export function getMetricLabel(key: string): string {
-  return key
+  let label = key
     .split('_')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
+
+  // Remove " F1" suffix if present
+  if (label.endsWith(' F1')) {
+    label = label.slice(0, -3);
+  }
+
+  return label;
 }
 
-export function formatMetricValue(value: number): string {
-  return value.toFixed(2);
+export function formatMetricValue(value: number, metricKey?: string): string {
+  if (metricKey && metricKey.toLowerCase().includes('rouge')) {
+    return value.toFixed(2);
+  }
+  return `${(value * 100).toFixed(0)}%`;
 }
 
 // Extract all unique metric keys from data array

@@ -31,7 +31,6 @@ export async function getAggregatedExams(): Promise<AggregatedModelExams[]> {
     const modelData = modelDoc.data() as FirestoreModel;
     const model = toModelSummary(modelDoc.id, modelData);
 
-    // Fetch the 'all' document directly instead of averaging
     const allDoc = await adminDb
       .collection(COLLECTION)
       .doc(modelDoc.id)
@@ -60,7 +59,6 @@ export async function getAllJudgments(): Promise<AggregatedModelJudgments[]> {
     const modelData = modelDoc.data() as FirestoreModel;
     const model = toModelSummary(modelDoc.id, modelData);
 
-    // Per the spec: /results/{model_id}/judgments/all
     const judgmentDoc = await adminDb
       .collection(COLLECTION)
       .doc(modelDoc.id)
@@ -89,7 +87,6 @@ export async function getModelDetail(modelId: string): Promise<ModelDetail | nul
   const modelData = modelDoc.data() as FirestoreModel;
   const profile = toModelSummary(modelId, modelData);
 
-  // Get all exams for this model
   const examsSnap = await adminDb
     .collection(COLLECTION)
     .doc(modelId)
@@ -106,7 +103,6 @@ export async function getModelDetail(modelId: string): Promise<ModelDetail | nul
     };
   });
 
-  // Get judgment (single doc)
   const judgmentDoc = await adminDb
     .collection(COLLECTION)
     .doc(modelId)

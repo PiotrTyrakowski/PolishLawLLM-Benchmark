@@ -5,7 +5,7 @@ export default async function JudgmentsSection() {
   const data = await getJudgmentsData();
 
   return (
-    <section id="judgments">
+    <section id="judgments" className="min-w-0">
       <JudgmentsTableClient initialData={data} />
     </section>
   );
