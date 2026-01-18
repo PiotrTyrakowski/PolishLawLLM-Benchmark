@@ -18,7 +18,7 @@ export const metricDescriptions: Record<string, string> = {
   rouge_w:
     'ROUGE-W: Miara podobieństwa bazująca na ważonych najdłuższych wspólnych podsekwencjach. Premiuje ciągłe fragmenty tekstu.',
   rouge_n_f1:
-    'ROUGE-N F1: Średnia harmoniczna precyzji i czułości dla n-gramów (1-3). Mierzy pokrycie słów i fraz.',
+    'ROUGE-N: Średnia harmoniczna precyzji i czułości dla n-gramów (1-3). Mierzy pokrycie słów i fraz.',
   rouge_n_tfidf:
     'Ważona czułość ROUGE-N z wagami TF-IDF. Wyższe wagi dla unikalnych terminów prawnych specyficznych dla danego przepisu.',
   bleu:

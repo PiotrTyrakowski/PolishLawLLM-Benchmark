@@ -10,11 +10,11 @@ export const revalidate = 600;
 
 export default function Home() {
   return (
-    <div className="bg-gray-50 text-gray-800 antialiased min-h-screen flex flex-col">
+    <div className="bg-gray-50 text-gray-800 antialiased min-h-screen flex flex-col overflow-x-hidden">
       <Header />
       <HeroSection />
       <AboutSection />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16 flex-1">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16 flex-1 w-full">
         <ExamsSection />
         <JudgmentsSection />
       </main>
