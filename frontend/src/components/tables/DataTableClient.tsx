@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { ArrowUp, ArrowDown } from '@phosphor-icons/react';
 import type { ModelSummary } from '@/lib/types';
 import { getMetricLabel, formatMetricValue, extractMetricKeys } from '@/lib/metricConfig';
 import { getMetricDescription } from '@/lib/metricDescriptions';
@@ -31,7 +32,6 @@ export default function DataTableClient({
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortAsc, setSortAsc] = useState(false);
 
-  // Extract all metric keys dynamically from the data
   const { accuracyKeys, textKeys } = useMemo(
     () => extractMetricKeys(initialData),
     [initialData]
@@ -40,7 +40,6 @@ export default function DataTableClient({
   // Set default sort key to first accuracy metric if not set
   const effectiveSortKey = sortKey ?? accuracyKeys[0] ?? null;
 
-  // Sort data
   const sorted = useMemo(() => {
     if (!effectiveSortKey) return initialData;
 
@@ -117,7 +116,15 @@ export default function DataTableClient({
                   >
                     <span className="inline-flex items-center gap-0.5 sm:gap-1.5">
                       {getMetricLabel(key)}
-                      {effectiveSortKey === key && (sortAsc ? ' ↑' : ' ↓')}
+                      {effectiveSortKey === key ? (
+                        sortAsc ? (
+                          <ArrowUp size={14} weight="bold" className="text-indigo-600" />
+                        ) : (
+                          <ArrowDown size={14} weight="bold" className="text-indigo-600" />
+                        )
+                      ) : (
+                        <ArrowDown size={14} className="text-gray-300" />
+                      )}
                       <Tooltip content={getMetricDescription(key)} />
                     </span>
                   </th>
@@ -133,7 +140,15 @@ export default function DataTableClient({
                   >
                     <span className="inline-flex items-center gap-0.5 sm:gap-1.5">
                       {getMetricLabel(key)}
-                      {effectiveSortKey === key && (sortAsc ? ' ↑' : ' ↓')}
+                      {effectiveSortKey === key ? (
+                        sortAsc ? (
+                          <ArrowUp size={14} weight="bold" className="text-indigo-600" />
+                        ) : (
+                          <ArrowDown size={14} weight="bold" className="text-indigo-600" />
+                        )
+                      ) : (
+                        <ArrowDown size={14} className="text-gray-300" />
+                      )}
                       <Tooltip content={getMetricDescription(key)} />
                     </span>
                   </th>
