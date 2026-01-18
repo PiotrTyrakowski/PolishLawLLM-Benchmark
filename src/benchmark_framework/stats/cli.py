@@ -58,7 +58,7 @@ def plot(
             "-o",
             help="Directory to save plots.",
         ),
-    ] = Path("data/plots2"),
+    ] = Path("data/plots"),
     parameters: Annotated[
         bool,
         typer.Option(

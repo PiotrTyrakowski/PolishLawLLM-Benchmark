@@ -21,7 +21,6 @@ class RougeWMetric(BaseMetric):
         Args:
             alpha: Weighting parameter for consecutive matches. Must be >= 1.0.
             beta: F-measure parameter controlling precision/recall balance.
-
         """
         super().__init__("rouge_w")
         if alpha < 1.0:
@@ -33,21 +32,12 @@ class RougeWMetric(BaseMetric):
     def _compute(
         self, prediction: str, reference: str, code_abbr: Optional[str] = None
     ) -> float:
-        """
-        Calculate ROUGE-W F-measure between prediction and reference.
-        """
         return self.calculate_f_measure(prediction, reference)
 
     def _weight_function(self, k: int) -> float:
-        """
-        Weighting function f(k) = k^alpha.
-        """
         return k**self.alpha
 
     def _inverse_weight_function(self, value: float) -> float:
-        """
-        Inverse of the weighting function.
-        """
         if value < 0:
             raise ValueError("value must be >= 0")
         return value ** (1.0 / self.alpha)
@@ -92,9 +82,6 @@ class RougeWMetric(BaseMetric):
         return c[m][n]
 
     def calculate_recall(self, prediction: str, reference: str) -> float:
-        """
-        Calculate ROUGE-W recall.
-        """
         pred_tokens = self.get_normalized_words(prediction)
         ref_tokens = self.get_normalized_words(reference)
 
@@ -105,7 +92,6 @@ class RougeWMetric(BaseMetric):
         wlcs = self.calculate_wlcs(pred_tokens, ref_tokens)
         recall = self._inverse_weight_function(wlcs) / m
 
-        # Handle floating point precision errors with tolerance
         if recall < 0:
             if recall < -self.tolerance:
                 raise ValueError(f"Recall {recall} is significantly below 0")
@@ -118,9 +104,6 @@ class RougeWMetric(BaseMetric):
         return recall
 
     def calculate_precision(self, prediction: str, reference: str) -> float:
-        """
-        Calculate ROUGE-W precision.
-        """
         pred_tokens = self.get_normalized_words(prediction)
         ref_tokens = self.get_normalized_words(reference)
 
@@ -131,7 +114,6 @@ class RougeWMetric(BaseMetric):
         wlcs = self.calculate_wlcs(pred_tokens, ref_tokens)
         precision = self._inverse_weight_function(wlcs) / n
 
-        # Handle floating point precision errors with tolerance
         if precision < 0:
             if precision < -self.tolerance:
                 raise ValueError(f"Precision {precision} is significantly below 0")
@@ -144,9 +126,6 @@ class RougeWMetric(BaseMetric):
         return precision
 
     def calculate_f_measure(self, prediction: str, reference: str) -> float:
-        """
-        Calculate ROUGE-W F-measure.
-        """
         recall = self.calculate_recall(prediction, reference)
         precision = self.calculate_precision(prediction, reference)
         beta_squared = self.beta**2
@@ -157,7 +136,6 @@ class RougeWMetric(BaseMetric):
 
         f_measure = (1 + beta_squared) * precision * recall / denominator
 
-        # Handle floating point precision errors with tolerance
         if f_measure < 0:
             if f_measure < -self.tolerance:
                 raise ValueError(f"F-measure {f_measure} is significantly below 0")
