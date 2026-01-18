@@ -78,6 +78,7 @@ export default async function ModelPage({ params }: ModelPageProps) {
   return (
     <div className="bg-gray-50 text-gray-800 antialiased min-h-screen flex flex-col">
       <Header />
+      <div className="h-14 sm:h-16" /> {/* Spacer for fixed header */}
       <Suspense fallback={<LoadingSkeleton />}>
         <ModelContent modelId={modelId} />
       </Suspense>

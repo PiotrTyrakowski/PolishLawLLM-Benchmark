@@ -12,6 +12,7 @@ export default function AboutPage() {
   return (
     <div className="bg-gray-50 text-gray-800 antialiased min-h-screen flex flex-col overflow-x-hidden">
       <Header />
+      <div className="h-14 sm:h-16" /> {/* Spacer for fixed header */}
 
       {/* Hero */}
       <div className="bg-white border-b border-gray-200 py-8 sm:py-12">
