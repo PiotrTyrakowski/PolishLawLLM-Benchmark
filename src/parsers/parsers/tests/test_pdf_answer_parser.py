@@ -1,10 +1,8 @@
 import pytest
 from pathlib import Path
 
-from src.parsers.extractors.answer_extractor import AnswerExtractor
-from src.parsers.parsers.parser import Parser
+from src.parsers.parsers.getters import get_answers_parser
 from src.parsers.domain.answer import Answer
-from src.parsers.pdf_readers.pdf_table_reader import PdfTableReader
 
 
 def get_pdf_path():
@@ -25,11 +23,7 @@ def get_pdf_path():
 
 @pytest.fixture
 def parser():
-    return Parser(
-        file_path=get_pdf_path(),
-        extractor=AnswerExtractor(),
-        pdf_reader=PdfTableReader(),
-    )
+    return get_answers_parser(file_path=get_pdf_path())
 
 
 def test_parse_returns_answer_objects(parser):
