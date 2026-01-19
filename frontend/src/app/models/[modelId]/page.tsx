@@ -11,7 +11,7 @@ import {
 } from '@/lib/data/dataProvider';
 
 // Revalidate data every 600 seconds (ISR)
-// export const revalidate = 600;
+export const revalidate = 600;
 
 interface ModelPageProps {
   params: Promise<{
@@ -70,13 +70,6 @@ function LoadingSkeleton() {
       <div className="text-slate-500">Ładowanie...</div>
     </div>
   );
-}
-
-export async function generateStaticParams() {
-  const exams = await getExamsData();
-  return exams.map((exam) => ({
-    modelId: exam.model.id,
-  }));
 }
 
 export default async function ModelPage({ params }: ModelPageProps) {
