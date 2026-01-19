@@ -6,7 +6,7 @@ import ExamsSection from '@/components/sections/ExamsSection';
 import JudgmentsSection from '@/components/sections/JudgmentsSection';
 
 // Revalidate data every 600 seconds (ISR)
-export const revalidate = 600;
+// export const revalidate = 600;
 
 export default function Home() {
   return (
