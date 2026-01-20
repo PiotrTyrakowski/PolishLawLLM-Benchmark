@@ -34,7 +34,7 @@ class LegalContentExtractor(BaseExtractor):
 
     @staticmethod
     def _get_raw_paragraph(article_text: str, paragraph_number: str) -> str:
-        """Get specific paragraph from article."""
+        """Get specific paragraph without any formating from article text."""
         safe_paragraph_number = re.escape(paragraph_number)
         paragraph_pattern = (
             rf"^(?:\s{{{PARAGRAPH_INDENT_SPACES}}}\s*)?"
@@ -54,7 +54,7 @@ class LegalContentExtractor(BaseExtractor):
         article_text: str,
         paragraph_number: str,
     ) -> str:
-        """Get specific paragraph from article."""
+        """Get specific paragraph from article text."""
         raw_paragraph = LegalContentExtractor._get_raw_paragraph(
             article_text, paragraph_number
         )
@@ -66,7 +66,7 @@ class LegalContentExtractor(BaseExtractor):
         point_number: str,
         paragraph_number: Optional[str] = None,
     ) -> str:
-        """Get specific point from article or paragraph."""
+        """Get specific point from article text."""
         text = (
             LegalContentExtractor._get_raw_paragraph(article_text, paragraph_number)
             if paragraph_number
