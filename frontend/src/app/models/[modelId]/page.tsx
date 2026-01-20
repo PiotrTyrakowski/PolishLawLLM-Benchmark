@@ -69,13 +69,6 @@ function LoadingSkeleton() {
   );
 }
 
-export async function generateStaticParams() {
-  const exams = await getExamsData();
-  return exams.map((exam) => ({
-    modelId: exam.model.id,
-  }));
-}
-
 export default async function ModelPage({ params }: ModelPageProps) {
   const { modelId } = await params;
 
