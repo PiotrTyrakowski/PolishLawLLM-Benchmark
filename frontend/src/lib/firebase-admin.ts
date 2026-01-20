@@ -1,7 +1,9 @@
 import 'server-only';
 
 import { initializeApp, getApps, cert, type ServiceAccount } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
+import { getFirestore, type Firestore } from 'firebase-admin/firestore';
+
+const USE_MOCK_DATA = process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true';
 
 function getServiceAccount(): ServiceAccount {
   const projectId = process.env.FIREBASE_PROJECT_ID;
@@ -21,8 +23,16 @@ function getServiceAccount(): ServiceAccount {
   };
 }
 
-const app = getApps().length === 0
-  ? initializeApp({ credential: cert(getServiceAccount()) })
-  : getApps()[0];
+function initFirestore(): Firestore | null {
+  if (USE_MOCK_DATA) {
+    return null;
+  }
 
-export const adminDb = getFirestore(app);
+  const app = getApps().length === 0
+    ? initializeApp({ credential: cert(getServiceAccount()) })
+    : getApps()[0];
+
+  return getFirestore(app);
+}
+
+export const adminDb = initFirestore();
