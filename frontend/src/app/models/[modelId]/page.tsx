@@ -10,9 +10,6 @@ import {
   getJudgmentsData,
 } from '@/lib/data/dataProvider';
 
-// Revalidate data every 600 seconds (ISR)
-// export const revalidate = 600;
-
 interface ModelPageProps {
   params: Promise<{
     modelId: string;

@@ -20,7 +20,6 @@ export function formatMetricValue(value: number, metricKey?: string): string {
   return `${(value * 100).toFixed(0)}%`;
 }
 
-// Extract all unique metric keys from data array
 export function extractMetricKeys(
   data: Array<{ accuracyMetrics: Record<string, number>; textMetrics: Record<string, number> }>
 ): { accuracyKeys: string[]; textKeys: string[] } {
