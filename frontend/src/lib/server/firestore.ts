@@ -14,6 +14,13 @@ import type {
 
 const COLLECTION = process.env.RESULTS_COLLECTION || 'results';
 
+function getDb() {
+  if (!adminDb) {
+    throw new Error('Firebase is disabled. This function should not be called when using mock data.');
+  }
+  return adminDb;
+}
+
 function toModelSummary(id: string, data: FirestoreModel): ModelSummary {
   return {
     id,
@@ -24,14 +31,14 @@ function toModelSummary(id: string, data: FirestoreModel): ModelSummary {
 }
 
 export async function getAggregatedExams(): Promise<AggregatedModelExams[]> {
-  const modelsSnap = await adminDb.collection(COLLECTION).get();
+  const modelsSnap = await getDb().collection(COLLECTION).get();
   const results: AggregatedModelExams[] = [];
 
   for (const modelDoc of modelsSnap.docs) {
     const modelData = modelDoc.data() as FirestoreModel;
     const model = toModelSummary(modelDoc.id, modelData);
 
-    const allDoc = await adminDb
+    const allDoc = await getDb()
       .collection(COLLECTION)
       .doc(modelDoc.id)
       .collection('exams')
@@ -52,14 +59,14 @@ export async function getAggregatedExams(): Promise<AggregatedModelExams[]> {
 }
 
 export async function getAllJudgments(): Promise<AggregatedModelJudgments[]> {
-  const modelsSnap = await adminDb.collection(COLLECTION).get();
+  const modelsSnap = await getDb().collection(COLLECTION).get();
   const results: AggregatedModelJudgments[] = [];
 
   for (const modelDoc of modelsSnap.docs) {
     const modelData = modelDoc.data() as FirestoreModel;
     const model = toModelSummary(modelDoc.id, modelData);
 
-    const judgmentDoc = await adminDb
+    const judgmentDoc = await getDb()
       .collection(COLLECTION)
       .doc(modelDoc.id)
       .collection('judgments')
@@ -80,14 +87,14 @@ export async function getAllJudgments(): Promise<AggregatedModelJudgments[]> {
 }
 
 export async function getModelDetail(modelId: string): Promise<ModelDetail | null> {
-  const modelDoc = await adminDb.collection(COLLECTION).doc(modelId).get();
+  const modelDoc = await getDb().collection(COLLECTION).doc(modelId).get();
 
   if (!modelDoc.exists) return null;
 
   const modelData = modelDoc.data() as FirestoreModel;
   const profile = toModelSummary(modelId, modelData);
 
-  const examsSnap = await adminDb
+  const examsSnap = await getDb()
     .collection(COLLECTION)
     .doc(modelId)
     .collection('exams')
@@ -103,7 +110,7 @@ export async function getModelDetail(modelId: string): Promise<ModelDetail | nul
     };
   });
 
-  const judgmentDoc = await adminDb
+  const judgmentDoc = await getDb()
     .collection(COLLECTION)
     .doc(modelId)
     .collection('judgments')
