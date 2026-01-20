@@ -22,14 +22,14 @@ class PdfLegalTextReader(BasePdfReader):
             with pdfplumber.open(pdf_path) as pdf:
                 pages_to_process = pdf.pages[start_page - 1 :]
                 for i, page in enumerate(pages_to_process, start_page):
-                    # Superindex processing
                     chars = page.chars
                     idx = 0
                     total_chars = len(chars)
 
                     while idx < total_chars:
+                        # Superindex processing
                         if chars[idx]["size"] < min_char_size:
-                            # Identify the full sequence (run) of small characters
+                            # Identify the full sequence of superindices
                             end = idx
                             sequence_text = ""
 
@@ -69,7 +69,7 @@ class PdfLegalTextReader(BasePdfReader):
                         top_lines = [h for h in horizontals if h["y"] >= page_h * 0.6]
                         if bottom_lines:
                             bottom_candidate = min(bottom_lines, key=lambda h: h["y"])
-                            keep_y0 = bottom_candidate["y"] + 15  # small padding
+                            keep_y0 = bottom_candidate["y"] + 15
                         if top_lines:
                             top_candidate = max(top_lines, key=lambda h: h["y"])
                             keep_y1 = top_candidate["y"] - 15
@@ -95,9 +95,6 @@ class PdfLegalTextReader(BasePdfReader):
 
     @staticmethod
     def _filter_date_lines(text: str, indent_threshold: int = 40) -> str:
-        """
-        Filter out lines with excessive indentation followed by dates.
-        """
         lines = text.split("\n")
         filtered_lines = []
 
@@ -118,8 +115,7 @@ class PdfLegalTextReader(BasePdfReader):
         keep_y1: Optional[float] = None,
     ):
         """
-        Return a function usable by page.filter() that:
-        - drops chars whose midpoint is outside [keep_y0, keep_y1] (if provided)
+        Return a function usable by page.filter() that drops chars which midpoint is outside [keep_y0, keep_y1]
         """
 
         def char_filter(char):
@@ -140,7 +136,7 @@ class PdfLegalTextReader(BasePdfReader):
     def _find_horizontal_lines(page, min_length_ratio=0.6, y_tolerance=2.0):
         """
         Detect horizontal rules on the page.
-        Returns list of dicts: { 'x0','x1','y','height','type' } in PDF coords (origin bottom-left).
+        Returns list of dicts: { 'x0','x1','y','height','type' } in PDF coords.
         min_length_ratio: minimal fraction of page width for a rule.
         """
         candidates = []
