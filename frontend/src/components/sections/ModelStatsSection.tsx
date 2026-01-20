@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useState, useMemo } from 'react';
+import { ArrowUp, ArrowDown } from '@phosphor-icons/react';
 import type { ModelDetail } from '@/lib/types';
 import { getMetricLabel, formatMetricValue, extractMetricKeys } from '@/lib/metricConfig';
 import { getMetricDescription } from '@/lib/metricDescriptions';
@@ -38,7 +39,9 @@ export default function ModelStatsSection({ data }: ModelStatsSectionProps) {
   const { profile, exams, judgments } = data;
   const accentColor = profile.isPolish ? 'bg-amber-500' : 'bg-indigo-600';
 
-  // Get the 'all' document for overall stats
+  const [sortKey, setSortKey] = useState<string | null>(null);
+  const [sortAsc, setSortAsc] = useState(false);
+
   const examsOverall = useMemo(() => {
     const allDoc = exams.find(e => e.examType === 'all');
     return allDoc
@@ -46,7 +49,6 @@ export default function ModelStatsSection({ data }: ModelStatsSectionProps) {
       : { accuracyMetrics: {}, textMetrics: {} };
   }, [exams]);
 
-  // Filter out 'all' document for the breakdown table
   const individualExams = useMemo(() => exams.filter(e => e.examType !== 'all'), [exams]);
 
   const { accuracyKeys: examAccKeys, textKeys: examTextKeys } = useMemo(() => {
@@ -58,6 +60,37 @@ export default function ModelStatsSection({ data }: ModelStatsSectionProps) {
     if (!judgments) return { accuracyKeys: [], textKeys: [] };
     return extractMetricKeys([judgments]);
   }, [judgments]);
+
+  const sortedExams = useMemo(() => {
+    if (!sortKey) return individualExams;
+
+    return [...individualExams].sort((a, b) => {
+      let aVal: number | string;
+      let bVal: number | string;
+
+      if (sortKey === 'examType') {
+        aVal = a.examType;
+        bVal = b.examType;
+        return sortAsc ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+      } else if (sortKey === 'year') {
+        aVal = a.year ?? 0;
+        bVal = b.year ?? 0;
+      } else {
+        aVal = a.accuracyMetrics[sortKey] ?? a.textMetrics[sortKey] ?? 0;
+        bVal = b.accuracyMetrics[sortKey] ?? b.textMetrics[sortKey] ?? 0;
+      }
+      return sortAsc ? (aVal as number) - (bVal as number) : (bVal as number) - (aVal as number);
+    });
+  }, [individualExams, sortKey, sortAsc]);
+
+  const handleSort = (key: string) => {
+    if (sortKey === key) {
+      setSortAsc(!sortAsc);
+    } else {
+      setSortKey(key);
+      setSortAsc(false);
+    }
+  };
 
   return (
     <div className="space-y-8 sm:space-y-12">
@@ -147,22 +180,50 @@ export default function ModelStatsSection({ data }: ModelStatsSectionProps) {
               <table className="min-w-full divide-y divide-slate-200">
                 <thead>
                   <tr className="bg-slate-50/80">
-                    <th scope="col" className="px-2 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 text-left text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">
-                      Typ Egzaminu
+                    <th
+                      scope="col"
+                      className="px-2 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 text-left text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100"
+                      onClick={() => handleSort('examType')}
+                    >
+                      <span className="inline-flex items-center gap-0.5 sm:gap-1">
+                        Typ Egzaminu
+                        {sortKey === 'examType' ? (
+                          sortAsc ? <ArrowUp size={14} weight="bold" className="text-indigo-600" /> : <ArrowDown size={14} weight="bold" className="text-indigo-600" />
+                        ) : (
+                          <ArrowDown size={14} className="text-slate-300" />
+                        )}
+                      </span>
                     </th>
-                    <th scope="col" className="px-2 sm:px-4 py-2 sm:py-3 md:py-4 text-center text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">
-                      Rok
+                    <th
+                      scope="col"
+                      className="px-2 sm:px-4 py-2 sm:py-3 md:py-4 text-center text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100"
+                      onClick={() => handleSort('year')}
+                    >
+                      <span className="inline-flex items-center gap-0.5 sm:gap-1">
+                        Rok
+                        {sortKey === 'year' ? (
+                          sortAsc ? <ArrowUp size={14} weight="bold" className="text-indigo-600" /> : <ArrowDown size={14} weight="bold" className="text-indigo-600" />
+                        ) : (
+                          <ArrowDown size={14} className="text-slate-300" />
+                        )}
+                      </span>
                     </th>
                     {examAccKeys.map((key, idx) => (
                       <th
                         key={`acc-${key}`}
                         scope="col"
-                        className={`px-2 sm:px-4 py-2 sm:py-3 md:py-4 text-center text-[10px] sm:text-xs font-bold uppercase tracking-wider whitespace-nowrap ${
+                        className={`px-2 sm:px-4 py-2 sm:py-3 md:py-4 text-center text-[10px] sm:text-xs font-bold uppercase tracking-wider whitespace-nowrap cursor-pointer hover:bg-slate-100 ${
                           idx === 0 ? 'text-indigo-900 bg-indigo-50/30 border-l border-slate-200' : 'text-slate-500'
                         }`}
+                        onClick={() => handleSort(key)}
                       >
-                        <span className="inline-flex items-center gap-1">
+                        <span className="inline-flex items-center gap-0.5 sm:gap-1">
                           {getMetricLabel(key)}
+                          {sortKey === key ? (
+                            sortAsc ? <ArrowUp size={14} weight="bold" className="text-indigo-600" /> : <ArrowDown size={14} weight="bold" className="text-indigo-600" />
+                          ) : (
+                            <ArrowDown size={14} className="text-slate-300" />
+                          )}
                           <Tooltip content={getMetricDescription(key)} />
                         </span>
                       </th>
@@ -171,12 +232,18 @@ export default function ModelStatsSection({ data }: ModelStatsSectionProps) {
                       <th
                         key={`text-${key}`}
                         scope="col"
-                        className={`px-2 sm:px-4 py-2 sm:py-3 md:py-4 text-center text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap ${
+                        className={`px-2 sm:px-4 py-2 sm:py-3 md:py-4 text-center text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap cursor-pointer hover:bg-slate-100 ${
                           idx === 0 ? 'border-l border-slate-200' : ''
                         }`}
+                        onClick={() => handleSort(key)}
                       >
-                        <span className="inline-flex items-center gap-1">
+                        <span className="inline-flex items-center gap-0.5 sm:gap-1">
                           {getMetricLabel(key)}
+                          {sortKey === key ? (
+                            sortAsc ? <ArrowUp size={14} weight="bold" className="text-indigo-600" /> : <ArrowDown size={14} weight="bold" className="text-indigo-600" />
+                          ) : (
+                            <ArrowDown size={14} className="text-slate-300" />
+                          )}
                           <Tooltip content={getMetricDescription(key)} />
                         </span>
                       </th>
@@ -184,7 +251,7 @@ export default function ModelStatsSection({ data }: ModelStatsSectionProps) {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-slate-100 text-xs sm:text-sm">
-                  {individualExams.map((item) => (
+                  {sortedExams.map((item) => (
                     <tr key={`${item.examType}-${item.year}`} className="hover:bg-slate-50 transition-colors">
                       <td className="px-2 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 font-medium text-slate-900 text-xs sm:text-sm whitespace-nowrap">
                         {item.examType}
