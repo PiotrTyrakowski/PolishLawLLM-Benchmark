@@ -1,26 +1,14 @@
 import json
 import pytest
-from pathlib import Path
 from functools import lru_cache
 
 from src.parsers.extractors.legal_content_extractor import LegalContentExtractor
 from src.common.text_formatter import TextFormatter
+from src.parsers.test_utils import get_data_path
 
 
-def get_corpus_path(code: str) -> Path:
-    """Helper function to get the path to the 2025 corpus JSON."""
-    file_path = (
-        Path(__file__).parent
-        / ".."
-        / ".."
-        / ".."
-        / ".."
-        / "data"
-        / "corpuses"
-        / "2025"
-        / f"{code}.json"
-    )
-    return file_path.resolve()
+def get_corpus_path(code: str):
+    return get_data_path("corpuses", "2025", f"{code}.json")
 
 
 @lru_cache(maxsize=None)
