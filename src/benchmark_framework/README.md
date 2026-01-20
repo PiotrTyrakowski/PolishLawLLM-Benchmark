@@ -1,15 +1,13 @@
 # Benchmark Framework
 
-A modular framework for benchmarking Large Language Models on Polish legal tasks. The framework supports multiple LLM providers, configurable evaluation metrics, and extensible task types.
+Framework for benchmarking Large Language Models on Polish legal tasks. The framework supports multiple LLM providers, configurable evaluation metrics, and extensible task types.
 
 ## Features
 
-- 🤖 **Multi-Provider Support**: OpenAI, Anthropic, Google Gemini, NVIDIA, and local models
-- 📊 **Evaluation Metrics**: Exact match, ROUGE-N, ROUGE-W, TF-IDF weighted ROUGE
-- 🔧 **Extensible Architecture**: Abstract base classes for models, managers, and metrics
-- ⏱️ **Rate Limiting**: Configurable requests per minute and daily limits
-- 💾 **Incremental Processing**: Skip already processed tasks on re-runs
-- 📈 **Statistics Calculation**: Aggregate accuracy and text similarity metrics
+- **Multi-Provider Support**: OpenAI, Anthropic, Google Gemini, NVIDIA, and more
+- **Evaluation Metrics**: Exact match, ROUGE-N, ROUGE-W, TF-IDF weighted ROUGE-N recall
+- **Rate Limiting**: Configurable requests per minute and daily limits
+- **Statistics Calculation**: Aggregate accuracy and text similarity metrics
 
 ## Architecture
 
@@ -42,7 +40,8 @@ benchmark_framework/
 │   ├── anthropic.py            # Claude models
 │   ├── gemini.py               # Google Gemini (with optional Google Search)
 │   ├── nvidia_model.py         # NVIDIA API hosted models
-│   ├── nvidia_nim_model.py     # NVIDIA NIM models
+│   ├── open_router.py          # OpenRouter API support
+│   ├── hfe_model.py            # HuggingFace Inference Endpoints hosted models
 │   └── local_model.py          # Local model support
 └── utils/
     ├── task_loader.py          # Load tasks from JSONL files
@@ -65,7 +64,7 @@ python -m src.benchmark_framework.cli <model-name> <task-type> [output-path] [in
 
 | Argument | Description |
 |----------|-------------|
-| `model-name` | Model identifier (e.g., `gemini-2.0-flash`, `gpt-4o`, `claude-3-opus`) |
+| `model-name` | Model identifier (e.g., `gemini-3-flash-preview`, `gpt-5.2`) |
 | `task-type` | Task type to benchmark (e.g., `exams`) |
 | `output-path` | Output directory for results (default: `data/results`) |
 | `input-path` | Input directory with task files (default: `data/tasks`) |
@@ -127,13 +126,13 @@ python -m src.benchmark_framework.calculate_metrics data/results data/metrics da
 Aggregate statistics from metric results.
 
 ```bash
-python -m src.benchmark_framework.calculate_stats <file-path>
+python -m src.stats.cli stats <file-path>
 ```
 
 #### Example
 
 ```bash
-python -m src.benchmark_framework.calculate_stats data/metrics/gemini-2.0-flash/exams/2025/adwokacki_radcowy.jsonl
+python -m src.stats.clis stats data/metrics/gemini-2.0-flash/exams/2025/adwokacki_radcowy.jsonl
 ```
 
 #### Output
@@ -152,22 +151,6 @@ Text Metrics:
 
 Malformed Response Rate: 0.0200
 ```
-
----
-
-## Supported Models
-
-Models are auto-detected by prefix in the model name:
-
-| Prefix | Provider | Example Model Names |
-|--------|----------|---------------------|
-| `gemini` | Google | `gemini-2.0-flash`, `gemini-2.5-pro` |
-| `gpt` | OpenAI | `gpt-4o`, `gpt-4-turbo` |
-| `claude` | Anthropic | `claude-3-opus`, `claude-3-sonnet` |
-| `speakleash` | NVIDIA | `speakleash/Bielik-11B-v2.3-Instruct` |
-| `deepseek` | NVIDIA | `deepseek/deepseek-chat` |
-| `meta` | NVIDIA | `meta/llama-3.1-70b-instruct` |
-| `CYFRAGOVPL` | NVIDIA NIM | `CYFRAGOVPL/PLLuM-12B-instruct` |
 
 ---
 
@@ -206,10 +189,6 @@ Each entry contains:
 - Model response (answer, legal_basis, legal_basis_content)
 - Model metadata (name, config)
 
-After metric calculation:
-- `accuracy_metrics`: `{answer: bool, legal_basis: bool}`
-- `text_metrics`: `{exact_match: float, rouge_n: float, ...}`
-
 ---
 
 ## Environment Variables
@@ -222,6 +201,10 @@ Set API keys for the respective providers:
 | Anthropic | `ANTHROPIC_API_KEY` |
 | Google | `GOOGLE_API_KEY` |
 | NVIDIA | `NVIDIA_API_KEY` |
+| OpenRouter | `OPENROUTER_API_KEY` |
+| HF endpoint | `HF_TOKEN` |
+| HF endpoint | `HF_ENDPOINT_URL` |
+
 
 ---
 
@@ -230,7 +213,3 @@ Set API keys for the respective providers:
 ```bash
 python -m pytest src/benchmark_framework/
 ```
-
-Test directories:
-- `src/benchmark_framework/metrics/tests/`
-- `src/benchmark_framework/utils/tests/`
