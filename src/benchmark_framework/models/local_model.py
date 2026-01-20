@@ -13,7 +13,7 @@ class LocalModel(BaseModel):
     ):
         super().__init__(model_name, model_config, **kwargs)
 
-        # Lazy imports - only import when LocalModel is actually used
+        # only import when LocalModel is actually used
         import torch
         from transformers import pipeline, BitsAndBytesConfig
 

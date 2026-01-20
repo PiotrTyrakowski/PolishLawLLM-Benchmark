@@ -24,9 +24,6 @@ class OpenRouterModel(BaseModel):
         self.client = OpenAI(base_url=base_url, api_key=api_key)
 
     def generate_response(self, system_prompt: str, prompt: str) -> str:
-        """
-        Generate a response from an OpenRouter model.
-        """
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": prompt},
@@ -40,7 +37,4 @@ class OpenRouterModel(BaseModel):
         return completion.choices[0].message.content
 
     def get_default_runner_config(self):
-        """
-        Returns default rate limiting configuration for OpenRouter models.
-        """
         return RunnerConfig()

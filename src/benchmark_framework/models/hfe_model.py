@@ -31,9 +31,6 @@ class HFEndpointModel(BaseModel):
             raise ValueError("HF_ENDPOINT_URL environment variable must be set")
 
     def generate_response(self, system_prompt: str, prompt: str) -> str:
-        """
-        Generate a response from the HF Endpoint model using requests.
-        """
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": prompt},

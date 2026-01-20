@@ -23,9 +23,6 @@ class OpenAIModel(BaseModel):
         self.client = OpenAI(api_key=api_key)
 
     def generate_response(self, system_prompt: str, prompt: str) -> str:
-        """
-        Generate a response from an OpenAI model.
-        """
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": prompt},
@@ -39,7 +36,4 @@ class OpenAIModel(BaseModel):
         return completion.choices[0].message.content
 
     def get_default_runner_config(self):
-        """
-        Returns default rate limiting configuration for OpenAI models.
-        """
         return RunnerConfig(requests_per_minute=50)
