@@ -49,12 +49,10 @@ class TFIDFRougeNMetric(BaseMetric):
     def _compute(self, prediction: str, reference: str, code_abbr: str) -> float:
         assert self.ngrams_importances is not None
 
-        # Get tokens to determine maximum possible n-gram size
         pred_tokens = self.get_normalized_words(prediction)
         ref_tokens = self.get_normalized_words(reference)
         max_possible_n = min(len(pred_tokens), len(ref_tokens))
 
-        # If both texts are empty, return 0
         if max_possible_n == 0:
             return 0.0
 

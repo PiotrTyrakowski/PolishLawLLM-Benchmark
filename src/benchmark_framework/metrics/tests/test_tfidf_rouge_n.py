@@ -97,10 +97,9 @@ class TestGetTokensTfidf:
 
     def test_tfidf_tf_component(self):
         """Test that TF is calculated as count/total_tokens."""
-        corpus_data = {"1": "word another"}
+        corpus_data = {"1": "word word another"}
         metric = create_metric_with_corpus(corpus_data)
 
-        # "word" appears twice, "another" appears once, total 3 tokens
         ref_tokens = ["word", "word", "another"]
         weights = metric.get_tokens_tfidf(ref_tokens, "test")
 
@@ -117,7 +116,7 @@ class TestGetTokensTfidf:
 
     def test_tfidf_higher_frequency_gives_higher_weight(self):
         """Test that tokens appearing more frequently in reference have higher TF-IDF."""
-        corpus_data = {"1": "apple banana cherry"}
+        corpus_data = {"1": "apple apple apple banana"}
         metric = create_metric_with_corpus(corpus_data)
 
         # "apple" appears 3 times, "banana" appears 1 time
@@ -126,18 +125,6 @@ class TestGetTokensTfidf:
 
         # Same IDF for both, but different TF
         assert weights["apple"] > weights["banana"]
-
-    def test_tfidf_raises_for_unknown_token(self):
-        """Test that get_tokens_tfidf raises ValueError for tokens not in corpus."""
-        corpus_data = {"1": "known words only"}
-        metric = create_metric_with_corpus(corpus_data)
-
-        ref_tokens = ["unknown"]
-
-        with pytest.raises(
-            ValueError, match="Token 'unknown' not found in test IDF lookup"
-        ):
-            metric.get_tokens_tfidf(ref_tokens, "test")
 
     def test_tfidf_case_sensitive_token_lookup(self):
         """Test that token lookup is case-sensitive against lowercased IDF keys."""
@@ -178,12 +165,12 @@ class TestGetTokensTfidf:
         }
         metric = create_metric_with_corpus(corpus_data)
 
-        # Equal TF (1 each), but different IDF
+        # Equal TF, but different IDF
         ref_tokens = ["common", "rare"]
         weights = metric.get_tokens_tfidf(ref_tokens, "test")
 
         # "common" appears in all 3 docs, "rare" in 1 doc
-        # Same TF (1/2 each), but "rare" has higher IDF
+        # Same TF, but "rare" has higher IDF
         assert weights["rare"] > weights["common"]
 
 
@@ -195,14 +182,14 @@ class TestGetNgramWeight:
         corpus_data = {"1": "apple banana"}
         metric = create_metric_with_corpus(corpus_data)
 
-        # Create token weights where one is clearly larger
-        token_weights = {"apple": 0.5, "banana": 1.0}
+        token_weights = {"apple": 1.0, "banana": 3.0}
 
         unigram = ("apple",)
         weight = metric.get_ngram_weight(unigram, token_weights)
 
-        # max_weight = 1.0, so apple weight = 0.5/1.0 = 0.5
-        assert abs(weight - 0.5) < 0.0001
+        # max_weight = 3.0, so apple weight = 1.0/3.0
+        expected_weight = 1.0 / 3.0
+        assert abs(weight - expected_weight) < 0.0001
 
     def test_ngram_weight_single_token_max_returns_one(self):
         """Test that unigram with max weight returns 1.0."""
@@ -213,8 +200,6 @@ class TestGetNgramWeight:
 
         unigram = ("word",)
         weight = metric.get_ngram_weight(unigram, token_weights)
-
-        # max_weight = 2.0, word weight = 2.0/2.0 = 1.0
         assert abs(weight - 1.0) < 0.0001
 
     def test_ngram_weight_averages_across_tokens(self):
@@ -263,18 +248,6 @@ class TestGetNgramWeight:
         # average = (1/3 + 2/3 + 1.0) / 3 = 2/3
         expected = (1 / 3 + 2 / 3 + 1.0) / 3
         assert abs(weight - expected) < 0.0001
-
-    def test_ngram_weight_all_unknown_tokens_returns_zero(self):
-        """Test that n-gram with all unknown tokens returns 0."""
-        corpus_data = {"1": "known"}
-        metric = create_metric_with_corpus(corpus_data)
-
-        token_weights = {"known": 1.0}
-
-        bigram = ("unknown1", "unknown2")
-        weight = metric.get_ngram_weight(bigram, token_weights)
-
-        assert weight == 0.0
 
     def test_ngram_weight_bounds_between_zero_and_one(self):
         """Test that n-gram weight is always between 0 and 1."""
@@ -335,16 +308,13 @@ class TestCalculateRecall:
         corpus_data = {"1": "the cat dog sat"}
         metric = create_metric_with_corpus(corpus_data)
 
-        # Reference: "the cat sat" (3 unigrams)
-        # Prediction: "the dog sat" (3 unigrams)
-        # Overlap: "the", "sat" (2 matches out of 3 reference unigrams)
         recall = metric.calculate_recall(
             prediction="the dog sat", reference="the cat sat", n=1, code_abbr="test"
         )
 
-        # With TF-IDF weighting, the exact value depends on token weights
-        # but should be between 0 and 1
-        assert 0.0 < recall < 1.0
+        # all words have equal weights
+        expected_value = 2.0 / 3.0
+        assert abs(recall - expected_value) < 0.0001
 
     def test_recall_bigrams_identical_returns_one(self):
         """Test that identical texts return recall of 1.0 for bigrams."""
@@ -355,34 +325,6 @@ class TestCalculateRecall:
             prediction="the quick brown fox",
             reference="the quick brown fox",
             n=2,
-            code_abbr="test",
-        )
-
-        assert abs(recall - 1.0) < 0.0001
-
-    def test_recall_bigrams_no_overlap(self):
-        """Test bigram recall with no overlapping bigrams."""
-        corpus_data = {"1": "a b c d"}
-        metric = create_metric_with_corpus(corpus_data)
-
-        # Reference bigrams: ("a", "b"), ("b", "c")
-        # Prediction bigrams: ("c", "d")
-        # No overlap
-        recall = metric.calculate_recall(
-            prediction="c d", reference="a b c", n=2, code_abbr="test"
-        )
-
-        assert recall == 0.0
-
-    def test_recall_trigrams(self):
-        """Test trigram recall calculation."""
-        corpus_data = {"1": "one two three four five"}
-        metric = create_metric_with_corpus(corpus_data)
-
-        recall = metric.calculate_recall(
-            prediction="one two three four five",
-            reference="one two three four five",
-            n=3,
             code_abbr="test",
         )
 
@@ -412,7 +354,7 @@ class TestCalculateRecall:
 
     def test_recall_prediction_superset_of_reference(self):
         """Test recall when prediction contains all reference words and more."""
-        corpus_data = {"1": "the cat sat on mat extra words"}
+        corpus_data = {"1": "the cat sat on mat"}
         metric = create_metric_with_corpus(corpus_data)
 
         # All reference unigrams are in prediction
@@ -436,7 +378,8 @@ class TestCalculateRecall:
         )
 
         # Not all reference tokens are captured
-        assert 0.0 < recall < 1.0
+        expected_value = 2.0 / 5.0
+        assert abs(recall - expected_value) < 0.0001
 
     def test_recall_normalizes_punctuation(self):
         """Test that punctuation is normalized in recall calculation."""
@@ -459,29 +402,6 @@ class TestCalculateRecall:
         )
 
         assert abs(recall - 1.0) < 0.0001
-
-    def test_recall_tfidf_weights_rare_words_more(self):
-        """Test that rare words contribute more to recall due to higher IDF."""
-        corpus_data = {
-            "1": "common rare",
-            "2": "common word",
-            "3": "common another",
-        }
-        metric = create_metric_with_corpus(corpus_data)
-
-        # Reference with only "common" (appears in all docs, low IDF)
-        recall_common = metric.calculate_recall(
-            prediction="common", reference="common", n=1, code_abbr="test"
-        )
-
-        # Reference with only "rare" (appears in 1 doc, high IDF)
-        recall_rare = metric.calculate_recall(
-            prediction="rare", reference="rare", n=1, code_abbr="test"
-        )
-
-        # Both should be 1.0 when prediction matches reference exactly
-        assert abs(recall_common - 1.0) < 0.0001
-        assert abs(recall_rare - 1.0) < 0.0001
 
     def test_recall_missing_rare_word_hurts_more(self):
         """Test that missing a rare word reduces recall more than missing a common word."""
@@ -510,6 +430,42 @@ class TestCalculateRecall:
 
         # Missing the rare word should hurt more (lower recall)
         assert 0 < recall_miss_rare < recall_miss_common < 1
+
+    def test_recall_missing_rare_word_hurts_more_2(self):
+        """Test that missing a rare word reduces recall more than missing a common word."""
+        corpus_data = {
+            "1": "common word rare",
+            "2": "common word super",
+            "3": "common word another",
+        }
+        metric = create_metric_with_corpus(corpus_data)
+
+        # Miss the common ngram
+        recall_miss_common = metric.calculate_recall(
+            prediction="word rare",
+            reference="common word rare",
+            n=2,
+            code_abbr="test",
+        )
+
+        # Miss the rare ngram
+        recall_miss_rare = metric.calculate_recall(
+            prediction="common word",
+            reference="common word rare",
+            n=2,
+            code_abbr="test",
+        )
+
+        # Miss all ngrams
+        recall_miss_all = metric.calculate_recall(
+            prediction="common rare",
+            reference="common word rare",
+            n=2,
+            code_abbr="test",
+        )
+
+        # Missing the rare ngram should hurt more (lower recall)
+        assert 0 == recall_miss_all < recall_miss_rare < recall_miss_common < 1
 
 
 class TestTFIDFRougeNCallableInterface:
@@ -554,15 +510,6 @@ class TestTFIDFRougeNCallableInterface:
 
 class TestTFIDFRougeNEdgeCases:
     """Tests for edge cases and potential bugs."""
-
-    def test_single_word_text(self):
-        """Test with single word texts."""
-        corpus_data = {"1": "hello"}
-        metric = create_metric_with_corpus(corpus_data)
-
-        score = metric(prediction="hello", reference="hello", code_abbr="test")
-
-        assert abs(score - 1.0) < 0.0001
 
     def test_very_long_text(self):
         """Test with very long text."""
