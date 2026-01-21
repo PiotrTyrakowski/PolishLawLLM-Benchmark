@@ -126,13 +126,13 @@ python -m src.benchmark_framework.calculate_metrics data/results data/metrics da
 Aggregate statistics from metric results.
 
 ```bash
-python -m src.stats.cli stats <file-path>
+python -m src.benchmark_framework.stats.cli stats <file-path>
 ```
 
 #### Example
 
 ```bash
-python -m src.stats.cli stats data/metrics/gemini-2.0-flash/exams/2025/adwokacki_radcowy.jsonl
+python -m src.benchmark_framework.stats.cli stats data/metrics/gemini-2.0-flash/exams/2025/adwokacki_radcowy.jsonl
 ```
 
 #### Output
