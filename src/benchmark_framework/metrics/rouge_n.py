@@ -25,12 +25,10 @@ class RougeNMetric(BaseMetric):
         """
         assert self.ngrams_importances is not None
 
-        # Get tokens to determine maximum possible n-gram size
         pred_tokens = self.get_normalized_words(prediction)
         ref_tokens = self.get_normalized_words(reference)
         max_possible_n = min(len(pred_tokens), len(ref_tokens))
 
-        # If both texts are empty, return 0
         if max_possible_n == 0:
             return 0.0
 
@@ -58,7 +56,6 @@ class RougeNMetric(BaseMetric):
         return intersection_ngram_counts
 
     def calculate_precision(self, prediction: str, reference: str, n: int) -> float:
-        """Calculate ROUGE-N precision score."""
         pred_tokens = self.get_normalized_words(prediction)
         ref_tokens = self.get_normalized_words(reference)
 
@@ -79,7 +76,6 @@ class RougeNMetric(BaseMetric):
         return precision
 
     def calculate_recall(self, prediction: str, reference: str, n: int) -> float:
-        """Calculate ROUGE-N recall score."""
         pred_tokens = self.get_normalized_words(prediction)
         ref_tokens = self.get_normalized_words(reference)
 
@@ -98,11 +94,9 @@ class RougeNMetric(BaseMetric):
         return recall
 
     def calculate_f1(self, prediction: str, reference: str, n: int) -> float:
-        """Calculate ROUGE-N F1 score from precision and recall."""
         precision = self.calculate_precision(prediction, reference, n)
         recall = self.calculate_recall(prediction, reference, n)
 
-        # Calculate F1 Score
         if precision + recall == 0:
             return 0.0
 
