@@ -65,7 +65,7 @@ python -m src.benchmark_framework.cli <model-name> <task-type> [output-path] [in
 | Argument | Description |
 |----------|-------------|
 | `model-name` | Model identifier (e.g., `gemini-3-flash-preview`, `gpt-5.2`) |
-| `task-type` | Task type to benchmark (e.g., `exams`) |
+| `task-type` | Task type to benchmark (`exams` or `judgments`) |
 | `output-path` | Output directory for results (default: `data/results`) |
 | `input-path` | Input directory with task files (default: `data/tasks`) |
 

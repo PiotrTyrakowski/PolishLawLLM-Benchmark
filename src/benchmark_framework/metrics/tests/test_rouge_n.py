@@ -226,9 +226,7 @@ class TestRougeNPrecision:
         # Matches with reference: "the", "sat" = 2 matches
         # Precision = 2/3 = 0.666...
         expected = 2.0 / 3.0
-        assert (
-            abs(precision - expected) < 0.001
-        ), f"Expected precision {expected}, got {precision}"
+        assert precision == pytest.approx(expected)
 
     def test_precision_partial_overlap_bigrams(self):
         """Test precision with partial overlap in bigrams."""
@@ -243,9 +241,7 @@ class TestRougeNPrecision:
         # Matches: ("the","cat"), ("on","mat") = 2 matches out of 4 in prediction
         # Precision = 2/4 = 0.5
         expected = 2.0 / 4.0
-        assert (
-            abs(precision - expected) < 0.001
-        ), f"Expected precision {expected}, got {precision}"
+        assert precision == pytest.approx(expected)
 
     def test_precision_prediction_longer_than_reference(self):
         """Test precision when prediction is longer than reference."""
@@ -258,9 +254,7 @@ class TestRougeNPrecision:
         )
 
         expected = 2.0 / 9.0
-        assert (
-            abs(precision - expected) < 0.001
-        ), f"Expected precision {expected}, got {precision}"
+        assert precision == pytest.approx(expected)
 
     def test_precision_empty_prediction_returns_zero(self):
         """Test that empty prediction returns precision of 0.0."""
@@ -316,9 +310,7 @@ class TestRougeNPrecision:
         )
 
         expected = 2.0 / 3.0
-        assert (
-            abs(precision - expected) < 0.001
-        ), f"Expected precision {expected}, got {precision}"
+        assert precision == pytest.approx(expected)
 
     def test_precision_polish_text_2(self):
         """Test precision with Polish text."""
@@ -331,9 +323,7 @@ class TestRougeNPrecision:
         )
 
         expected = 1.0
-        assert (
-            abs(precision - expected) < 0.001
-        ), f"Expected precision {expected}, got {precision}"
+        assert precision == pytest.approx(expected)
 
     def test_precision_both_empty_returns_zero(self):
         """Test that both empty texts return precision of 0.0."""
@@ -365,7 +355,7 @@ class TestRougeNPrecision:
         )
 
         expected = 1.0 / 3.0
-        assert abs(precision - expected) < 0.001
+        assert precision == pytest.approx(expected)
 
     def test_precision_numbers(self):
         """Test precision with numbers."""
@@ -378,7 +368,7 @@ class TestRougeNPrecision:
         # Unigrams: ["article", "123", "456"] vs ["article", "123", "789"]
         # Matches: "article", "123" = 2 out of 3
         expected = 2.0 / 3.0
-        assert abs(precision - expected) < 0.001
+        assert precision == pytest.approx(expected)
 
 
 class TestRougeNRecall:
@@ -443,9 +433,7 @@ class TestRougeNRecall:
         # Matches with prediction: "the", "sat" = 2 matches
         # Recall = 2/3 = 0.666...
         expected = 2.0 / 3.0
-        assert (
-            abs(recall - expected) < 0.001
-        ), f"Expected recall {expected}, got {recall}"
+        assert recall == pytest.approx(expected)
 
     def test_recall_partial_overlap_bigrams(self):
         """Test recall with partial overlap in bigrams."""
@@ -461,9 +449,7 @@ class TestRougeNRecall:
         # Matches: ("the","cat"), ("on","mat") = 2 matches out of 4 in reference
         # Recall = 2/4 = 0.5
         expected = 2.0 / 4.0
-        assert (
-            abs(recall - expected) < 0.001
-        ), f"Expected recall {expected}, got {recall}"
+        assert recall == pytest.approx(expected)
 
     def test_recall_prediction_longer_than_reference(self):
         """Test recall when prediction is longer than reference."""
@@ -479,9 +465,7 @@ class TestRougeNRecall:
         # Both are in prediction
         # Recall = 2/2 = 1.0
         expected = 1.0
-        assert (
-            abs(recall - expected) < 0.001
-        ), f"Expected recall {expected}, got {recall}"
+        assert recall == pytest.approx(expected)
 
     def test_recall_prediction_shorter_than_reference(self):
         """Test recall when prediction is shorter than reference."""
@@ -494,9 +478,7 @@ class TestRougeNRecall:
         )
 
         expected = 2.0 / 6.0
-        assert (
-            abs(recall - expected) < 0.001
-        ), f"Expected recall {expected}, got {recall}"
+        assert recall == pytest.approx(expected)
 
     def test_recall_empty_prediction_returns_zero(self):
         """Test that empty prediction returns recall of 0.0."""
@@ -564,7 +546,7 @@ class TestRougeNRecall:
         )
 
         expected = 1.0 / 3.0
-        assert abs(recall - expected) < 0.001
+        assert recall == pytest.approx(expected)
 
     def test_recall_numbers(self):
         """Test recall with numbers."""
@@ -575,7 +557,7 @@ class TestRougeNRecall:
         )
 
         expected = 2.0 / 3.0
-        assert abs(recall - expected) < 0.001
+        assert recall == pytest.approx(expected)
 
 
 class TestRougeNF1:
@@ -601,7 +583,7 @@ class TestRougeNF1:
         f1 = metric.calculate_f1(prediction, reference, n=1)
 
         expected_f1 = 2 * (precision * recall) / (precision + recall)
-        assert abs(f1 - expected_f1) < 0.001, f"Expected F1 {expected_f1}, got {f1}"
+        assert f1 == pytest.approx(expected_f1)
 
     def test_f1_empty_texts_returns_zero(self):
         """Test that empty texts return F1 of 0.0."""
@@ -630,7 +612,7 @@ class TestRougeNF1:
         recall = metric.calculate_recall(prediction, reference, n=1)
 
         expected_f1 = 2 * precision * recall / (precision + recall)
-        assert abs(f1 - expected_f1) < 0.001
+        assert f1 == pytest.approx(expected_f1)
 
     def test_f1_perfect_recall_partial_precision(self):
         """Test F1 with perfect recall but partial precision."""
@@ -643,7 +625,7 @@ class TestRougeNF1:
         recall = metric.calculate_recall(prediction, reference, n=1)
 
         expected_f1 = 2 * precision * recall / (precision + recall)
-        assert abs(f1 - expected_f1) < 0.001
+        assert f1 == pytest.approx(expected_f1)
 
     def test_f1_is_harmonic_mean(self):
         """Test that F1 is the harmonic mean of precision and recall."""
@@ -656,7 +638,7 @@ class TestRougeNF1:
         f1 = metric.calculate_f1(prediction, reference, n=1)
 
         expected = 2 * precision * recall / (precision + recall)
-        assert abs(f1 - expected) < 0.001
+        assert f1 == pytest.approx(expected)
 
 
 class TestRougeNWeightedAverage:
@@ -670,7 +652,7 @@ class TestRougeNWeightedAverage:
         score = metric(prediction=text, reference=text)
 
         f1_unigram = metric.calculate_f1(text, text, n=1)
-        assert abs(score - f1_unigram) < 0.001, f"Expected {f1_unigram}, got {score}"
+        assert score == pytest.approx(f1_unigram)
 
     def test_weighted_average_equal_weights(self):
         """Test weighted average with equal weights."""
@@ -684,7 +666,7 @@ class TestRougeNWeightedAverage:
         f1_3 = metric.calculate_f1(text, text, n=3)
         expected = (f1_1 + f1_2 + f1_3) / 3.0
 
-        assert abs(score - expected) < 0.001, f"Expected {expected}, got {score}"
+        assert score == pytest.approx(expected)
 
     def test_weighted_average_different_weights(self):
         """Test weighted average with different weights."""
@@ -698,7 +680,7 @@ class TestRougeNWeightedAverage:
         f1_3 = metric.calculate_f1(text, text, n=3)
         expected = (1.0 * f1_1 + 2.0 * f1_2 + 3.0 * f1_3) / 6.0
 
-        assert abs(score - expected) < 0.001, f"Expected {expected}, got {score}"
+        assert score == pytest.approx(expected)
 
     def test_weighted_average_mixed_zero_nonzero_weights(self):
         """Test weighted average with mixed zero and non-zero weights."""
@@ -709,7 +691,7 @@ class TestRougeNWeightedAverage:
 
         # Only bigram (n=2) should contribute
         f1_bigram = metric.calculate_f1(text, text, n=2)
-        assert abs(score - f1_bigram) < 0.001
+        assert score == pytest.approx(f1_bigram)
 
     def test_weighted_average_many_ngram_sizes(self):
         """Test weighted average with many n-gram sizes."""
@@ -719,7 +701,7 @@ class TestRougeNWeightedAverage:
         score = metric(prediction=text, reference=text)
 
         # All n-gram F1s should be 1.0 for identical text
-        assert abs(score - 1.0) < 0.001
+        assert score == pytest.approx(1.0)
 
     def test_call_with_code_abbr_parameter(self):
         """Test that code_abbr parameter is accepted (even if unused)."""
@@ -728,7 +710,7 @@ class TestRougeNWeightedAverage:
 
         result = metric(prediction=text, reference=text, code_abbr="TEST")
 
-        assert abs(result - 1.0) < 0.001
+        assert result == pytest.approx(1.0)
 
 
 class TestRougeNScoreBatch:
@@ -744,7 +726,7 @@ class TestRougeNScoreBatch:
 
         assert len(scores) == 3
         for score in scores:
-            assert abs(score - 1.0) < 0.001
+            assert score == pytest.approx(1.0)
 
     def test_score_batch_mixed_similarity(self):
         """Test batch scoring with varying similarity."""
@@ -755,7 +737,7 @@ class TestRougeNScoreBatch:
         scores = list(metric.score_batch(predictions, references))
 
         assert len(scores) == 3
-        assert abs(scores[0] - 1.0) < 0.001  # Identical
+        assert scores[0] == pytest.approx(1.0)  # Identical
         assert scores[1] == 0.0  # No overlap
         assert 0 < scores[2] < 1.0  # Partial overlap
 
@@ -774,7 +756,7 @@ class TestRougeNScoreBatch:
         scores = list(metric.score_batch(["hello"], ["hello"]))
 
         assert len(scores) == 1
-        assert abs(scores[0] - 1.0) < 0.001
+        assert scores[0] == pytest.approx(1.0)
 
     def test_score_batch_mismatched_lengths_raises(self):
         """Test that mismatched lengths raise assertion error."""
@@ -793,7 +775,7 @@ class TestRougeNNormalization:
 
         result = metric(prediction="HELLO WORLD", reference="hello world")
 
-        assert abs(result - 1.0) < 0.001
+        assert result == pytest.approx(1.0)
 
     def test_normalization_multiple_punctuation(self):
         """Test removal of multiple punctuation marks."""
@@ -803,7 +785,7 @@ class TestRougeNNormalization:
             prediction="Hello, World! How are you?", reference="hello world how are you"
         )
 
-        assert abs(result - 1.0) < 0.001
+        assert result == pytest.approx(1.0)
 
     def test_normalization_preserves_numbers(self):
         """Test that numbers are preserved."""
@@ -811,7 +793,7 @@ class TestRougeNNormalization:
 
         result = metric(prediction="article 123", reference="article 123")
 
-        assert abs(result - 1.0) < 0.001
+        assert result == pytest.approx(1.0)
 
 
 class TestRougeNEdgeCases:
@@ -825,7 +807,7 @@ class TestRougeNEdgeCases:
 
         result = metric(prediction=text, reference=text)
 
-        assert abs(result - 1.0) < 0.001
+        assert result == pytest.approx(1.0)
 
     def test_special_characters_in_words(self):
         """Test handling of special characters within words."""
@@ -833,7 +815,7 @@ class TestRougeNEdgeCases:
 
         result = metric(prediction="self-driving car", reference="selfdriving car")
 
-        assert abs(result - 1.0) < 0.001
+        assert result == pytest.approx(1.0)
 
     def test_newlines_and_tabs(self):
         """Test handling of newlines and tabs."""
@@ -841,7 +823,7 @@ class TestRougeNEdgeCases:
 
         result = metric(prediction="hello\nworld\tthere", reference="hello world there")
 
-        assert abs(result - 1.0) < 0.001
+        assert result == pytest.approx(1.0)
 
     def test_multiple_spaces(self):
         """Test handling of multiple consecutive spaces."""
@@ -851,7 +833,7 @@ class TestRougeNEdgeCases:
             prediction="hello    world     there", reference="hello world there"
         )
 
-        assert abs(result - 1.0) < 0.001
+        assert result == pytest.approx(1.0)
 
     def test_default_ngram_importances(self):
         """Test default n-gram importances are [1, 1, 1]."""
@@ -875,4 +857,4 @@ class TestRougeNEdgeCases:
         result2 = metric(prediction=text2, reference=text1)
 
         # F1 should be symmetric when texts have same length
-        assert abs(result1 - result2) < 0.001
+        assert result1 == pytest.approx(result2)
