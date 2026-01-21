@@ -65,9 +65,9 @@ class TestWeightingFunction:
         """Test weighting function with default alpha=1.2."""
         metric = RougeWMetric()
 
-        assert abs(metric._weight_function(1) - 1.0) < 0.001
-        assert abs(metric._weight_function(2) - (2**1.2)) < 0.001
-        assert abs(metric._weight_function(3) - (3**1.2)) < 0.001
+        assert metric._weight_function(1) == pytest.approx(1.0)
+        assert metric._weight_function(2) == pytest.approx(2**1.2)
+        assert metric._weight_function(3) == pytest.approx(3**1.2)
         assert metric._weight_function(0) == 0.0
 
 
@@ -86,9 +86,9 @@ class TestInverseWeightingFunction:
         """Test that f^(-1)(x) = sqrt(x) when alpha = 2.0."""
         metric = RougeWMetric(alpha=2.0)
 
-        assert abs(metric._inverse_weight_function(1.0) - 1.0) < 0.001
-        assert abs(metric._inverse_weight_function(4.0) - 2.0) < 0.001
-        assert abs(metric._inverse_weight_function(9.0) - 3.0) < 0.001
+        assert metric._inverse_weight_function(1.0) == pytest.approx(1.0)
+        assert metric._inverse_weight_function(4.0) == pytest.approx(2.0)
+        assert metric._inverse_weight_function(9.0) == pytest.approx(3.0)
 
     def test_inverse_weight_function_roundtrip(self):
         """Test that f^(-1)(f(k)) = k."""
@@ -97,7 +97,7 @@ class TestInverseWeightingFunction:
         for k in [1, 2, 3, 5, 10]:
             weighted = metric._weight_function(k)
             result = metric._inverse_weight_function(weighted)
-            assert abs(result - k) < 0.001
+            assert result == pytest.approx(k)
 
     def test_inverse_weight_function_zero_returns_zero(self):
         """Test that f^(-1)(0) = 0."""
@@ -123,7 +123,7 @@ class TestCalculateWLCS:
         wlcs = metric.calculate_wlcs(tokens, tokens)
 
         # All 4 tokens match consecutively: f(4) = 4^2 = 16
-        assert abs(wlcs - 16.0) < 0.001
+        assert wlcs == pytest.approx(16.0)
 
     def test_wlcs_no_common_elements(self):
         """Test WLCS with no common elements returns 0."""
@@ -166,7 +166,7 @@ class TestCalculateWLCS:
         wlcs = metric.calculate_wlcs(["a"], ["a"])
 
         # Single match: f(1) = 1
-        assert abs(wlcs - 1.0) < 0.001
+        assert wlcs == pytest.approx(1.0)
 
     def test_wlcs_consecutive_matches_vs_non_consecutive(self):
         """Test that consecutive matches get higher score than non-consecutive."""
@@ -184,8 +184,8 @@ class TestCalculateWLCS:
         # Consecutive: f(3) = 9
         # Non-consecutive: f(1) + f(1) + f(1) = 3
         assert wlcs_consecutive > wlcs_non_consecutive
-        assert abs(wlcs_consecutive - 9.0) < 0.001
-        assert abs(wlcs_non_consecutive - 3.0) < 0.001
+        assert wlcs_consecutive == pytest.approx(9.0)
+        assert wlcs_non_consecutive == pytest.approx(3.0)
 
     def test_wlcs_mixed_consecutive_and_non_consecutive(self):
         """Test WLCS with mixed consecutive and non-consecutive matches."""
@@ -200,7 +200,7 @@ class TestCalculateWLCS:
         # "a b" consecutive: f(2) = 4
         # "d" separate: f(1) = 1
         # Total: 4 + 1 = 5
-        assert abs(wlcs - 5.0) < 0.001
+        assert wlcs == pytest.approx(5.0)
 
     def test_wlcs_alpha_one_equals_standard_lcs(self):
         """Test that WLCS with alpha=1.0 equals standard LCS length."""
@@ -212,7 +212,7 @@ class TestCalculateWLCS:
         wlcs = metric.calculate_wlcs(pred, ref)
 
         # Standard LCS length = 3 (a, b, c)
-        assert abs(wlcs - 3.0) < 0.001
+        assert wlcs == pytest.approx(3.0)
 
     def test_wlcs_order_matters(self):
         """Test that WLCS respects sequence order."""
@@ -223,10 +223,10 @@ class TestCalculateWLCS:
         ref_reversed = ["c", "b", "a"]
 
         wlcs_ordered = metric.calculate_wlcs(pred, ref_ordered)
-        assert abs(wlcs_ordered - 9.0) < 0.001
+        assert wlcs_ordered == pytest.approx(9.0)
 
         wlcs_reversed = metric.calculate_wlcs(pred, ref_reversed)
-        assert abs(wlcs_reversed - 1.0) < 0.001
+        assert wlcs_reversed == pytest.approx(1.0)
 
 
 class TestRougeWRecall:
@@ -239,7 +239,7 @@ class TestRougeWRecall:
 
         recall = metric.calculate_recall(text, text)
 
-        assert abs(recall - 1.0) < 0.001
+        assert recall == pytest.approx(1.0)
 
     def test_recall_empty_prediction(self):
         """Test that empty prediction returns recall of 0.0."""
@@ -286,7 +286,7 @@ class TestRougeWRecall:
         # LCS with prediction: "the", "sat" = length 2 (not consecutive)
         # Recall = 2/3 = 0.666...
         expected = 2.0 / 3.0
-        assert abs(recall - expected) < 0.001
+        assert recall == pytest.approx(expected)
 
     def test_recall_all_reference_words_in_prediction(self):
         """Test recall when all reference words appear in prediction."""
@@ -300,7 +300,7 @@ class TestRougeWRecall:
         # Reference has 3 words, all found in prediction (not all consecutive)
         # LCS = "the", "cat", "sat" = 3
         # Recall = 3/3 = 1.0
-        assert abs(recall - 1.0) < 0.001
+        assert recall == pytest.approx(1.0)
 
     def test_recall_consecutive_matches_improve_score(self):
         """Test that consecutive matches improve recall when alpha > 1."""
@@ -317,7 +317,7 @@ class TestRougeWRecall:
 
         # Both have same LCS length but consecutive should score higher
         assert recall_consecutive > recall_scattered
-        assert abs(recall_consecutive - 1.0) < 0.001  # Perfect consecutive match
+        assert recall_consecutive == pytest.approx(1.0)  # Perfect consecutive match
 
 
 class TestRougeWPrecision:
@@ -330,7 +330,7 @@ class TestRougeWPrecision:
 
         precision = metric.calculate_precision(text, text)
 
-        assert abs(precision - 1.0) < 0.001
+        assert precision == pytest.approx(1.0)
 
     def test_precision_empty_prediction(self):
         """Test that empty prediction returns precision of 0.0."""
@@ -378,7 +378,7 @@ class TestRougeWPrecision:
         # LCS with reference: "the", "sat" = length 2
         # Precision = 2/3 = 0.666...
         expected = 2.0 / 3.0
-        assert abs(precision - expected) < 0.001
+        assert precision == pytest.approx(expected)
 
     def test_precision_prediction_longer_than_reference(self):
         """Test precision when prediction is much longer than reference."""
@@ -392,7 +392,7 @@ class TestRougeWPrecision:
         # Prediction: 9 words, LCS = "the", "cat" = 2
         # Precision = 2/9
         expected = 2.0 / 9.0
-        assert abs(precision - expected) < 0.001
+        assert precision == pytest.approx(expected)
 
     def test_precision_all_prediction_words_in_reference(self):
         """Test precision when all prediction words appear in reference."""
@@ -406,7 +406,7 @@ class TestRougeWPrecision:
         # Prediction has 2 words, both found in reference
         # LCS = "the", "cat" = 2
         # Precision = 2/2 = 1.0
-        assert abs(precision - 1.0) < 0.001
+        assert precision == pytest.approx(1.0)
 
 
 class TestRougeWFMeasure:
@@ -419,7 +419,7 @@ class TestRougeWFMeasure:
 
         f_measure = metric.calculate_f_measure(text, text)
 
-        assert abs(f_measure - 1.0) < 0.001
+        assert f_measure == pytest.approx(1.0)
 
     def test_f_measure_empty_prediction(self):
         """Test that empty prediction returns F-measure of 0.0."""
@@ -465,7 +465,7 @@ class TestRougeWFMeasure:
 
         # F1 = 2 * P * R / (P + R)
         expected = 2 * precision * recall / (precision + recall)
-        assert abs(f_measure - expected) < 0.001
+        assert f_measure == pytest.approx(expected)
 
     def test_f_measure_beta_one_is_harmonic_mean(self):
         """Test that beta=1 gives harmonic mean of precision and recall."""
@@ -478,7 +478,7 @@ class TestRougeWFMeasure:
         f_measure = metric.calculate_f_measure(prediction, reference)
 
         expected_harmonic_mean = 2 * precision * recall / (precision + recall)
-        assert abs(f_measure - expected_harmonic_mean) < 0.001
+        assert f_measure == pytest.approx(expected_harmonic_mean)
 
     def test_f_measure_high_beta_favors_recall(self):
         """Test that higher beta gives more weight to recall."""
@@ -526,7 +526,7 @@ class TestRougeWNormalization:
 
         result = metric(prediction="The Cat Sat", reference="the cat sat")
 
-        assert abs(result - 1.0) < 0.001
+        assert result == pytest.approx(1.0)
 
     def test_punctuation_removal(self):
         """Test that punctuation is removed."""
@@ -534,7 +534,7 @@ class TestRougeWNormalization:
 
         result = metric(prediction="Hello, world!", reference="Hello world")
 
-        assert abs(result - 1.0) < 0.001
+        assert result == pytest.approx(1.0)
 
     def test_various_punctuation(self):
         """Test removal of various punctuation marks."""
@@ -545,7 +545,7 @@ class TestRougeWNormalization:
             reference="Hello world Hows it going",
         )
 
-        assert abs(result - 1.0) < 0.001
+        assert result == pytest.approx(1.0)
 
     def test_whitespace_normalization(self):
         """Test that extra whitespace is normalized."""
@@ -553,7 +553,7 @@ class TestRougeWNormalization:
 
         result = metric(prediction="  hello   world  ", reference="hello world")
 
-        assert abs(result - 1.0) < 0.001
+        assert result == pytest.approx(1.0)
 
 
 class TestRougeWEdgeCases:
@@ -568,7 +568,7 @@ class TestRougeWEdgeCases:
 
         result = metric(prediction=text, reference=text)
 
-        assert abs(result - 1.0) < 0.001
+        assert result == pytest.approx(1.0)
 
     def test_numbers_as_words(self):
         """Test handling of numbers."""
@@ -578,7 +578,7 @@ class TestRougeWEdgeCases:
             prediction="article 123 section 456", reference="article 123 section 456"
         )
 
-        assert abs(result - 1.0) < 0.001
+        assert result == pytest.approx(1.0)
 
 
 class TestRougeWAlphaComparison:
@@ -616,7 +616,7 @@ class TestRougeWMathematicalProperties:
         f2 = metric.calculate_f_measure(text2, text1)
 
         # With same lengths and beta=1, should be symmetric
-        assert abs(f1 - f2) < 0.001
+        assert f1 == pytest.approx(f2)
 
     def test_recall_and_precision_swap_roles(self):
         """Test that swapping prediction and reference swaps recall and precision."""
@@ -632,8 +632,8 @@ class TestRougeWMathematicalProperties:
         precision_2 = metric.calculate_precision(ref, pred)
 
         # Recall with (pred, ref) should equal Precision with (ref, pred)
-        assert abs(recall_1 - precision_2) < 0.001
-        assert abs(precision_1 - recall_2) < 0.001
+        assert recall_1 == pytest.approx(precision_2)
+        assert precision_1 == pytest.approx(recall_2)
 
     def test_wlcs_commutative(self):
         """Test that WLCS is commutative (same result swapping arguments)."""
@@ -645,4 +645,4 @@ class TestRougeWMathematicalProperties:
         wlcs_1 = metric.calculate_wlcs(tokens1, tokens2)
         wlcs_2 = metric.calculate_wlcs(tokens2, tokens1)
 
-        assert abs(wlcs_1 - wlcs_2) < 0.001
+        assert wlcs_1 == pytest.approx(wlcs_2)

@@ -74,12 +74,12 @@ class TestBuildIdfLookup:
             # apple appears in 2 docs, total 3 docs
             # IDF = log(3/(2+1)) + 1 = log(1) + 1
             expected_apple = math.log(1) + 1
-            assert abs(idf_scores["apple"] - expected_apple) < 0.0001
+            assert idf_scores["apple"] == pytest.approx(expected_apple)
 
             # date appears in 1 doc
             # IDF = log(3/(1+1)) + 1 = log(3/2) + 1
             expected_date = math.log(3 / 2) + 1
-            assert abs(idf_scores["date"] - expected_date) < 0.0001
+            assert idf_scores["date"] == pytest.approx(expected_date)
 
 
 class TestGetTokensTfidf:
@@ -111,8 +111,8 @@ class TestGetTokensTfidf:
         expected_word = (2 / 3) * idf_word
         expected_another = (1 / 3) * idf_another
 
-        assert abs(weights["word"] - expected_word) < 0.0001
-        assert abs(weights["another"] - expected_another) < 0.0001
+        assert weights["word"] == pytest.approx(expected_word)
+        assert weights["another"] == pytest.approx(expected_another)
 
     def test_tfidf_higher_frequency_gives_higher_weight(self):
         """Test that tokens appearing more frequently in reference have higher TF-IDF."""
@@ -154,7 +154,7 @@ class TestGetTokensTfidf:
         idf = metric.idf_lookup["test"]["single"]
         expected = 1.0 * idf
 
-        assert abs(weights["single"] - expected) < 0.0001
+        assert weights["single"] == pytest.approx(expected)
 
     def test_tfidf_idf_difference_affects_weight(self):
         """Test that tokens with different IDF values produce different weights."""
@@ -189,7 +189,7 @@ class TestGetNgramWeight:
 
         # max_weight = 3.0, so apple weight = 1.0/3.0
         expected_weight = 1.0 / 3.0
-        assert abs(weight - expected_weight) < 0.0001
+        assert weight == pytest.approx(expected_weight)
 
     def test_ngram_weight_single_token_max_returns_one(self):
         """Test that unigram with max weight returns 1.0."""
@@ -200,7 +200,7 @@ class TestGetNgramWeight:
 
         unigram = ("word",)
         weight = metric.get_ngram_weight(unigram, token_weights)
-        assert abs(weight - 1.0) < 0.0001
+        assert weight == pytest.approx(1.0)
 
     def test_ngram_weight_averages_across_tokens(self):
         """Test that n-gram weight is the average of normalized token weights."""
@@ -214,7 +214,7 @@ class TestGetNgramWeight:
 
         # normalized: a = 0.4/0.8 = 0.5, b = 0.8/0.8 = 1.0
         # average = (0.5 + 1.0) / 2 = 0.75
-        assert abs(weight - 0.75) < 0.0001
+        assert weight == pytest.approx(0.75)
 
     def test_ngram_weight_unknown_token_treated_as_zero(self):
         """Test that tokens not in token_weights are treated as 0."""
@@ -232,7 +232,7 @@ class TestGetNgramWeight:
 
         # known = 1.0/1.0 = 1.0, unknown = 0.0
         # average = (1.0 + 0.0) / 2 = 0.5
-        assert abs(weight - 0.5) < 0.0001
+        assert weight == pytest.approx(0.5)
 
     def test_ngram_weight_trigram(self):
         """Test weight calculation for trigrams."""
@@ -247,7 +247,7 @@ class TestGetNgramWeight:
         # normalized: a = 0.3/0.9 = 1/3, b = 0.6/0.9 = 2/3, c = 0.9/0.9 = 1.0
         # average = (1/3 + 2/3 + 1.0) / 3 = 2/3
         expected = (1 / 3 + 2 / 3 + 1.0) / 3
-        assert abs(weight - expected) < 0.0001
+        assert weight == pytest.approx(expected)
 
     def test_ngram_weight_bounds_between_zero_and_one(self):
         """Test that n-gram weight is always between 0 and 1."""
@@ -272,7 +272,7 @@ class TestGetNgramWeight:
 
         # All weights equal to max, so all normalized to 1.0
         # average = (1.0 + 1.0 + 1.0) / 3 = 1.0
-        assert abs(weight - 1.0) < 0.0001
+        assert weight == pytest.approx(1.0)
 
 
 class TestCalculateRecall:
@@ -290,7 +290,7 @@ class TestCalculateRecall:
             code_abbr="test",
         )
 
-        assert abs(recall - 1.0) < 0.0001
+        assert recall == pytest.approx(1.0)
 
     def test_recall_no_overlap_returns_zero(self):
         """Test that texts with no common words return recall of 0.0."""
@@ -314,7 +314,7 @@ class TestCalculateRecall:
 
         # all words have equal weights
         expected_value = 2.0 / 3.0
-        assert abs(recall - expected_value) < 0.0001
+        assert recall == pytest.approx(expected_value)
 
     def test_recall_bigrams_identical_returns_one(self):
         """Test that identical texts return recall of 1.0 for bigrams."""
@@ -328,7 +328,7 @@ class TestCalculateRecall:
             code_abbr="test",
         )
 
-        assert abs(recall - 1.0) < 0.0001
+        assert recall == pytest.approx(1.0)
 
     def test_recall_empty_prediction_returns_zero(self):
         """Test that empty prediction returns recall of 0.0."""
@@ -365,7 +365,7 @@ class TestCalculateRecall:
             code_abbr="test",
         )
 
-        assert abs(recall - 1.0) < 0.0001
+        assert recall == pytest.approx(1.0)
 
     def test_recall_prediction_subset_of_reference(self):
         """Test recall when prediction is subset of reference."""
@@ -379,7 +379,7 @@ class TestCalculateRecall:
 
         # Not all reference tokens are captured
         expected_value = 2.0 / 5.0
-        assert abs(recall - expected_value) < 0.0001
+        assert recall == pytest.approx(expected_value)
 
     def test_recall_normalizes_punctuation(self):
         """Test that punctuation is normalized in recall calculation."""
@@ -390,7 +390,7 @@ class TestCalculateRecall:
             prediction="Hello, World!", reference="hello world", n=1, code_abbr="test"
         )
 
-        assert abs(recall - 1.0) < 0.0001
+        assert recall == pytest.approx(1.0)
 
     def test_recall_case_insensitive(self):
         """Test that recall calculation is case insensitive."""
@@ -401,7 +401,7 @@ class TestCalculateRecall:
             prediction="HELLO WORLD", reference="hello world", n=1, code_abbr="test"
         )
 
-        assert abs(recall - 1.0) < 0.0001
+        assert recall == pytest.approx(1.0)
 
     def test_recall_missing_rare_word_hurts_more(self):
         """Test that missing a rare word reduces recall more than missing a common word."""
@@ -480,7 +480,7 @@ class TestTFIDFRougeNCallableInterface:
             prediction="hello world", reference="hello world", code_abbr="test"
         )
 
-        assert abs(score - 1.0) < 0.0001
+        assert score == pytest.approx(1.0)
 
     def test_callable_strips_whitespace(self):
         """Test that callable strips leading/trailing whitespace."""
@@ -491,7 +491,7 @@ class TestTFIDFRougeNCallableInterface:
             prediction="  hello world  ", reference="hello world", code_abbr="test"
         )
 
-        assert abs(score - 1.0) < 0.0001
+        assert score == pytest.approx(1.0)
 
     def test_metric_name(self):
         """Test that metric has correct name."""
@@ -520,7 +520,7 @@ class TestTFIDFRougeNEdgeCases:
 
         score = metric(prediction=text, reference=text, code_abbr="test")
 
-        assert abs(score - 1.0) < 0.0001
+        assert score == pytest.approx(1.0)
 
     def test_special_characters_removed(self):
         """Test that special characters are handled properly."""
@@ -533,7 +533,7 @@ class TestTFIDFRougeNEdgeCases:
             code_abbr="test",
         )
 
-        assert abs(score - 1.0) < 0.0001
+        assert score == pytest.approx(1.0)
 
     def test_numbers_preserved(self):
         """Test that numbers are preserved in text."""
@@ -546,7 +546,7 @@ class TestTFIDFRougeNEdgeCases:
             code_abbr="test",
         )
 
-        assert abs(score - 1.0) < 0.0001
+        assert score == pytest.approx(1.0)
 
     def test_multiple_spaces_handled(self):
         """Test that multiple spaces are handled correctly."""
@@ -557,7 +557,7 @@ class TestTFIDFRougeNEdgeCases:
             prediction="hello    world", reference="hello world", code_abbr="test"
         )
 
-        assert abs(score - 1.0) < 0.0001
+        assert score == pytest.approx(1.0)
 
     def test_newlines_and_tabs_handled(self):
         """Test that newlines and tabs are handled correctly."""
@@ -570,4 +570,4 @@ class TestTFIDFRougeNEdgeCases:
             code_abbr="test",
         )
 
-        assert abs(score - 1.0) < 0.0001
+        assert score == pytest.approx(1.0)
