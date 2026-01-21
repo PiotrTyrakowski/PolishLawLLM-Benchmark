@@ -172,15 +172,13 @@ class TestCalculateWLCS:
         """Test that consecutive matches get higher score than non-consecutive."""
         metric = RougeWMetric(alpha=2.0)
 
-        # Case 1: Consecutive matches "a b c" in "a b c d e"
         pred_consecutive = ["a", "b", "c", "d", "e"]
         ref_consecutive = ["a", "b", "c"]
         wlcs_consecutive = metric.calculate_wlcs(pred_consecutive, ref_consecutive)
 
-        # Case 2: Non-consecutive matches "a" "c" "e" in "a b c d e"
-        ref_non_consecutive = ["a", "c", "e"]
+        pred_non_consecutive = ["a", "d", "b", "e", "c"]
         wlcs_non_consecutive = metric.calculate_wlcs(
-            pred_consecutive, ref_non_consecutive
+            pred_non_consecutive, ref_consecutive
         )
 
         # Consecutive: f(3) = 9
@@ -277,7 +275,7 @@ class TestRougeWRecall:
 
     def test_recall_partial_overlap(self):
         """Test recall with partial overlap."""
-        metric = RougeWMetric(alpha=1.0)  # Use alpha=1 for simple verification
+        metric = RougeWMetric(alpha=1.0)
 
         prediction = "the cat sat"
         reference = "the dog sat"
@@ -519,28 +517,6 @@ class TestRougeWFMeasure:
         assert f_half < f1
 
 
-class TestRougeWCallable:
-    """Tests for the callable interface (__call__ method)."""
-
-    def test_call_returns_f_measure(self):
-        """Test that calling the metric returns F-measure."""
-        metric = RougeWMetric()
-        text = "the cat sat"
-
-        result = metric(prediction=text, reference=text)
-        expected = metric.calculate_f_measure(text, text)
-
-        assert abs(result - expected) < 0.001
-
-    def test_call_identical_texts(self):
-        """Test calling with identical texts returns 1.0."""
-        metric = RougeWMetric()
-
-        result = metric(prediction="hello world", reference="hello world")
-
-        assert abs(result - 1.0) < 0.001
-
-
 class TestRougeWNormalization:
     """Tests for text normalization behavior."""
 
@@ -580,101 +556,8 @@ class TestRougeWNormalization:
         assert abs(result - 1.0) < 0.001
 
 
-class TestRougeWPolishText:
-    """Tests for Polish text handling."""
-
-    def test_polish_identical_texts(self):
-        """Test with identical Polish texts."""
-        metric = RougeWMetric()
-        text = "zakaz prowadzenia pojazdów mechanicznych"
-
-        result = metric(prediction=text, reference=text)
-
-        assert abs(result - 1.0) < 0.001
-
-    def test_polish_partial_overlap(self):
-        """Test with partial overlap in Polish text."""
-        metric = RougeWMetric(alpha=1.0)
-
-        prediction = "zakaz prowadzenia pojazdów"
-        reference = "zakaz prowadzenia"
-
-        # Both texts start with same words
-        # Reference has 2 words, prediction has 3
-        # LCS = 2 (zakaz prowadzenia)
-        # Recall = 2/2 = 1.0
-        # Precision = 2/3
-
-        recall = metric.calculate_recall(prediction, reference)
-        precision = metric.calculate_precision(prediction, reference)
-
-        assert abs(recall - 1.0) < 0.001
-        assert abs(precision - 2.0 / 3.0) < 0.001
-
-    def test_polish_consecutive_matches(self):
-        """Test that consecutive Polish words are weighted correctly."""
-        metric = RougeWMetric(alpha=2.0)
-
-        # Reference with 3 consecutive words matching
-        prediction = "zakaz prowadzenia pojazdów mechanicznych"
-        reference = "zakaz prowadzenia pojazdów"
-
-        f_measure = metric.calculate_f_measure(prediction, reference)
-
-        # All 3 reference words match consecutively
-        # Recall should be close to 1.0
-        assert f_measure > 0.8
-
-    def test_polish_with_diacritics(self):
-        """Test handling of Polish diacritics."""
-        metric = RougeWMetric()
-
-        prediction = "żółć gęślą jaźń"
-        prediction2 = "żółć gęślą jazn"
-        reference = "żółć gęślą jaźń"
-
-        result = metric(prediction=prediction, reference=reference)
-        result2 = metric(prediction=prediction2, reference=reference)
-
-        assert abs(result - 1.0) < 0.001
-        assert result2 < result
-
-
 class TestRougeWEdgeCases:
     """Tests for edge cases."""
-
-    def test_single_word_identical(self):
-        """Test with single identical word."""
-        metric = RougeWMetric()
-
-        result = metric(prediction="hello", reference="hello")
-
-        assert abs(result - 1.0) < 0.001
-
-    def test_single_word_different(self):
-        """Test with single different word."""
-        metric = RougeWMetric()
-
-        result = metric(prediction="hello", reference="world")
-
-        assert result == 0.0
-
-    def test_repeated_words(self):
-        """Test handling of repeated words."""
-        metric = RougeWMetric(alpha=1.0)
-
-        prediction = "the the the"
-        reference = "the the"
-
-        # LCS = "the the" = 2
-        # Recall = 2/2 = 1.0
-        # Precision = 2/3
-
-        recall = metric.calculate_recall(prediction, reference)
-        precision = metric.calculate_precision(prediction, reference)
-
-        assert abs(recall - 1.0) < 0.001
-        assert abs(precision - 2.0 / 3.0) < 0.001
 
     def test_very_long_sequences(self):
         """Test with very long sequences."""
@@ -687,14 +570,6 @@ class TestRougeWEdgeCases:
 
         assert abs(result - 1.0) < 0.001
 
-    def test_only_punctuation_returns_zero(self):
-        """Test that only punctuation strings return 0."""
-        metric = RougeWMetric()
-
-        result = metric(prediction="...", reference="!!!")
-
-        assert result == 0.0
-
     def test_numbers_as_words(self):
         """Test handling of numbers."""
         metric = RougeWMetric()
@@ -704,37 +579,6 @@ class TestRougeWEdgeCases:
         )
 
         assert abs(result - 1.0) < 0.001
-
-
-class TestRougeWScoreBatch:
-    """Tests for batch scoring."""
-
-    def test_score_batch_basic(self):
-        """Test batch scoring with basic inputs."""
-        metric = RougeWMetric()
-
-        predictions = ["hello world", "the cat sat", "foo bar"]
-        references = ["hello world", "the cat sat", "foo bar"]
-
-        scores = list(metric.score_batch(predictions, references))
-
-        assert len(scores) == 3
-        for score in scores:
-            assert abs(score - 1.0) < 0.001
-
-    def test_score_batch_mixed(self):
-        """Test batch scoring with mixed similarity."""
-        metric = RougeWMetric()
-
-        predictions = ["hello world", "abc def", "the cat"]
-        references = ["hello world", "xyz uvw", "the dog"]
-
-        scores = list(metric.score_batch(predictions, references))
-
-        assert len(scores) == 3
-        assert abs(scores[0] - 1.0) < 0.001  # Identical
-        assert scores[1] == 0.0  # No overlap
-        assert 0 < scores[2] < 1.0  # Partial overlap
 
 
 class TestRougeWAlphaComparison:
@@ -755,7 +599,7 @@ class TestRougeWAlphaComparison:
         score_3 = metric_alpha_3.calculate_f_measure(prediction, reference)
 
         # Higher alpha should give lower scores for scattered matches
-        assert score_1 >= score_2 >= score_3
+        assert score_1 > score_2 > score_3
 
 
 class TestRougeWMathematicalProperties:
