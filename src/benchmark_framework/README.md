@@ -132,7 +132,7 @@ python -m src.stats.cli stats <file-path>
 #### Example
 
 ```bash
-python -m src.stats.clis stats data/metrics/gemini-2.0-flash/exams/2025/adwokacki_radcowy.jsonl
+python -m src.stats.cli stats data/metrics/gemini-2.0-flash/exams/2025/adwokacki_radcowy.jsonl
 ```
 
 #### Output
