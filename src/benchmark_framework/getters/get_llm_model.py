@@ -11,7 +11,7 @@ from src.benchmark_framework.models.open_router import OpenRouterModel
 
 MODEL_REGISTRY = {
     "gemini": GeminiModel,
-    "speakleash": NvidiaModel,
+    "speakleash": HFEndpointModel,
     "deepseek": NvidiaModel,
     "meta": NvidiaModel,
     "gpt": OpenAIModel,
