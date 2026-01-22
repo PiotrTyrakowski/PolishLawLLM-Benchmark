@@ -5,25 +5,25 @@ from src.benchmark_framework.models.openai import OpenAIModel
 from src.benchmark_framework.models.base_model import BaseModel
 from src.benchmark_framework.models.gemini import GeminiModel
 from src.benchmark_framework.configs.model_config import ModelConfig
-from src.benchmark_framework.models.nvidia_model import NvidiaModel
+from src.benchmark_framework.models.mistral_model import MistralModel
 from src.benchmark_framework.models.hfe_model import HFEndpointModel
 from src.benchmark_framework.models.open_router import OpenRouterModel
 
 MODEL_REGISTRY = {
     "gemini": GeminiModel,
     "speakleash": HFEndpointModel,
-    "deepseek": NvidiaModel,
-    "meta": NvidiaModel,
+    "deepseek": OpenRouterModel,
+    "meta": OpenRouterModel,
     "gpt": OpenAIModel,
     "claude": AnthropicModel,
     "CYFRAGOVPL": HFEndpointModel,
-    "perplexity": OpenRouterModel,  # https://openrouter.ai/perplexity/sonar-pro-search
-    "qwen": OpenRouterModel,  # https://openrouter.ai/qwen/qwen3-max
-    "x": OpenRouterModel,  # https://openrouter.ai/x-ai/grok-4 (x-ai -> x)
-    "z": OpenRouterModel,  # https://openrouter.ai/z-ai/glm-4.7 (z-ai -> z)
-    "moonshotai": NvidiaModel,
+    "perplexity": OpenRouterModel,
+    "qwen": OpenRouterModel,
+    "x": OpenRouterModel,
+    "z": OpenRouterModel,
     "mistralai": OpenRouterModel,
-    "nvidia": NvidiaModel,
+    "mistral": MistralModel,
+    "nvidia": OpenRouterModel,
     "google": OpenRouterModel,
 }
 
