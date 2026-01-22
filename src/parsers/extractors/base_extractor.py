@@ -6,5 +6,4 @@ class BaseExtractor(ABC):
 
     @abstractmethod
     def extract(self, text: str):
-        """Extract structured data from text."""
         pass

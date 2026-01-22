@@ -24,9 +24,6 @@ class AnthropicModel(BaseModel):
         self.client = anthropic.Anthropic(api_key=api_key)
 
     def generate_response(self, system_prompt: str, prompt: str) -> str:
-        """
-        Generate a response from a Claude model.
-        """
         message = self.client.messages.create(
             model=self.model_name,
             system=system_prompt,
@@ -39,7 +36,4 @@ class AnthropicModel(BaseModel):
         return message.content[0].text
 
     def get_default_runner_config(self):
-        """
-        Returns default rate limiting configuration for Anthropic models.
-        """
         return RunnerConfig(requests_per_minute=50)

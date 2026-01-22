@@ -3,10 +3,6 @@ import re
 
 
 def strip_markdown_code_blocks(text: str) -> str:
-    """
-    Remove markdown code block markers from text.
-    Handles ```json, ```python, or plain ``` blocks.
-    """
     text = text.strip()
 
     if text.startswith("```"):
@@ -21,9 +17,6 @@ def strip_markdown_code_blocks(text: str) -> str:
 
 
 def extract_json_field(response_text: str, field_name: str, default: str = "") -> str:
-    """
-    Extract a specific field from a JSON response.
-    """
     text = strip_markdown_code_blocks(response_text)
 
     try:

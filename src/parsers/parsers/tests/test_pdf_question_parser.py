@@ -1,36 +1,24 @@
 import pytest
-from pathlib import Path
 
-from src.parsers.extractors.question_extractor import QuestionExtractor
-from src.parsers.parsers.parser import Parser
+from src.parsers.parsers.getters import get_questions_parser
 from src.parsers.domain.question import Question
-from src.parsers.pdf_readers.pdf_text_reader import PdfTextReader
+from src.parsers.test_utils import get_data_path
 
 
 def get_pdf_path():
-    """Helper function to get the path to the 2025 exam PDF."""
-    file_path = (
-        Path(__file__).parent
-        / ".."
-        / ".."
-        / ".."
-        / ".."
-        / "data"
-        / "pdfs"
-        / "2025"
-        / "Zestaw_pytań_testowych_na_egzamin_wstępny_dla_kandydatów_na_aplikantów_adwokackich_i_radcowskich_27_września_2025.pdf"
+    return get_data_path(
+        "pdfs",
+        "2025",
+        "Zestaw_pytań_testowych_na_egzamin_wstępny_dla_kandydatów_na_aplikantów_adwokackich_i_radcowskich_27_września_2025.pdf",
     )
-    return file_path.resolve()
 
 
 @pytest.fixture
 def parser_with_mock():
-    return Parser(
-        file_path=get_pdf_path(),
-        extractor=QuestionExtractor(),
-        pdf_reader=PdfTextReader(),
-        start_page=2,
-    )
+    pdf_path = get_pdf_path()
+    if not pdf_path.exists():
+        pytest.skip(f"PDF file not found: {pdf_path}")
+    return get_questions_parser(file_path=pdf_path)
 
 
 def test_parse_returns_question_objects(parser_with_mock):

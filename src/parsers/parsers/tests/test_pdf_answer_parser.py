@@ -1,35 +1,24 @@
 import pytest
-from pathlib import Path
 
-from src.parsers.extractors.answer_extractor import AnswerExtractor
-from src.parsers.parsers.parser import Parser
+from src.parsers.parsers.getters import get_answers_parser
 from src.parsers.domain.answer import Answer
-from src.parsers.pdf_readers.pdf_table_reader import PdfTableReader
+from src.parsers.test_utils import get_data_path
 
 
 def get_pdf_path():
-    """Helper function to get the path to the 2025 exam PDF."""
-    file_path = (
-        Path(__file__).parent
-        / ".."
-        / ".."
-        / ".."
-        / ".."
-        / "data"
-        / "pdfs"
-        / "2025"
-        / "Wykaz_prawidłowych_odpowiedzi_do_zestawu_pytań_testowych_na_egzamin_wstępny_na_aplikację_adwokacką_i_radcowską_27_września_2025.pdf"
+    return get_data_path(
+        "pdfs",
+        "2025",
+        "Wykaz_prawidłowych_odpowiedzi_do_zestawu_pytań_testowych_na_egzamin_wstępny_na_aplikację_adwokacką_i_radcowską_27_września_2025.pdf",
     )
-    return file_path.resolve()
 
 
 @pytest.fixture
 def parser():
-    return Parser(
-        file_path=get_pdf_path(),
-        extractor=AnswerExtractor(),
-        pdf_reader=PdfTableReader(),
-    )
+    pdf_path = get_pdf_path()
+    if not pdf_path.exists():
+        pytest.skip(f"PDF file not found: {pdf_path}")
+    return get_answers_parser(file_path=pdf_path)
 
 
 def test_parse_returns_answer_objects(parser):

@@ -8,7 +8,6 @@ class FileOperations:
 
     @staticmethod
     def save_jsonl(data: List[Dict[str, Any]], output_path: Path) -> None:
-        """Save data in JSONL format."""
         output_path.parent.mkdir(parents=True, exist_ok=True)
         with output_path.open("w", encoding="utf-8") as f:
             for item in data:
@@ -16,7 +15,6 @@ class FileOperations:
 
     @staticmethod
     def load_jsonl(file_path: Path) -> List[Dict[str, Any]]:
-        """Load data from JSONL format."""
         data = []
         with file_path.open("r", encoding="utf-8") as f:
             for line in f:
@@ -26,7 +24,6 @@ class FileOperations:
 
     @staticmethod
     def save_json(data: Dict[str, Any], output_path: Path) -> None:
-        """Save data in JSON format."""
         output_path.parent.mkdir(parents=True, exist_ok=True)
         with output_path.open("w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)

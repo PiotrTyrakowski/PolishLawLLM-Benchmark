@@ -90,7 +90,6 @@ class LegalBasisService:
         if not article_text:
             raise ValueError(f"Article {article_num} not found in {formatted_code}")
 
-        # Extract based on components present
         if point_num:
             return LegalContentExtractor.get_point(
                 article_text, point_num, paragraph_num

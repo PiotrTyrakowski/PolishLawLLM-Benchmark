@@ -4,12 +4,12 @@ This tool extracts exam questions, answers, and legal basis content from PDF fil
 
 ## Features
 
-- 📄 **PDF Parsing**: Extracts questions and answers from exam PDFs using specialized readers
-- ⚖️ **Legal Basis Extraction**: Retrieves relevant legal code content from pre-generated corpus files
-- 📊 **Structured Output**: Generates JSONL files ready for LLM benchmarking
-- 🔍 **Multiple Exam Types**: Supports adwokacki/radcowy, komorniczy, and notarialny exams
-- 📁 **Multi-Year Support**: Processes exams from multiple years in a single run
-- 🎯 **Year Filtering**: Optional `--year` flag to process specific years only
+- **PDF Parsing**: Extracts questions and answers from exam PDFs using specialized readers
+- **Legal Basis Extraction**: Retrieves relevant legal code content from pre-generated corpus files
+- **Structured Output**: Generates JSONL files ready for LLM benchmarking
+- **Multiple Exam Types**: Supports adwokacki/radcowy, komorniczy, and notarialny exams
+- **Multi-Year Support**: Processes exams from multiple years in a single run
+- **Year Filtering**: Optional `--year` flag to process specific years only
 
 ## Architecture
 

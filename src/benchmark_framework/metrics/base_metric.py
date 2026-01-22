@@ -5,7 +5,7 @@ import string
 
 class BaseMetric(ABC):
     """
-    Common interface for evaluation metrics producing scores normalized to the [0, 1] interval.
+    Common interface for evaluation metrics.
     """
 
     def __init__(self, name: str):
@@ -14,8 +14,7 @@ class BaseMetric(ABC):
     def __call__(
         self, prediction: str, reference: str, code_abbr: Optional[str] = None
     ) -> float:
-        """Compute a single metric score clipped to the [0.0, 1.0] interval."""
-
+        """Compute a single metric score."""
         normalized_prediction = prediction.strip()
         normalized_reference = reference.strip()
         score = float(
@@ -28,7 +27,6 @@ class BaseMetric(ABC):
         self, predictions: Sequence[str], references: Sequence[str]
     ) -> Iterable[float]:
         """Convenience method for scoring aligned batches of texts."""
-
         assert len(predictions) == len(
             references
         ), "predictions and references must have the same length"
@@ -48,4 +46,4 @@ class BaseMetric(ABC):
     def _compute(
         self, prediction: str, reference: str, code_abbr: Optional[str] = None
     ) -> float:
-        """Return the raw metric value before clipping to [0.0, 1.0]."""
+        """Return the raw metric value."""

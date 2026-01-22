@@ -17,10 +17,6 @@ class RougeWMetric(BaseMetric):
     def __init__(self, alpha: float = 1.2, beta: float = 1.0) -> None:
         """
         Initialize the ROUGE-W metric.
-
-        Args:
-            alpha: Weighting parameter for consecutive matches. Must be >= 1.0.
-            beta: F-measure parameter controlling precision/recall balance.
         """
         super().__init__("rouge_w")
         if alpha < 1.0:

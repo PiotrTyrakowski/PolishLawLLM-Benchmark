@@ -7,7 +7,6 @@ class LegalReferenceExtractor(BaseExtractor):
     """Extract components from legal basis strings."""
 
     def extract(self, legal_basis: str) -> LegalReference:
-        """Extract legal basis from string."""
         article_match = RegexPatterns.article_capture_pattern().search(legal_basis)
         paragraph_match = RegexPatterns.paragraph_capture_pattern().search(legal_basis)
         point_match = RegexPatterns.point_capture_pattern().search(legal_basis)

@@ -11,13 +11,6 @@ TYPE_REGISTRY = {
 def get_task_by_dataset(dataset_name: str, task_raw: dict) -> Task:
     """
     Factory function to get a task instance by dataset name.
-
-    Args:
-        dataset_name: The name of the dataset task to instantiate.
-        task_raw: The raw task data.
-
-    Returns:
-        An instance of the specified task class.
     """
     type_class = TYPE_REGISTRY.get(dataset_name)
     if not type_class:

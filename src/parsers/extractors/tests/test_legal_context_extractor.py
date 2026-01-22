@@ -1,26 +1,14 @@
 import json
 import pytest
-from pathlib import Path
 from functools import lru_cache
 
 from src.parsers.extractors.legal_content_extractor import LegalContentExtractor
 from src.common.text_formatter import TextFormatter
+from src.parsers.test_utils import get_data_path
 
 
-def get_corpus_path(code: str) -> Path:
-    """Helper function to get the path to the 2025 corpus JSON."""
-    file_path = (
-        Path(__file__).parent
-        / ".."
-        / ".."
-        / ".."
-        / ".."
-        / "data"
-        / "corpuses"
-        / "2025"
-        / f"{code}.json"
-    )
-    return file_path.resolve()
+def get_corpus_path(code: str):
+    return get_data_path("corpuses", "2025", f"{code}.json")
 
 
 @lru_cache(maxsize=None)
@@ -36,7 +24,6 @@ def load_corpus(code: str) -> dict:
 @pytest.mark.parametrize(
     "article_num,paragraph_num,point_num,expected_text,code",
     [
-        # kk - full article tests
         (
             "1",
             None,
@@ -79,7 +66,6 @@ def load_corpus(code: str) -> dict:
             "§ 1. Degradacja obejmuje utratę posiadanego stopnia wojskowego i powrót do stopnia szeregowego. § 2. Sąd może orzec degradację w razie skazania za przestępstwo umyślne, jeżeli rodzaj czynu, sposób i okoliczności jego popełnienia pozwalają przyjąć, że sprawca utracił właściwości wymagane do posiadania stopnia wojskowego.",
             "kk",
         ),
-        # kk - paragraph tests
         (
             "1",
             "1",
@@ -115,7 +101,6 @@ def load_corpus(code: str) -> dict:
             "Nie podlega karze, kto przekracza granice obrony koniecznej pod wpływem strachu lub wzburzenia usprawiedliwionych okolicznościami zamachu.",
             "kk",
         ),
-        # kks - paragraph tests
         (
             "50",
             "1",
@@ -130,7 +115,6 @@ def load_corpus(code: str) -> dict:
             "Orzeczona kara lub środek karny wymieniony w art. 47 § 2 pkt 2 i 3 nie podlega wykonaniu, jeżeli od daty uprawomocnienia się orzeczenia upłynęły 3 lata.",
             "kks",
         ),
-        # kc - paragraph and full article tests
         (
             "365",
             "3",
@@ -152,7 +136,6 @@ def load_corpus(code: str) -> dict:
             "§ 1. Jeżeli miejsce spełnienia świadczenia nie jest oznaczone ani nie wynika z właściwości zobowiązania, świadczenie powinno być spełnione w miejscu, gdzie w chwili powstania zobowiązania dłużnik miał zamieszkanie lub siedzibę. Jednakże świadczenie pieniężne powinno być spełnione w miejscu zamieszkania lub w siedzibie wierzyciela w chwili spełnienia świadczenia; jeżeli wierzyciel zmienił miejsce zamieszkania lub siedzibę po powstaniu zobowiązania, ponosi spowodowaną przez tę zmianę nadwyżkę kosztów przesłania. § 2. Jeżeli zobowiązanie ma związek z przedsiębiorstwem dłużnika lub wierzyciela, o miejscu spełnienia świadczenia rozstrzyga siedziba przedsiębiorstwa.",
             "kc",
         ),
-        # kk - point tests
         ("39", None, "1", "pozbawienie praw publicznych;", "kk"),
         (
             "40",
@@ -175,7 +158,6 @@ def load_corpus(code: str) -> dict:
             "zawartość alkoholu w 1 dm^3 wydychanego powietrza przekracza 0,25 mg albo prowadzi do stężenia przekraczającego tę wartość.",
             "kk",
         ),
-        # kpc
         (
             "14",
             None,
