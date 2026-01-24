@@ -55,7 +55,7 @@ def plot_metric_for_model_parameters(
             linestyle="--",
             linewidth=1.5,
             label=special_model,
-            alpha=0.8
+            alpha=0.8,
         )
 
     ax.set_title(title, fontsize=14, pad=20)
