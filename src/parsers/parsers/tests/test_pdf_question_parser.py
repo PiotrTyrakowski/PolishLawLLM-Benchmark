@@ -2,7 +2,7 @@ import pytest
 
 from src.parsers.parsers.getters import get_questions_parser
 from src.parsers.domain.question import Question
-from src.parsers.test_utils import get_data_path
+from src.parsers.utils.test_utils import get_data_path
 
 
 def get_pdf_path():
