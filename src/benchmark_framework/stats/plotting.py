@@ -14,8 +14,14 @@ def plot_metric_for_model_parameters(
     output_dir: Path,
 ):
     data = []
+    special_model = "gpt-5.2"
+    special_model_score = None
 
     for model_name, metrics in models_metrics.items():
+        if model_name == special_model:
+            special_model_score = metrics[metric_parent][metric_name]
+            continue
+
         if model_name in MODEL_CONFIG:
             model_config = MODEL_CONFIG[model_name]
             marker_style = f"${model_config.shortcut}$"
@@ -40,6 +46,16 @@ def plot_metric_for_model_parameters(
             s=150,
             label=label_text,
             alpha=0.8,
+        )
+
+    if special_model_score is not None:
+        ax.axhline(
+            y=special_model_score,
+            color="red",
+            linestyle="--",
+            linewidth=1.5,
+            label=special_model,
+            alpha=0.8
         )
 
     ax.set_title(title, fontsize=14, pad=20)
