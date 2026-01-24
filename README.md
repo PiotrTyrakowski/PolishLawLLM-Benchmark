@@ -94,7 +94,7 @@ Upload benchmark results to Firebase for visualization in the frontend dashboard
 python -m src.uploaders.cli <results-dir>
 ```
 
-**[Detailed documentation →](src/uploaders/Readme.md)**
+**[Detailed documentation →](src/uploaders/README.md)**
 
 ---
 
