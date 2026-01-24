@@ -12,16 +12,14 @@ class ModelInfo:
 
 MODEL_CONFIG: dict[str, ModelInfo] = {
     "CYFRAGOVPL-PLLuM-12B-instruct": ModelInfo(parameters=12, shortcut="P"),
-    "speakleash-bielik-11b-v2.6-instruct": ModelInfo(parameters=11, shortcut="B"),
+    "speakleash-bielik-11b-v3.0-instruct": ModelInfo(parameters=11, shortcut="B"),
     "google-gemma-3-12b-it": ModelInfo(parameters=12, shortcut="G"),
-    "meta-llama-3.1-405b-instruct": ModelInfo(parameters=405, shortcut="L"),
-    "meta-llama-3.3-70b-instruct": ModelInfo(parameters=70, shortcut="L2"),
-    "mistralai-mistral-large-3-675b-instruct-2512": ModelInfo(
-        parameters=675, shortcut="M"
-    ),
+    "meta-llama-llama-3.1-405b-instruct": ModelInfo(parameters=405, shortcut="L"),
+    "meta-llama-llama-3.3-70b-instruct": ModelInfo(parameters=70, shortcut="L2"),
+    "mistral-large-latest": ModelInfo(parameters=675, shortcut="M"),
     "mistralai-mistral-nemo": ModelInfo(parameters=12, shortcut="m"),
-    "deepseek-ai-deepseek-v3.2": ModelInfo(parameters=685, shortcut="D"),
-    "nvidia-nemotron-nano-12b-v2-vl": ModelInfo(parameters=12, shortcut="N"),
+    "deepseek-deepseek-v3.2": ModelInfo(parameters=685, shortcut="D"),
+    "meta-llama-llama-4-maverick": ModelInfo(parameters=400, shortcut="LM"),
 }
 
 

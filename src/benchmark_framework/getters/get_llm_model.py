@@ -23,7 +23,6 @@ MODEL_REGISTRY = {
     "z": OpenRouterModel,
     "mistralai": OpenRouterModel,
     "mistral": MistralModel,
-    "nvidia": OpenRouterModel,
     "google": OpenRouterModel,
 }
 
