@@ -1,20 +1,16 @@
 import json
 import pytest
+from pathlib import Path
 from functools import lru_cache
 
 from src.parsers.extractors.legal_content_extractor import LegalContentExtractor
 from src.common.text_formatter import TextFormatter
-from src.parsers.utils.test_utils import get_data_path
-
-
-def get_corpus_path(code: str):
-    return get_data_path("corpuses", "2025", f"{code}.json")
 
 
 @lru_cache(maxsize=None)
 def load_corpus(code: str) -> dict:
     """Load a corpus JSON file (cached)."""
-    corpus_path = get_corpus_path(code)
+    corpus_path = Path(__file__).parent / "test_data" / f"{code}.json"
     if not corpus_path.exists():
         pytest.skip(f"Corpus file not found: {corpus_path}")
     with open(corpus_path, "r", encoding="utf-8") as f:
