@@ -1,21 +1,13 @@
 import pytest
+from pathlib import Path
 
 from src.parsers.parsers.getters import get_questions_parser
 from src.parsers.domain.question import Question
-from src.parsers.utils.test_utils import get_data_path
-
-
-def get_pdf_path():
-    return get_data_path(
-        "pdfs",
-        "2025",
-        "Zestaw_pytań_testowych_na_egzamin_wstępny_dla_kandydatów_na_aplikantów_adwokackich_i_radcowskich_27_września_2025.pdf",
-    )
 
 
 @pytest.fixture
 def parser_with_mock():
-    pdf_path = get_pdf_path()
+    pdf_path = Path(__file__).parent / "test_data" / "test_questions.pdf"
     if not pdf_path.exists():
         pytest.skip(f"PDF file not found: {pdf_path}")
     return get_questions_parser(file_path=pdf_path)

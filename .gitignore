@@ -11,10 +11,6 @@ __pycache__/
 *.pyzw
 *.pyzwz
 
-# PDF files
-*.pdf
-**/*.pdf
-
 .env
 .claude/
 changes.txt
