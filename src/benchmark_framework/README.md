@@ -4,7 +4,7 @@ Framework for benchmarking Large Language Models on Polish legal tasks. The fram
 
 ## Features
 
-- **Multi-Provider Support**: OpenAI, Anthropic, Google Gemini, NVIDIA, and more
+- **Multi-Provider Support**: OpenAI, Anthropic, Google Gemini, and more
 - **Evaluation Metrics**: Exact match, ROUGE-N, ROUGE-W, TF-IDF weighted ROUGE-N recall
 - **Rate Limiting**: Configurable requests per minute and daily limits
 - **Statistics Calculation**: Aggregate accuracy and text similarity metrics
@@ -39,7 +39,7 @@ benchmark_framework/
 │   ├── openai.py               # OpenAI GPT models
 │   ├── anthropic.py            # Claude models
 │   ├── gemini.py               # Google Gemini (with optional Google Search)
-│   ├── nvidia_model.py         # NVIDIA API hosted models
+│   ├── mistral_model.py        # Mistral AI models
 │   ├── open_router.py          # OpenRouter API support
 │   ├── hfe_model.py            # HuggingFace Inference Endpoints hosted models
 │   └── local_model.py          # Local model support

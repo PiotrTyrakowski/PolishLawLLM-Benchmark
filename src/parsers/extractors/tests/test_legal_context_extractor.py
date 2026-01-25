@@ -4,7 +4,7 @@ from functools import lru_cache
 
 from src.parsers.extractors.legal_content_extractor import LegalContentExtractor
 from src.common.text_formatter import TextFormatter
-from src.parsers.test_utils import get_data_path
+from src.parsers.utils.test_utils import get_data_path
 
 
 def get_corpus_path(code: str):

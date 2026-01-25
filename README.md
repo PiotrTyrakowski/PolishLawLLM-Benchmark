@@ -1,6 +1,6 @@
 # Polish Law LLM Benchmark
 
-A benchmark framework for evaluating Large Language Models on Polish legal tasks, including bar exam questions and court judgment analysis.
+A benchmark framework for evaluating Large Language Models on Polish legal tasks, including exam questions and court judgment analysis.
 
 ## Project Structure
 
@@ -35,10 +35,10 @@ pip install -r requirements.txt
 export GOOGLE_API_KEY="..."      # For Gemini models
 export OPENAI_API_KEY="..."      # For GPT models
 export ANTHROPIC_API_KEY="..."   # For Claude models
-export NVIDIA_API_KEY="..."      # For NVIDIA-hosted models
 export OPENROUTER_API_KEY="..."  # For OpenRouter-hosted models
 export HF_TOKEN="..."            # For models hosted using Hugging Face Inference Endpoints
 export HF_ENDPOINT_URL="..."     # Custom endpoint URL for Hugging Face Inference Endpoints
+export MISTRAL_API_KEY="..."     # For Mistral models
 ```
 
 ### Run the tests
@@ -66,7 +66,7 @@ python -m src.benchmark_framework.calculate_metrics <input-dir> <output-dir>
 python -m src.benchmark_framework.stats.cli stats <file-path>
 ```
 
-📖 **[Detailed documentation →](src/benchmark_framework/README.md)**
+**[Detailed documentation →](src/benchmark_framework/README.md)**
 
 ---
 
@@ -82,7 +82,7 @@ python -m src.parsers.corpuses.setup_corpuses <pdf-dir> <output-dir> <year>
 python -m src.parsers.cli <pdfs-dir> <corpuses-dir> <output-dir>
 ```
 
-📖 **[Detailed documentation →](src/parsers/README.md)**
+**[Detailed documentation →](src/parsers/README.md)**
 
 ---
 
@@ -94,7 +94,7 @@ Upload benchmark results to Firebase for visualization in the frontend dashboard
 python -m src.uploaders.cli <results-dir>
 ```
 
-📖 **[Detailed documentation →](src/uploaders/Readme.md)**
+**[Detailed documentation →](src/uploaders/README.md)**
 
 ---
 
@@ -108,7 +108,7 @@ bun install
 bun run dev
 ```
 
-📖 **[Detailed documentation →](frontend/README.md)**
+**[Detailed documentation →](frontend/README.md)**
 
 ---
 

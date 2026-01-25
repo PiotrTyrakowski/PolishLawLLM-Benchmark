@@ -16,3 +16,5 @@ firebase-admin==7.1.0
 rich==14.2.0
 matplotlib==3.10.8
 pandas==2.3.3
+sentencepiece==0.2.1
+mistralai==1.10.1

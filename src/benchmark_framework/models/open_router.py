@@ -5,6 +5,21 @@ from src.benchmark_framework.configs.runner_config import RunnerConfig
 from src.benchmark_framework.models.base_model import BaseModel
 from src.benchmark_framework.configs.model_config import ModelConfig
 
+MODEL_PROVIDER_DICT = {
+    "meta-llama/llama-3.3-70b-instruct": {
+        "order": ["novita/bf16"],
+        "allow_fallbacks": False,
+    },
+    "meta-llama/llama-3.1-405b-instruct": {
+        "order": ["together/fp8"],
+        "allow_fallbacks": False,
+    },
+    "meta-llama/llama-4-maverick": {"quantizations": ["fp8"], "allow_fallbacks": False},
+    "deepseek/deepseek-v3.2": {"quantizations": ["fp8"], "allow_fallbacks": False},
+    "google/gemma-3-12b-it": {"order": ["deepinfra/bf16"], "allow_fallbacks": False},
+    "mistralai/mistral-nemo": {"order": ["deepinfra/fp8"], "allow_fallbacks": False},
+}
+
 
 class OpenRouterModel(BaseModel):
     """
@@ -29,10 +44,18 @@ class OpenRouterModel(BaseModel):
             {"role": "user", "content": prompt},
         ]
 
-        completion = self.client.chat.completions.create(
-            model=self.model_name,
-            messages=messages,
-        )
+        request_kwargs = {
+            "model": self.model_name,
+            "messages": messages,
+        }
+
+        # Only add extra_body if the model is defined in the provider dict
+        if self.model_name in MODEL_PROVIDER_DICT:
+            request_kwargs["extra_body"] = {
+                "provider": MODEL_PROVIDER_DICT[self.model_name]
+            }
+
+        completion = self.client.chat.completions.create(**request_kwargs)
 
         return completion.choices[0].message.content
 
